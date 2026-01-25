@@ -1,0 +1,119 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+html, body {
+  margin: 0;
+  height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  
+  border: 0.01px solid rgb(17, 17, 63);
+  padding: 0.6em 1.2em;
+  margin-top: 0.25em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  width: 90%;
+  margin-left: 1.3em;
+
+  border-style: solid;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+
+
+}
+
+.sidebar {
+  border-style: solid;
+  border-color: #747bff;
+  width: 25%;
+  height: 90%;
+}
+
+.main-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 auto;
+  border-style: solid;
+  border-color: #747bff;
+  height: 90%;
+  width: 100%;
+  align-items: center;
+}
+
+.bubbleBox {
+  border-style: dotted;
+  border-color: cadetblue;
+  width: 80%;
+  margin-left: 100px;
+  margin-right: 100px;
+  height: 70%;
+  text-align: center;
+}
+
+.bubbleBox h1 {
+  margin: auto;
+}
+
+p[contenteditable] {
+  border-bottom: 1px dotted transparent;
+  transition: border-color 0.2s;
+}
+
+p[contenteditable]:hover {
+  border-color: #999;
+}
