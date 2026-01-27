@@ -7,7 +7,6 @@ function App() {
   const [jobs, setJobs] = useState([]);
   const [activeJobId, setActiveJobId] = useState(null);
 
-  console.log("Job:", jobs);
   function addJob(newJob) {
     setJobs((prevJobs) => [...prevJobs, newJob]);
   }

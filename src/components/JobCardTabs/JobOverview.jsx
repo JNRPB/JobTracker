@@ -90,27 +90,6 @@ function JobOverview({ job, onUpdate }) {
           {job.notes}
         </p>
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "10px",
-        }}
-      >
-        <button
-          disabled={activeTab === 0}
-          onClick={() => setActiveTab(activeTab - 1)}
-        >
-          ◀
-        </button>
-
-        <button
-          disabled={activeTab === 2}
-          onClick={() => setActiveTab(activeTab + 1)}
-        >
-          ▶
-        </button>
-      </div>
     </>
   );
 }
