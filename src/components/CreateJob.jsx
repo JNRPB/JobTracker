@@ -5,7 +5,7 @@ function CreateJob({ addJob }) {
     name: "",
     address: "",
     notes: "",
-    status: "Pending",
+    status: "Lead",
   });
 
   function handleChange(e) {
@@ -16,15 +16,22 @@ function CreateJob({ addJob }) {
     e.preventDefault();
 
     const newJob = { id: Date.now(), ...formData };
+
+    // Add job to parent state
     addJob(newJob);
 
+    // Also save to localStorage
+    const existingJobs = JSON.parse(localStorage.getItem("jobs") || "[]");
+
+    // Reset the form
     setFormData({
       name: "",
       address: "",
       notes: "",
-      status: "Pending",
+      status: "Lead",
     });
   }
+
   return (
     <>
       <div>
@@ -39,6 +46,7 @@ function CreateJob({ addJob }) {
             placeholder="Job Name"
             value={formData.name}
             onChange={handleChange}
+            required
           />
           <input
             name="address"
@@ -53,9 +61,14 @@ function CreateJob({ addJob }) {
             onChange={handleChange}
           />
           <select name="status" value={formData.status} onChange={handleChange}>
-            <option>Pending</option>
+            <option>Lead</option>
+            <option>Contacted</option>
+            <option>To-Quote</option>
+            <option>Quoted</option>
+            <option>Approved</option>
+            <option>Booked</option>
             <option>In Progress</option>
-            <option>Complete</option>
+            <option>Completed</option>
           </select>
           <button type="submit">Add Job</button>
         </form>

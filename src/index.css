@@ -1,133 +1,234 @@
+/* -------------------------- */
+/* Global Styles & Typography */
+/* -------------------------- */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: dark light;
+  color: #e5e7eb;
+  background-color: #1a1a1a;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+  --brand-color: rgba(0, 123, 255, 0.7);
 }
 
 html, body {
   margin: 0;
-  height: 100vh;
+  height: 100%;
+  width: 100%;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  font-weight: 600;
+  text-align: center;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 2.5rem;
 }
 
-button {
-  
-  border: 0.01px solid rgb(17, 17, 63);
-  padding: 0.6em 1.2em;
-  margin-top: 0.25em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-  width: 90%;
-  margin-left: 1.3em;
-
-  border-style: solid;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+h2 {
+  font-size: 1.2rem;
+  color: #cbd5e1;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
+/* -------------------------- */
+/* Layout: App, Sidebar, Main */
+/* -------------------------- */
 .app-container {
   display: flex;
   height: 100vh;
-
-
+  width: 100%;
+  background-color: #1a1a1a;
 }
 
 .sidebar {
-  border-style: solid;
-  border-color: #747bff;
-  width: 25%;
-  height: 90%;
+  background-color: #1f1f2e;
+  width: 250px;
+  padding: 1.5rem 1rem;
+  border-radius: 0 16px 16px 0;
+  box-shadow: 4px 0 12px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: #e5e7eb;
+  text-align: center;
 }
 
 .main-panel {
+  flex: 1;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin: 0 auto;
-  border-style: solid;
-  border-color: #747bff;
-  height: 90%;
-  width: 100%;
-  align-items: center;
+  gap: 1.5rem;
+  overflow-y: auto;
+  align-items: center; /* keep cards centered */
 }
 
+/* -------------------------- */
+/* Job Card (BubbleBox)       */
+/* -------------------------- */
 .bubbleBox {
-  border-style: dotted;
-  border-color: cadetblue;
-  width: 80%;
-  margin-left: 100px;
-  margin-right: 100px;
-  height: 70%;
-  text-align: center;
+  background-color: #1e1e2f;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  width: 70%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center; /* keep text centered */
   max-height: 70vh;
-overflow-y: auto;
-padding: 1rem;
+  overflow-y: auto;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.bubbleBox:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+
+.bubbleBox h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.bubbleBox h2 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* -------------------------- */
+/* Editable Fields            */
+/* -------------------------- */
+[contenteditable="true"] {
+  border-bottom: 1px dotted #555;
+  transition: border-color 0.2s, background-color 0.2s;
+  padding: 0.2rem 0;
+}
+
+[contenteditable="true"]:hover {
+  border-color: var(--brand-color);
+  background-color: rgba(0,123,255,0.05);
+}
+
+[contenteditable="true"]:focus {
+  border-color: var(--brand-color);
+  background-color: rgba(0,123,255,0.15);
+  outline: none;
+}
+
+/* -------------------------- */
+/* Buttons                    */
+/* -------------------------- */
+button {
+  background-color: var(--brand-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 90%;
+  margin-top: 1rem;
+}
+
+button:hover {
+  background-color: rgba(0,123,255,1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+button.delete-job {
+  background-color: #ff4d4f;
+}
+
+button.delete-job:hover {
+  background-color: #e63946;
+}
+
+/* -------------------------- */
+/* Status Pills & Dropdowns   */
+/* -------------------------- */
+.status-row {
+  display: flex;
+  justify-content: center; /* center the status row */
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  min-width: 90px;
+  transition: background-color 0.3s ease;
+}
+
+.status-row select {
+  border-radius: 10px;
+  border: 1px solid #444;
+  padding: 0.4rem 0.6rem;
+  background-color: #2a2a3c;
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.status-row select:hover {
+  border-color: var(--brand-color);
+}
+
+.status-row select:focus {
+  outline: none;
+  border-color: var(--brand-color);
+}
+
+/* -------------------------- */
+/* Tables (Phase Table)       */
+/* -------------------------- */
 .phase table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
 }
 
-.phase th,
-.phase td {
-  border: 1px solid #ddd;
-  padding: 16px 10px;
+.phase th, .phase td {
+  border: 1px solid #333;
+  padding: 12px 10px;
   text-align: center;
 }
 
 .phase th {
-  background: transparent;
+  background-color: #1f1f2e;
   font-weight: 600;
+  color: #cbd5e1;
 }
 
 .phase tr:nth-child(even) {
-  background: #353535;
+  background-color: #2a2a3c;
+}
+
+.phase tr:hover {
+  background-color: rgba(0,123,255,0.1);
 }
 
 .phase button.delete-row {
@@ -137,34 +238,104 @@ padding: 1rem;
   color: #fff;
   border: none;
   border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
-/* totals row */
-.phase tr:last-child td {
-  background: transparent;
-  font-weight: bold;
+.phase button.delete-row:hover {
+  background-color: #e63946;
 }
 
-/* Add Row row */
-.phase td[colspan] {
+/* -------------------------- */
+/* Responsive                  */
+/* -------------------------- */
+@media (max-width: 1024px) {
+  .app-container {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    border-radius: 0 0 16px 16px;
+  }
+  .main-panel {
+    padding: 1rem;
+  }
+  .bubbleBox {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .bubbleBox {
+    padding: 1rem;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+
+
+
+.phase tr.total-phase-cost {
+  background-color: rgba(0, 0, 0, 0.35); /* stronger highlight for total job cost */
+  font-weight: 800;
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+/* Homepage container */
+.homepage-container {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  overflow-x: auto; /* scroll if too many columns */
+}
+
+/* Each status column */
+.status-column {
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  padding: 1rem;
+  min-width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Column title */
+.status-column h2 {
   text-align: center;
-  padding: 12px;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 0.5rem;
 }
 
-.phase button {
-  padding: 6px 12px;
+/* Job card in column */
+.job-card {
+  background-color: var(--brand-color);
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  text-align: center;
 }
 
-.bubbleBox h1 {
-  margin: auto;
+.job-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-p[contenteditable] {
-  border-bottom: 1px dotted transparent;
-  transition: border-color 0.2s;
-}
 
-p[contenteditable]:hover {
-  border-color: #999;
+.status-column .job-count {
+  font-size: 0.9rem;
+  color: #c4c3c3;
+  text-align: center;
+  margin-bottom: 0.5rem;
 }

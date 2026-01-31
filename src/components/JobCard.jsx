@@ -1,14 +1,23 @@
 import { useState } from "react";
 import JobOverview from "./JobCardTabs/JobOverview";
 import ExpectedCost from "./JobCardTabs/ExpectedCost";
+import ActualCost from "./JobCardTabs/ActualCost";
 
-function JobCard({ job, onUpdate }) {
+function JobCard({ job, onUpdate, deleteJob }) {
   const [activeTab, setActiveTab] = useState(0);
+
+  function handleDeleteJob() {
+    removeJob(job.id);
+  }
 
   return (
     <>
-      {activeTab === 0 && <JobOverview job={job} onUpdate={onUpdate} />}
+      {activeTab === 0 && (
+        <JobOverview job={job} onUpdate={onUpdate} deleteJob={deleteJob} />
+      )}
       {activeTab === 1 && <ExpectedCost job={job} onUpdate={onUpdate} />}
+
+      {activeTab === 2 && <ActualCost job={job} onUpdate={onUpdate} />}
       <div
         style={{
           display: "flex",

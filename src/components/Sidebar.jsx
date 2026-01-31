@@ -3,6 +3,9 @@ import SidebarButton from "./SideBarButton";
 function Sidebar({ setActiveComponent, jobs, setActiveJobId }) {
   return (
     <div className="sidebar">
+      <button onClick={() => setActiveComponent("Homepage")}>
+        🏠 Homepage
+      </button>
       {jobs
         .slice()
         .sort((a, b) => a.name.localeCompare(b.name))

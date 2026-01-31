@@ -1,8 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function JobOverview({ job, onUpdate }) {
+const JOB_STATUSES = [
+  "Lead",
+  "Contacted",
+  "To-Quote",
+  "Quoted",
+  "Approved",
+  "Booked",
+  "In Progress",
+  "Completed",
+];
+
+function JobOverview({ job, onUpdate, deleteJob }) {
   const [localJobInfo, setLocalJobInfo] = useState(job);
   const [activeTab, setActiveTab] = useState(0);
+
+  useEffect(() => {
+    setLocalJobInfo(job);
+  }, [job]);
 
   function commitChange(field, value) {
     const updatedJobInfo = {
@@ -89,6 +104,41 @@ function JobOverview({ job, onUpdate }) {
         >
           {job.notes}
         </p>
+        <br></br>
+        <div style={{ marginTop: "1rem" }}>
+          <strong>Status:</strong>
+
+          <select
+            value={localJobInfo.status}
+            onChange={(e) => commitChange("status", e.target.value)}
+            style={{
+              marginLeft: "0.5rem",
+              padding: "0.4rem",
+              borderRadius: "6px",
+            }}
+          >
+            {JOB_STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          style={{
+            backgroundColor: "red",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            padding: "0.5rem 1rem",
+            cursor: "pointer",
+            marginTop: "1rem",
+          }}
+          onClick={() => deleteJob(job.id)}
+        >
+          Delete Job
+        </button>
       </div>
     </>
   );

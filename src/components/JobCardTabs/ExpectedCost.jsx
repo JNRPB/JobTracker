@@ -16,10 +16,36 @@ function ExpectedCost({ job, onUpdate }) {
     onUpdate({ ...job, phases: updatedPhases });
   }
 
+  const totalExpectedCost = phases.reduce((sum, phase) => {
+    const materialTotal = phase.rows?.reduce(
+      (s, row) => s + Number(row.materialCost || 0),
+      0,
+    );
+    const labourTotal = phase.rows?.reduce(
+      (s, row) => s + Number(row.labourCost || 0),
+      0,
+    );
+    return sum + materialTotal + labourTotal;
+  }, 0);
+
   return (
     <>
       <div>
         <h1>Expected Cost</h1>
+      </div>
+
+      <div
+        style={{
+          textAlign: "center",
+          margin: "1rem 0",
+          padding: "0.5rem 1rem",
+          backgroundColor: "rgba(0,123,255,0.25)",
+          borderRadius: "12px",
+          fontWeight: "700",
+          fontSize: "1.2rem",
+        }}
+      >
+        Total Expected Cost: £{totalExpectedCost}
       </div>
 
       <div className="bubbleBox">
@@ -35,7 +61,24 @@ function ExpectedCost({ job, onUpdate }) {
 
           return (
             <div key={phase.id} className="phase">
-              <h2>{phase.name}</h2>
+              <h2
+                contentEditable
+                suppressContentEditableWarning={true}
+                onBlur={(e) => {
+                  const updatedPhases = phases.map((p) =>
+                    p.id === phase.id ? { ...p, name: e.target.innerText } : p,
+                  );
+                  onUpdate({ ...job, phases: updatedPhases });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault(); // prevent newline
+                    e.target.blur(); // trigger onBlur -> submit
+                  }
+                }}
+              >
+                {phase.name}
+              </h2>
 
               <table>
                 <thead>
@@ -68,16 +111,23 @@ function ExpectedCost({ job, onUpdate }) {
                       <td
                         contentEditable
                         suppressContentEditableWarning={true}
-                        onBlur={(e) =>
+                        onBlur={(e) => {
+                          let val = e.target.innerText.replace(/[^0-9.]/g, ""); // strip non-numbers
                           updateCell(
                             phase.id,
                             "materialCost",
-                            e.target.innerText,
+                            Number(val),
                             rowIndex,
-                          )
-                        }
+                          );
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault(); // prevent newline
+                            e.target.blur(); // trigger onBlur -> submit
+                          }
+                        }}
                       >
-                        {row.materialCost}
+                        £{row.materialCost || 0}
                       </td>
 
                       <td
@@ -98,16 +148,23 @@ function ExpectedCost({ job, onUpdate }) {
                       <td
                         contentEditable
                         suppressContentEditableWarning={true}
-                        onBlur={(e) =>
+                        onBlur={(e) => {
+                          let val = e.target.innerText.replace(/[^0-9.]/g, ""); // strip non-numbers
                           updateCell(
                             phase.id,
                             "labourCost",
-                            e.target.innerText,
+                            Number(val),
                             rowIndex,
-                          )
-                        }
+                          );
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault(); // prevent newline
+                            e.target.blur(); // trigger onBlur -> submit
+                          }
+                        }}
                       >
-                        {row.labourCost}
+                        £{row.labourCost || 0}
                       </td>
                       <td>
                         <button
@@ -137,16 +194,25 @@ function ExpectedCost({ job, onUpdate }) {
                   ))}
 
                   {/* Totals row */}
-                  <tr>
+                  <tr className="totals-row">
                     <td>
-                      <strong>Total</strong>
+                      <strong>Totals</strong>
                     </td>
                     <td>
-                      <strong>{materialTotal}</strong>
+                      <strong>£{materialTotal}</strong>
                     </td>
                     <td></td>
                     <td>
-                      <strong>{labourTotal}</strong>
+                      <strong>£{labourTotal}</strong>
+                    </td>
+                    <td></td>
+                  </tr>
+                  <tr className="total-phase-cost">
+                    <td>
+                      <strong>Total Phase Cost</strong>
+                    </td>
+                    <td colSpan={3}>
+                      <strong>£{materialTotal + labourTotal}</strong>
                     </td>
                     <td></td>
                   </tr>
