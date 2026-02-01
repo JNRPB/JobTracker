@@ -17,28 +17,11 @@ function Homepage({ jobs, setActiveComponent, setActiveJobId }) {
   });
 
   return (
-    <div
-      className="homepage-container"
-      style={{
-        display: "flex",
-        gap: "1rem",
-        maxWidth: "100%",
-        alignItems: "stretch", // make all columns same height
-        height: "80vh",
-        padding: "1rem",
-      }}
-    >
+    <div className="homepage-container">
+      {/* Date & Time */}
+
       {statuses.map((status) => (
-        <div
-          className="status-column"
-          key={status}
-          style={{
-            flex: "0 0 200px",
-            backgroundColor: "#1e1e2f",
-            padding: "0.5rem",
-            borderRadius: "8px",
-          }}
-        >
+        <div className="status-column" key={status}>
           <h2 style={{ color: "white" }}>{status}</h2>
           <div className="job-count">{jobsByStatus[status].length} jobs</div>
 
@@ -46,6 +29,7 @@ function Homepage({ jobs, setActiveComponent, setActiveJobId }) {
             <div
               key={job.id}
               className="job-card"
+              data-fulltext={job.name}
               onClick={() => {
                 setActiveJobId(job.id);
                 setActiveComponent("JobCard");

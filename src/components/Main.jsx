@@ -2,6 +2,7 @@ import CreateJob from "./CreateJob";
 import JobCard from "./JobCard";
 import NoJob from "./NoJob";
 import Homepage from "./Homepage";
+import MonthlyCashflow from "./MonthlyCashflow";
 
 function Main({
   activeComponent,
@@ -50,6 +51,15 @@ function Main({
       case "Homepage":
         return (
           <Homepage
+            jobs={jobs}
+            setActiveComponent={setActiveComponent}
+            setActiveJobId={setActiveJobId}
+          />
+        );
+
+      case "MonthlyCashflow":
+        return (
+          <MonthlyCashflow
             jobs={jobs}
             setActiveComponent={setActiveComponent}
             setActiveJobId={setActiveJobId}

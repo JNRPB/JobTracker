@@ -65,7 +65,6 @@ function JobOverview({ job, onUpdate, deleteJob }) {
         >
           {job.name}
         </h1>
-
         <h2>
           <strong>Address:</strong>
           <br />
@@ -124,7 +123,50 @@ function JobOverview({ job, onUpdate, deleteJob }) {
             ))}
           </select>
         </div>
-
+        <br />
+        <br />
+        <br />
+        {["Booked", "In Progress", "Completed"].includes(job.status) && (
+          <div className="booking-details">
+            <label>
+              Date Scheduled to Start:
+              <br />
+              <input
+                type="date"
+                value={job.startDate || ""}
+                onChange={(e) =>
+                  onUpdate({ ...job, startDate: e.target.value })
+                }
+              />
+            </label>
+            <br />
+            <br />
+            <label>
+              Date Scheduled to Finish:
+              <br />
+              <input
+                type="date"
+                value={job.finishDate || ""}
+                onChange={(e) =>
+                  onUpdate({ ...job, finishDate: e.target.value })
+                }
+              />
+            </label>
+            <br />
+            <br />
+            <label>
+              Agreed Price:
+              <br />
+              <input
+                type="number"
+                value={job.agreedPrice || ""}
+                onChange={(e) =>
+                  onUpdate({ ...job, agreedPrice: Number(e.target.value) })
+                }
+              />
+            </label>
+          </div>
+        )}
         <button
           style={{
             backgroundColor: "red",

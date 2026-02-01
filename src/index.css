@@ -60,7 +60,30 @@ h2 {
   gap: 1rem;
   color: #e5e7eb;
   text-align: center;
+  overflow: hidden;
 }
+
+
+
+/* Container that holds the job buttons */
+.job-list {
+  flex: 1;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+  padding-right: 4px;
+  height: 30vh'
+}
+
+/* Optional nicer scrollbar (Chrome/Edge) */
+.job-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.job-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
 
 .main-panel {
   flex: 1;
@@ -141,6 +164,10 @@ button {
   margin-top: 1rem;
 }
 
+.job-button-allJobs {
+  background-color: transparent;
+}
+
 button:hover {
   background-color: rgba(0,123,255,1);
   transform: translateY(-1px);
@@ -154,6 +181,10 @@ button:active {
 
 button.delete-job {
   background-color: #ff4d4f;
+}
+
+button.delete-small {
+  background-color: transparent;
 }
 
 button.delete-job:hover {
@@ -253,8 +284,12 @@ button.delete-job:hover {
     flex-direction: column;
   }
   .sidebar {
-    width: 100%;
-    border-radius: 0 0 16px 16px;
+    
+    
+      height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   }
   .main-panel {
     padding: 1rem;
@@ -289,20 +324,24 @@ button.delete-job:hover {
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  overflow-x: auto; /* scroll if too many columns */
+  overflow-x: auto;
+  max-width: 100%;
+  align-items: stretch;
+  height: 80vh;
 }
 
 /* Each status column */
 .status-column {
-  background-color: #f7f7f7;
+  background-color: #1e1e2f;
   border-radius: 12px;
   padding: 1rem;
-  min-width: 250px;
+  max-width: 100px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   max-height: 80vh;
-  overflow-y: auto;
+  
+  overflow: visible;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
@@ -319,18 +358,29 @@ button.delete-job:hover {
 .job-card {
   background-color: var(--brand-color);
   padding: 0.75rem 1rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   border-radius: 8px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   cursor: pointer;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
   text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.8rem;
+  max-width: 100%;
+  max-height: 1.2rem;
+  white-space: nowrap;
+  align-items: center;
+  position: relative;
 }
 
 .job-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  white-space: normal;
+  max-height: none;
 }
+
 
 
 .status-column .job-count {
@@ -338,4 +388,73 @@ button.delete-job:hover {
   color: #c4c3c3;
   text-align: center;
   margin-bottom: 0.5rem;
+}
+
+.stats-widget{
+  border-style: solid;
+  border-color: white;
+  padding: 20px;
+  text-align: center;
+  max-width: 20vh;
+}
+
+.month-selector {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.cashflowWrapper {
+  display: flex;
+  width: 50%;
+  gap: 2rem;
+}
+
+
+.monthly-outgoings li {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;            
+  padding: 0.25rem 0;             
+}
+
+.monthly-outgoings li button.delete-small {
+  padding: 0;           /* remove all padding */
+  width: auto;          /* shrink to content */
+  min-width: 0;         /* override any min-width from global button */
+  background: transparent; /* optional: remove background if needed */
+  border: none;         /* remove border */
+  cursor: pointer;
+  color: #ff4d4f;       /* keep the color */
+}
+
+
+
+
+
+.add-outgoing {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.add-outgoing input {
+  flex: 1;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #1e1e2f;
+  color: #fff;
+}
+
+.add-outgoing button {
+  padding: 0.4rem 0.8rem;
+}
+
+.net-cashflow {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
 }
