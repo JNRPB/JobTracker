@@ -5,6 +5,9 @@ import ActualCost from "./JobCardTabs/ActualCost";
 
 function JobCard({ job, onUpdate, deleteJob }) {
   const [activeTab, setActiveTab] = useState(0);
+  const [editingExpectedCost, setEditingExpectedCost] = useState(false);
+  const [editingActualCost, setEditingActualCost] = useState(false);
+  const [editingJobDetails, setEditingJobDetails] = useState(false);
 
   function handleDeleteJob() {
     removeJob(job.id);
@@ -13,11 +16,31 @@ function JobCard({ job, onUpdate, deleteJob }) {
   return (
     <>
       {activeTab === 0 && (
-        <JobOverview job={job} onUpdate={onUpdate} deleteJob={deleteJob} />
+        <JobOverview
+          job={job}
+          onUpdate={onUpdate}
+          deleteJob={deleteJob}
+          editing={editingJobDetails}
+          setEditing={setEditingJobDetails}
+        />
       )}
-      {activeTab === 1 && <ExpectedCost job={job} onUpdate={onUpdate} />}
+      {activeTab === 1 && (
+        <ExpectedCost
+          job={job}
+          onUpdate={onUpdate}
+          editing={editingExpectedCost}
+          setEditing={setEditingExpectedCost}
+        />
+      )}
 
-      {activeTab === 2 && <ActualCost job={job} onUpdate={onUpdate} />}
+      {activeTab === 2 && (
+        <ActualCost
+          job={job}
+          onUpdate={onUpdate}
+          editing={editingActualCost}
+          setEditing={setEditingActualCost}
+        />
+      )}
       <div
         style={{
           display: "flex",

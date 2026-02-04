@@ -332,7 +332,7 @@ button.delete-job:hover {
 
 /* Each status column */
 .status-column {
-  background-color: #1e1e2f;
+  background-color: #1e1e2f21;
   border-radius: 12px;
   padding: 1rem;
   max-width: 100px;
@@ -344,6 +344,8 @@ button.delete-job:hover {
   overflow: visible;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
+
 
 /* Column title */
 .status-column h2 {
@@ -430,8 +432,13 @@ button.delete-job:hover {
 }
 
 
+#expectedincome {
+  cursor: default;
+}
 
-
+#expectedincomelist{
+  cursor: default;
+}
 
 .add-outgoing {
   display: flex;
@@ -457,4 +464,14 @@ button.delete-job:hover {
   text-align: center;
   font-size: 1.2rem;
   font-weight: 700;
+}
+
+.phaseLine{
+  text-align: center;
+
+  border-bottom: dotted #c4c3c3;
+}
+
+.summaryBox{
+  border: solid red;
 }

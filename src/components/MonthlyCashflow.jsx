@@ -85,12 +85,12 @@ function MonthlyCashflow({ jobs }) {
       </div>
 
       <div className="cashflowWrapper">
-        <div className="bubbleBox">
+        <div className="bubbleBox" id="expectedincome">
           <h1>Jobs finishing this month</h1>
           {jobsThisMonth.length === 0 ? (
             <p>No jobs finishing.</p>
           ) : (
-            <ul>
+            <ul id="expectedincomelist">
               {jobsThisMonth.map((job) => (
                 <li key={job.id}>
                   {job.name} — £{job.agreedPrice || job.totalExpectedCost || 0}
