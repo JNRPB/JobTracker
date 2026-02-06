@@ -269,6 +269,51 @@ function JobOverview({ job, onUpdate, deleteJob, editing, setEditing }) {
               );
             })}
           </div>
+
+          {/* Job Cost Overview */}
+          <div style={{ marginTop: "1.5rem" }}>
+            <h2>JOB COST SUMMARY</h2>
+            {(() => {
+              const phases = job.phases || [];
+              const actualCosts = job.actualCosts || [];
+
+              // Total expected from phases
+              const totalExpected = phases.reduce(
+                (sumPhase, phase) =>
+                  sumPhase +
+                  (phase.rows?.reduce(
+                    (sumRow, row) =>
+                      sumRow +
+                      Number(row.materialCost || 0) +
+                      Number(row.labourCost || 0),
+                    0,
+                  ) || 0),
+                0,
+              );
+
+              // Total actual from actualCosts
+              const totalActual = actualCosts.reduce(
+                (sum, row) => sum + Number(row.cost || 0),
+                0,
+              );
+
+              const remaining = totalExpected - totalActual;
+
+              return (
+                <div style={{ marginBottom: "1rem" }}>
+                  <div>
+                    <strong>Quoted Total:</strong> £{totalExpected.toFixed(2)}
+                  </div>
+                  <div>
+                    <strong>Actual Total:</strong> £{totalActual.toFixed(2)}
+                  </div>
+                  <div>
+                    <strong>Remaining:</strong> £{remaining.toFixed(2)}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
         </div>
       )}
     </>
