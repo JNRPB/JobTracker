@@ -3,7 +3,7 @@ import JobOverview from "./JobCardTabs/JobOverview";
 import ExpectedCost from "./JobCardTabs/ExpectedCost";
 import ActualCost from "./JobCardTabs/ActualCost";
 
-function JobCard({ job, onUpdate, deleteJob }) {
+function JobCard({ job, onUpdate, deleteJob, onArchive }) {
   const [activeTab, setActiveTab] = useState(0);
   const [editingExpectedCost, setEditingExpectedCost] = useState(false);
   const [editingActualCost, setEditingActualCost] = useState(false);
@@ -22,6 +22,7 @@ function JobCard({ job, onUpdate, deleteJob }) {
           deleteJob={deleteJob}
           editing={editingJobDetails}
           setEditing={setEditingJobDetails}
+          onArchive={onArchive}
         />
       )}
       {activeTab === 1 && (

@@ -1,79 +1,79 @@
 import { useState } from "react";
 
-function CreateJob({ addJob }) {
+function CreateJob({ addJob, setActiveJobId, setActiveComponent }) {
   const [formData, setFormData] = useState({
     name: "",
     address: "",
-    notes: "",
     status: "Lead",
   });
 
   function handleChange(e) {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   }
 
   function handleSubmit(e) {
     e.preventDefault();
 
-    const newJob = { id: Date.now(), ...formData };
+    const newJob = {
+      id: Date.now(),
+      name: formData.name,
+      address: formData.address,
+      status: formData.status,
 
-    // Add job to parent state
+      // defaults (important)
+      notes: "",
+      phases: [],
+      actualCosts: [],
+      archived: false,
+    };
+
     addJob(newJob);
 
-    // Also save to localStorage
-    const existingJobs = JSON.parse(localStorage.getItem("jobs") || "[]");
+    setActiveJobId(newJob.id);
+    setActiveComponent("JobCard");
 
-    // Reset the form
     setFormData({
       name: "",
       address: "",
-      notes: "",
       status: "Lead",
     });
   }
 
   return (
-    <>
-      <div>
-        <h1>Home</h1>
-      </div>
-      <div className="bubbleBox">
-        <h1>CREATE JOB</h1>
+    <div className="create-job-page">
+      <h1>Create Job</h1>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            name="name"
-            placeholder="Job Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-          <input
-            name="address"
-            placeholder="Job Address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-          <textarea
-            name="notes"
-            placeholder="Job Notes"
-            value={formData.notes}
-            onChange={handleChange}
-          />
-          <select name="status" value={formData.status} onChange={handleChange}>
-            <option>Lead</option>
-            <option>Contacted</option>
-            <option>To-Quote</option>
-            <option>Quoted</option>
-            <option>Approved</option>
-            <option>Booked</option>
-            <option>In Progress</option>
-            <option>Completed</option>
-          </select>
-          <button type="submit">Add Job</button>
-        </form>
-      </div>
-    </>
+      <form className="create-job-form" onSubmit={handleSubmit}>
+        <input
+          name="name"
+          placeholder="Job name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          name="address"
+          placeholder="Address"
+          value={formData.address}
+          onChange={handleChange}
+        />
+
+        <select name="status" value={formData.status} onChange={handleChange}>
+          <option value="Lead">Lead</option>
+          <option value="Contacted">Contacted</option>
+          <option value="To-Quote">To-Quote</option>
+          <option value="Quoted">Quoted</option>
+          <option value="Approved">Approved</option>
+          <option value="Booked">Booked</option>
+        </select>
+
+        <button type="submit">Create Job</button>
+      </form>
+    </div>
   );
 }
 

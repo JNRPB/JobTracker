@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-
-import Headbar from "./components/Headbar";
+import Sidebar from "./components/Sidebar";
 import Main from "./components/Main";
 
 function App() {
-  const [activeComponent, setActiveComponent] = useState("WelcomeScreen");
+  const [activeComponent, setActiveComponent] = useState("NoJob");
   const [jobs, setJobs] = useState([]); // start empty
   const [activeJobId, setActiveJobId] = useState(null);
 
@@ -16,36 +15,25 @@ function App() {
       .catch((err) => console.error("Error fetching jobs:", err));
   }, []);
 
-  // Add Job to Server
-  async function addJob(newJob) {
-    try {
-      const res = await fetch("http://192.168.0.22:3001/jobs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newJob),
-      });
-
-      const savedJob = await res.json();
-
-      const updatedJobs = [...jobs, savedJob];
-      setJobs(updatedJobs);
-      localStorage.setItem("jobs", JSON.stringify(updatedJobs));
-    } catch (err) {
-      console.error("Failed to create job:", err);
-    }
-  }
-
   // Unified function to update jobs in state and localStorage (optional)
   function updateJobs(updatedJobs) {
     setJobs(updatedJobs);
     localStorage.setItem("jobs", JSON.stringify(updatedJobs)); // optional backup
   }
 
+  function addJob(newJob) {
+    const updatedJobs = [...jobs, newJob];
+    updateJobs(updatedJobs);
+    // TODO: POST to backend to persist
+  }
+
   return (
     <div className="app-container">
-      <Headbar setActiveComponent={setActiveComponent} />
+      <Sidebar
+        setActiveComponent={setActiveComponent}
+        jobs={jobs}
+        setActiveJobId={setActiveJobId}
+      />
       <Main
         activeComponent={activeComponent}
         addJob={addJob}
@@ -55,14 +43,6 @@ function App() {
         setActiveComponent={setActiveComponent}
         setActiveJobId={setActiveJobId}
       />
-      <div>
-        <h1>Debug</h1>
-        <p>Component: {activeComponent}</p>
-        <p>Job ID: {activeJobId}</p>
-        <p>
-          Job Name: {jobs.find((j) => j.id === activeJobId)?.name || "None"}
-        </p>
-      </div>
     </div>
   );
 }

@@ -1,322 +1,255 @@
 import { useState, useEffect } from "react";
 
-const JOB_STATUSES = [
-  "Lead",
-  "Contacted",
-  "To-Quote",
-  "Quoted",
-  "Approved",
-  "Booked",
-  "In Progress",
-  "Completed",
-];
-
-function JobOverview({ job, onUpdate, deleteJob, editing, setEditing }) {
-  const [localJobInfo, setLocalJobInfo] = useState(job);
-  const [activeTab, setActiveTab] = useState(0);
+function JobOverview({ job, jobs, onUpdate, deleteJob, onArchive }) {
+  const [localJob, setLocalJob] = useState(job);
 
   useEffect(() => {
-    setLocalJobInfo(job);
+    setLocalJob(job);
   }, [job]);
 
-  function commitChange(field, value) {
-    const updatedJobInfo = {
-      ...localJobInfo,
+  function update(field, value) {
+    const updated = {
+      ...localJob,
       [field]: value,
     };
 
-    setLocalJobInfo(updatedJobInfo);
-
-    if (onUpdate) onUpdate(updatedJobInfo);
-  }
-
-  function handleKeyDown(e) {
-    if (e.key === "Enter") {
-      e.preventDefault(); // prevents newline
-      commitChange(e.target.innerText);
-      e.target.blur();
-    }
-  }
-
-  function handleBlur(e) {
-    commitChange(e.target.innerText);
+    setLocalJob(updated);
+    if (onUpdate) onUpdate(updated);
   }
 
   return (
-    <>
-      <div>
-        <h1>Job Overview</h1> <br />
-        {editing ? (
-          <button onClick={() => setEditing(false)}>💾 Save</button>
-        ) : (
-          <button onClick={() => setEditing(true)}>✏️ Edit</button>
-        )}
+    <div className="eBox">
+      {/* ---------------- NAME ---------------- */}
+      <h1
+        contentEditable
+        suppressContentEditableWarning
+        onBlur={(e) => update("name", e.target.innerText)}
+        style={{ cursor: "text", marginBottom: "0.3rem" }}
+      >
+        {job.name}
+      </h1>
+
+      {/* ---------------- ADDRESS ---------------- */}
+      <p
+        contentEditable
+        suppressContentEditableWarning
+        onBlur={(e) => update("address", e.target.innerText)}
+        style={{ opacity: 0.8, cursor: "text" }}
+      >
+        {job.address}
+      </p>
+
+      <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
+
+      {/* ---------------- NOTES ---------------- */}
+      <div
+        contentEditable
+        suppressContentEditableWarning
+        onBlur={(e) => update("notes", e.target.innerText)}
+        style={{
+          padding: "0.6rem",
+          borderRadius: "8px",
+          background: "rgba(255,255,255,0.03)",
+          cursor: "text",
+          marginBottom: "1rem",
+          minHeight: "60px",
+        }}
+      >
+        {job.notes || "Click to add notes..."}
       </div>
 
-      {editing && (
-        <div className="bubbleBox">
-          <h1
-            contentEditable
-            suppressContentEditableWarning={true}
-            onBlur={(e) => commitChange("name", e.target.innerText)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                commitChange("name", e.target.innerText);
-                e.target.blur();
-              }
-            }}
-            style={{
-              cursor: "text",
-            }}
-          >
-            {job.name}
-          </h1>
-          <h2>
-            <strong>Address:</strong>
-            <br />
-            <span
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => commitChange("address", e.target.innerText)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  commitChange("address", e.target.innerText);
-                  e.target.blur();
-                }
-              }}
-            >
-              {job.address}
-            </span>
-          </h2>
-          <br></br>
-          <br></br>
-          <h2>
-            <strong>Notes:</strong>
-          </h2>
-          <br></br>
-          <p
-            contentEditable
-            suppressContentEditableWarning
-            onBlur={(e) => commitChange("notes", e.target.innerText)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                commitChange("notes", e.target.innerText);
-                e.target.blur();
-              }
-            }}
-          >
-            {job.notes}
-          </p>
-          <br></br>
-          <div style={{ marginTop: "1rem" }}>
-            <strong>Status:</strong>
+      {/* ---------------- STATUS ---------------- */}
+      <div style={{ marginBottom: "1rem" }}>
+        <strong>Status:</strong>{" "}
+        <select
+          value={job.status}
+          onChange={(e) => update("status", e.target.value)}
+          style={{
+            marginLeft: "0.5rem",
+            padding: "0.4rem 0.6rem",
+            borderRadius: "6px",
+            background: "#1f1f2e",
+            color: "#fff",
+            border: "1px solid #444",
+          }}
+        >
+          {[
+            "Lead",
+            "Contacted",
+            "To-Quote",
+            "Quoted",
+            "Approved",
+            "Booked",
+            "In Progress",
+            "Completed",
+          ].map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
+        </select>
+      </div>
 
-            <select
-              value={localJobInfo.status}
-              onChange={(e) => commitChange("status", e.target.value)}
+      {/* ---------------- DATES + PRICE ---------------- */}
+      {["Booked", "In Progress", "Completed"].includes(job.status) && (
+        <div style={{ marginBottom: "1rem", opacity: 0.9 }}>
+          <div style={{ marginBottom: "0.5rem" }}>
+            <strong>Start:</strong>{" "}
+            <input
+              type="date"
+              value={job.startDate || ""}
+              onChange={(e) => update("startDate", e.target.value)}
               style={{
                 marginLeft: "0.5rem",
-                padding: "0.4rem",
+                background: "#1f1f2e",
+                color: "#fff",
+                border: "1px solid #444",
                 borderRadius: "6px",
+                padding: "0.3rem",
               }}
-            >
-              {JOB_STATUSES.map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-            </select>
+            />
           </div>
-          <br />
-          <br />
-          <br />
-          {["Booked", "In Progress", "Completed"].includes(job.status) && (
-            <div className="booking-details">
-              <label>
-                Date Scheduled to Start:
-                <br />
-                <input
-                  type="date"
-                  value={job.startDate || ""}
-                  onChange={(e) =>
-                    onUpdate({ ...job, startDate: e.target.value })
-                  }
-                />
-              </label>
-              <br />
-              <br />
-              <label>
-                Date Scheduled to Finish:
-                <br />
-                <input
-                  type="date"
-                  value={job.finishDate || ""}
-                  onChange={(e) =>
-                    onUpdate({ ...job, finishDate: e.target.value })
-                  }
-                />
-              </label>
-              <br />
-              <br />
-              <label>
-                Agreed Price:
-                <br />
-                <input
-                  type="number"
-                  value={job.agreedPrice || ""}
-                  onChange={(e) =>
-                    onUpdate({ ...job, agreedPrice: Number(e.target.value) })
-                  }
-                />
-              </label>
-            </div>
-          )}
-          <button
+
+          <div style={{ marginBottom: "0.5rem" }}>
+            <strong>Finish:</strong>{" "}
+            <input
+              type="date"
+              value={job.finishDate || ""}
+              onChange={(e) => update("finishDate", e.target.value)}
+              style={{
+                marginLeft: "0.5rem",
+                background: "#1f1f2e",
+                color: "#fff",
+                border: "1px solid #444",
+                borderRadius: "6px",
+                padding: "0.3rem",
+              }}
+            />
+          </div>
+
+          <div>
+            <strong>Price:</strong>{" "}
+            <input
+              type="number"
+              value={job.agreedPrice || ""}
+              onChange={(e) => update("agreedPrice", Number(e.target.value))}
+              style={{
+                marginLeft: "0.5rem",
+                background: "#1f1f2e",
+                color: "#fff",
+                border: "1px solid #444",
+                borderRadius: "6px",
+                padding: "0.3rem",
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
+
+      {/* ---------------- PHASES ---------------- */}
+      <h3>Phases</h3>
+
+      {job.phases?.map((phase) => {
+        const expectedTotal = phase.rows?.reduce(
+          (sum, row) =>
+            sum + Number(row.materialCost || 0) + Number(row.labourCost || 0),
+          0,
+        );
+
+        const actualTotal = job.actualCosts?.reduce(
+          (sum, row) =>
+            sum + (row.phaseId === phase.id ? Number(row.cost || 0) : 0),
+          0,
+        );
+
+        const remaining = expectedTotal - actualTotal;
+
+        return (
+          <div
+            key={phase.id}
             style={{
-              backgroundColor: "red",
-              color: "#fff",
-              border: "none",
-              borderRadius: "4px",
-              padding: "0.5rem 1rem",
-              cursor: "pointer",
-              marginTop: "1rem",
+              padding: "0.6rem",
+              marginBottom: "0.6rem",
+              borderRadius: "8px",
+              background: "rgba(255,255,255,0.03)",
             }}
-            onClick={() => deleteJob(job.id)}
           >
-            Delete Job
-          </button>
-        </div>
-      )}
-
-      {!editing && (
-        <div className="bubbleBox">
-          {/* Job Name */}
-          <h1>{job.name}</h1>
-
-          {/* Address */}
-          <h2>
-            <strong>Address:</strong> <br />
-            {job.address}
-          </h2>
-
-          {/* Notes */}
-          {job.notes && (
-            <>
-              <h2>
-                <strong>Notes:</strong>
-              </h2>
-              <p>{job.notes}</p>
-            </>
-          )}
-
-          {/* Status */}
-          <div style={{ marginTop: "1rem" }}>
-            <strong>Status:</strong> {job.status}
-          </div>
-
-          {/* Dates & Agreed Price (if booked/in progress/completed) */}
-          {["Booked", "In Progress", "Completed"].includes(job.status) && (
-            <div style={{ marginTop: "0.5rem" }}>
-              <div>
-                <strong>Start Date:</strong> {job.startDate || "—"}
-              </div>
-              <div>
-                <strong>Finish Date:</strong> {job.finishDate || "—"}
-              </div>
-              <div>
-                <strong>Agreed Price:</strong> £
-                {job.agreedPrice?.toFixed(2) || "0.00"}
-              </div>
+            <strong>{phase.name}</strong>
+            <div style={{ opacity: 0.8, fontSize: "0.9rem" }}>
+              £{expectedTotal.toFixed(2)} • £{remaining.toFixed(2)} remaining
             </div>
-          )}
-
-          {/* Phases Overview */}
-          <div style={{ marginTop: "1.5rem" }}>
-            <h2>PHASES</h2>
-            <p>
-              {job.phases?.length || 0} Phase
-              {job.phases?.length === 1 ? "" : "s"}
-            </p>
-
-            {job.phases?.map((phase) => {
-              // Expected cost for this phase
-              const expectedTotal = phase.rows?.reduce(
-                (sum, row) =>
-                  sum +
-                  Number(row.materialCost || 0) +
-                  Number(row.labourCost || 0),
-                0,
-              );
-
-              // Actual cost assigned to this phase
-              const actualTotal = job.actualCosts?.reduce(
-                (sum, row) =>
-                  sum + (row.phaseId === phase.id ? Number(row.cost || 0) : 0),
-                0,
-              );
-
-              const remaining = expectedTotal - actualTotal;
-
-              return (
-                <div key={phase.id} style={{ marginBottom: "0.8rem" }}>
-                  <strong>{phase.name}</strong>
-                  <br />£{expectedTotal.toFixed(2)} with £{remaining.toFixed(2)}{" "}
-                  remaining
-                </div>
-              );
-            })}
           </div>
+        );
+      })}
 
-          {/* Job Cost Overview */}
-          <div style={{ marginTop: "1.5rem" }}>
-            <h2>JOB COST SUMMARY</h2>
-            {(() => {
-              const phases = job.phases || [];
-              const actualCosts = job.actualCosts || [];
+      <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
 
-              // Total expected from phases
-              const totalExpected = phases.reduce(
-                (sumPhase, phase) =>
-                  sumPhase +
-                  (phase.rows?.reduce(
-                    (sumRow, row) =>
-                      sumRow +
-                      Number(row.materialCost || 0) +
-                      Number(row.labourCost || 0),
-                    0,
-                  ) || 0),
-                0,
-              );
+      {/* ---------------- COST SUMMARY ---------------- */}
+      <h3>Cost Summary</h3>
 
-              // Total actual from actualCosts
-              const totalActual = actualCosts.reduce(
-                (sum, row) => sum + Number(row.cost || 0),
-                0,
-              );
+      {(() => {
+        const phases = job.phases || [];
+        const actualCosts = job.actualCosts || [];
 
-              const remaining = totalExpected - totalActual;
+        const totalExpected = phases.reduce(
+          (sumPhase, phase) =>
+            sumPhase +
+            (phase.rows?.reduce(
+              (sumRow, row) =>
+                sumRow +
+                Number(row.materialCost || 0) +
+                Number(row.labourCost || 0),
+              0,
+            ) || 0),
+          0,
+        );
 
-              return (
-                <div style={{ marginBottom: "1rem" }}>
-                  <div>
-                    <strong>Quoted Total:</strong> £{totalExpected.toFixed(2)}
-                  </div>
-                  <div>
-                    <strong>Actual Total:</strong> £{totalActual.toFixed(2)}
-                  </div>
-                  <div>
-                    <strong>Remaining:</strong> £{remaining.toFixed(2)}
-                  </div>
-                </div>
-              );
-            })()}
+        const totalActual = actualCosts.reduce(
+          (sum, row) => sum + Number(row.cost || 0),
+          0,
+        );
+
+        const remaining = totalExpected - totalActual;
+
+        return (
+          <div style={{ lineHeight: "1.6" }}>
+            <div>
+              <strong>Quoted:</strong> £{totalExpected.toFixed(2)}
+            </div>
+            <div>
+              <strong>Actual:</strong> £{totalActual.toFixed(2)}
+            </div>
+            <div>
+              <strong>Remaining:</strong> £{remaining.toFixed(2)}
+            </div>
           </div>
-        </div>
+        );
+      })()}
+
+      <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
+
+      {/* ---------------- Archive ---------------- */}
+      {job.archived ? (
+        <h1> ARCHIVED </h1>
+      ) : (
+        <button
+          onClick={() => onArchive(job.id)}
+          style={{
+            background: "#ff4d4f",
+            marginTop: "1rem",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            padding: "0.5rem 1rem",
+            cursor: "pointer",
+          }}
+        >
+          Archive Job
+        </button>
       )}
-    </>
+    </div>
   );
 }
 
