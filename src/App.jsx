@@ -8,6 +8,13 @@ function App() {
   const [jobs, setJobs] = useState([]); // start empty
   const [activeJobId, setActiveJobId] = useState(null);
 
+  // Navigation Function
+
+  function navigate(screen, jobId = null) {
+    setActiveComponent(screen);
+    setActiveJobId(jobId);
+  }
+
   // Fetch jobs from loft PC Node server
   useEffect(() => {
     fetch("http://192.168.0.22:3001/jobs") // Node server endpoint
@@ -45,24 +52,20 @@ function App() {
 
   return (
     <div className="app-container">
-      <Headbar setActiveComponent={setActiveComponent} />
+      <Headbar navigate={navigate} />
       <Main
         activeComponent={activeComponent}
         addJob={addJob}
         jobs={jobs}
         activeJobId={activeJobId}
         setJobs={updateJobs}
-        setActiveComponent={setActiveComponent}
-        setActiveJobId={setActiveJobId}
+        navigate={navigate}
       />
-      <div>
-        <h1>Debug</h1>
-        <p>Component: {activeComponent}</p>
-        <p>Job ID: {activeJobId}</p>
-        <p>
-          Job Name: {jobs.find((j) => j.id === activeJobId)?.name || "None"}
-        </p>
-      </div>
+
+      <h1>
+        Active Component is : {activeComponent} and Active Job ID is:{" "}
+        {activeJobId}
+      </h1>
     </div>
   );
 }

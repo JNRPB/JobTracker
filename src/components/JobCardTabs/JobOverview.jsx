@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-function JobOverview({ job, jobs, onUpdate, deleteJob, onArchive }) {
+function JobOverview({ job, jobs, onUpdate, deleteJob, onArchive, navigate }) {
   const [localJob, setLocalJob] = useState(job);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ function JobOverview({ job, jobs, onUpdate, deleteJob, onArchive }) {
   }
 
   return (
-    <div className="eBox">
+    <div className="bubbleBox2">
       {/* ---------------- NAME ---------------- */}
       <h1
         contentEditable
@@ -90,143 +90,17 @@ function JobOverview({ job, jobs, onUpdate, deleteJob, onArchive }) {
         </select>
       </div>
 
-      {/* ---------------- DATES + PRICE ---------------- */}
-      {["Booked", "In Progress", "Completed"].includes(job.status) && (
-        <div style={{ marginBottom: "1rem", opacity: 0.9 }}>
-          <div style={{ marginBottom: "0.5rem" }}>
-            <strong>Start:</strong>{" "}
-            <input
-              type="date"
-              value={job.startDate || ""}
-              onChange={(e) => update("startDate", e.target.value)}
-              style={{
-                marginLeft: "0.5rem",
-                background: "#1f1f2e",
-                color: "#fff",
-                border: "1px solid #444",
-                borderRadius: "6px",
-                padding: "0.3rem",
-              }}
-            />
-          </div>
+      <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
 
-          <div style={{ marginBottom: "0.5rem" }}>
-            <strong>Finish:</strong>{" "}
-            <input
-              type="date"
-              value={job.finishDate || ""}
-              onChange={(e) => update("finishDate", e.target.value)}
-              style={{
-                marginLeft: "0.5rem",
-                background: "#1f1f2e",
-                color: "#fff",
-                border: "1px solid #444",
-                borderRadius: "6px",
-                padding: "0.3rem",
-              }}
-            />
-          </div>
-
-          <div>
-            <strong>Price:</strong>{" "}
-            <input
-              type="number"
-              value={job.agreedPrice || ""}
-              onChange={(e) => update("agreedPrice", Number(e.target.value))}
-              style={{
-                marginLeft: "0.5rem",
-                background: "#1f1f2e",
-                color: "#fff",
-                border: "1px solid #444",
-                borderRadius: "6px",
-                padding: "0.3rem",
-              }}
-            />
-          </div>
-        </div>
+      {!job.phases || job.phases.length === 0 ? (
+        <button onClick={() => navigate("QuoteBuilder", job.id)}>
+          Build Quote
+        </button>
+      ) : (
+        <button onClick={() => navigate("QuoteBuilder", job.id)}>
+          Edit Quote
+        </button>
       )}
-
-      <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
-
-      {/* ---------------- PHASES ---------------- */}
-      <h3>Phases</h3>
-
-      {job.phases?.map((phase) => {
-        const expectedTotal = phase.rows?.reduce(
-          (sum, row) =>
-            sum + Number(row.materialCost || 0) + Number(row.labourCost || 0),
-          0,
-        );
-
-        const actualTotal = job.actualCosts?.reduce(
-          (sum, row) =>
-            sum + (row.phaseId === phase.id ? Number(row.cost || 0) : 0),
-          0,
-        );
-
-        const remaining = expectedTotal - actualTotal;
-
-        return (
-          <div
-            key={phase.id}
-            style={{
-              padding: "0.6rem",
-              marginBottom: "0.6rem",
-              borderRadius: "8px",
-              background: "rgba(255,255,255,0.03)",
-            }}
-          >
-            <strong>{phase.name}</strong>
-            <div style={{ opacity: 0.8, fontSize: "0.9rem" }}>
-              £{expectedTotal.toFixed(2)} • £{remaining.toFixed(2)} remaining
-            </div>
-          </div>
-        );
-      })}
-
-      <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
-
-      {/* ---------------- COST SUMMARY ---------------- */}
-      <h3>Cost Summary</h3>
-
-      {(() => {
-        const phases = job.phases || [];
-        const actualCosts = job.actualCosts || [];
-
-        const totalExpected = phases.reduce(
-          (sumPhase, phase) =>
-            sumPhase +
-            (phase.rows?.reduce(
-              (sumRow, row) =>
-                sumRow +
-                Number(row.materialCost || 0) +
-                Number(row.labourCost || 0),
-              0,
-            ) || 0),
-          0,
-        );
-
-        const totalActual = actualCosts.reduce(
-          (sum, row) => sum + Number(row.cost || 0),
-          0,
-        );
-
-        const remaining = totalExpected - totalActual;
-
-        return (
-          <div style={{ lineHeight: "1.6" }}>
-            <div>
-              <strong>Quoted:</strong> £{totalExpected.toFixed(2)}
-            </div>
-            <div>
-              <strong>Actual:</strong> £{totalActual.toFixed(2)}
-            </div>
-            <div>
-              <strong>Remaining:</strong> £{remaining.toFixed(2)}
-            </div>
-          </div>
-        );
-      })()}
 
       <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
 

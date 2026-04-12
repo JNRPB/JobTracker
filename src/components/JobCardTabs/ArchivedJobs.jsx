@@ -1,4 +1,4 @@
-function ArchivedJobs({ jobs, setActiveComponent, setActiveJobId }) {
+function ArchivedJobs({ jobs, navigate }) {
   const archivedJobs = jobs.filter((j) => j.archived);
 
   return (
@@ -18,8 +18,7 @@ function ArchivedJobs({ jobs, setActiveComponent, setActiveJobId }) {
               key={job.id}
               className="job-card"
               onClick={() => {
-                setActiveJobId(job.id);
-                setActiveComponent("JobCard");
+                navigate("JobCard", job.id);
               }}
               style={{
                 opacity: 0.7,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import SideBarButton from "./SideBarButton";
 
-function Headbar({ setActiveComponent }) {
+function Headbar({ navigate }) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   // Update every second
@@ -25,25 +25,25 @@ function Headbar({ setActiveComponent }) {
         <SideBarButton
           label="Homepage"
           component="WelcomeScreen"
-          setActiveComponent={setActiveComponent}
+          navigate={navigate}
         />
         <br></br>
         <SideBarButton
           label="Jobs Overview"
           component="JobStatusOverview"
-          setActiveComponent={setActiveComponent}
+          navigate={navigate}
         />
         <br></br>
         <SideBarButton
           label="Create Job"
           component="CreateJob"
-          setActiveComponent={setActiveComponent}
+          navigate={navigate}
         />
         <br></br>
         <SideBarButton
           label="Archived Jobs"
           component="ArchivedJobs"
-          setActiveComponent={setActiveComponent}
+          navigate={navigate}
         />
       </div>
     </div>

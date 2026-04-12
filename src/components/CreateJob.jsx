@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function CreateJob({ addJob, setActiveJobId, setActiveComponent }) {
+function CreateJob({ addJob, navigate }) {
   const [formData, setFormData] = useState({
     name: "",
     address: "",
@@ -32,8 +32,7 @@ function CreateJob({ addJob, setActiveJobId, setActiveComponent }) {
 
     addJob(newJob);
 
-    setActiveJobId(newJob.id);
-    setActiveComponent("JobCard");
+    navigate("JobCard", newJob.id);
 
     setFormData({
       name: "",

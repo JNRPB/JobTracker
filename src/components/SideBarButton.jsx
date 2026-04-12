@@ -1,6 +1,6 @@
-function SideBarButton({ label, component, setActiveComponent }) {
+function SideBarButton({ label, component, navigate }) {
   return (
-    <button className="tabButton" onClick={() => setActiveComponent(component)}>
+    <button className="tabButton" onClick={() => navigate(component)}>
       {label}
     </button>
   );

@@ -1,8 +1,7 @@
 import CreateJob from "./CreateJob";
 import JobCard from "./JobCard";
-import NoJob from "./WelcomeScreen";
+import QuoteBuilder from "./QuoteBuilder";
 import JobStatusOverview from "./JobStatusOverview";
-import MonthlyCashflow from "./MonthlyCashflow";
 import WelcomeScreen from "./WelcomeScreen";
 import ArchivedJobs from "./JobCardTabs/ArchivedJobs";
 
@@ -12,8 +11,7 @@ function Main({
   activeJobId,
   jobs,
   setJobs,
-  setActiveComponent,
-  setActiveJobId,
+  navigate,
 }) {
   const job = jobs.find((j) => j.id === activeJobId);
 
@@ -86,13 +84,7 @@ function Main({
   function renderActiveComponent() {
     switch (activeComponent) {
       case "CreateJob":
-        return (
-          <CreateJob
-            addJob={addJob}
-            setActiveJobId={setActiveJobId}
-            setActiveComponent={setActiveComponent}
-          />
-        );
+        return <CreateJob addJob={addJob} navigate={navigate} />;
 
       case "JobCard":
         if (!job) return <WelcomeScreen />; // fallback if job is deleted or null
@@ -103,35 +95,18 @@ function Main({
             deleteJob={deleteJob}
             key={job.id}
             onArchive={archiveJob}
+            navigate={navigate}
           />
         );
 
       case "JobStatusOverview":
-        return (
-          <JobStatusOverview
-            jobs={jobs}
-            setActiveComponent={setActiveComponent}
-            setActiveJobId={setActiveJobId}
-          />
-        );
+        return <JobStatusOverview jobs={jobs} navigate={navigate} />;
 
-      case "MonthlyCashflow":
-        return (
-          <MonthlyCashflow
-            jobs={jobs}
-            setActiveComponent={setActiveComponent}
-            setActiveJobId={setActiveJobId}
-          />
-        );
+      case "QuoteBuilder":
+        return <QuoteBuilder activeJobId={activeJobId} navigate={navigate} />;
 
       case "ArchivedJobs":
-        return (
-          <ArchivedJobs
-            jobs={jobs}
-            setActiveComponent={setActiveComponent}
-            setActiveJobId={setActiveJobId}
-          />
-        );
+        return <ArchivedJobs jobs={jobs} navigate={navigate} />;
 
       case "WelcomeScreen":
       default:

@@ -1,4 +1,4 @@
-function JobStatusOverview({ jobs, setActiveComponent, setActiveJobId }) {
+function JobStatusOverview({ jobs, navigate }) {
   const statuses = [
     "Lead",
     "Contacted",
@@ -34,8 +34,7 @@ function JobStatusOverview({ jobs, setActiveComponent, setActiveJobId }) {
                 key={job.id}
                 className="job-card"
                 onClick={() => {
-                  setActiveJobId(job.id);
-                  setActiveComponent("JobCard");
+                  navigate("JobCard", job.id);
                 }}
               >
                 {job.name}
