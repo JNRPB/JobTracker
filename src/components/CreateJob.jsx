@@ -22,17 +22,17 @@ function CreateJob({ addJob, navigate }) {
       name: formData.name,
       address: formData.address,
       status: formData.status,
-
-      // defaults (important)
       notes: "",
       phases: [],
       actualCosts: [],
       archived: false,
+      quoteTotal: 0,
+      startDate: "",
     };
 
     addJob(newJob);
 
-    navigate("JobCard", newJob.id);
+    navigate("JobCard", { jobId: newJob.id });
 
     setFormData({
       name: "",

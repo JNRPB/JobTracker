@@ -4,20 +4,27 @@ import QuoteBuilder from "./QuoteBuilder";
 import JobStatusOverview from "./JobStatusOverview";
 import WelcomeScreen from "./WelcomeScreen";
 import ArchivedJobs from "./JobCardTabs/ArchivedJobs";
+import Transactions from "./Transactions";
+import Invoices from "./Invoices";
+import LogInvoice from "./LogInvoice";
+import EditInvoice from "./EditInvoice";
 
 function Main({
   activeComponent,
   addJob,
-  activeJobId,
+  navData,
   jobs,
   setJobs,
   navigate,
+  addInvoice,
+  invoices,
+  updateInvoice,
+  deleteInvoice,
 }) {
-  const job = jobs.find((j) => j.id === activeJobId);
+  const job = jobs.find((j) => j.id === navData.jobId);
 
   window.jobs = jobs;
 
-  // Update a single job + persist via App & Server
   async function updateJob(updatedJob) {
     const updatedJobs = jobs.map((j) =>
       j.id === updatedJob.id ? updatedJob : j,
@@ -26,7 +33,6 @@ function Main({
     setJobs(updatedJobs);
     localStorage.setItem("jobs", JSON.stringify(updatedJobs));
 
-    // Send update to backend
     try {
       const response = await fetch(
         `http://192.168.0.22:3001/jobs/${updatedJob.id}`,
@@ -49,7 +55,6 @@ function Main({
     }
   }
 
-  // Delete a job + persist server also
   async function deleteJob(jobId) {
     const updatedJobs = jobs.filter((j) => j.id !== jobId);
     setJobs(updatedJobs);
@@ -71,46 +76,117 @@ function Main({
   }
 
   async function archiveJob(jobId) {
-    await fetch(`http://192.168.0.22:3001/jobs/${jobId}/archive`, {
-      method: "PUT",
-    });
+    try {
+      await fetch(`http://192.168.0.22:3001/jobs/${jobId}/archive`, {
+        method: "PUT",
+      });
 
-    const res = await fetch("http://192.168.0.22:3001/jobs");
-    const data = await res.json();
+      const res = await fetch("http://192.168.0.22:3001/jobs");
+      const data = await res.json();
 
-    setJobs(data);
+      setJobs(data);
+      localStorage.setItem("jobs", JSON.stringify(data));
+    } catch (err) {
+      console.error("Error archiving job:", err);
+    }
   }
-  // Render exactly one component based on activeComponent
+
+  async function unarchiveJob(jobId) {
+    try {
+      await fetch(`http://192.168.0.22:3001/jobs/${jobId}/unarchive`, {
+        method: "PUT",
+      });
+
+      const res = await fetch("http://192.168.0.22:3001/jobs");
+      const data = await res.json();
+
+      setJobs(data);
+      localStorage.setItem("jobs", JSON.stringify(data));
+    } catch (err) {
+      console.error("Error unarchiving job:", err);
+    }
+  }
+
   function renderActiveComponent() {
     switch (activeComponent) {
       case "CreateJob":
         return <CreateJob addJob={addJob} navigate={navigate} />;
 
       case "JobCard":
-        if (!job) return <WelcomeScreen />; // fallback if job is deleted or null
+        if (!job) return <WelcomeScreen jobs={jobs} />;
         return (
           <JobCard
+            key={job.id}
             job={job}
             onUpdate={updateJob}
             deleteJob={deleteJob}
-            key={job.id}
             onArchive={archiveJob}
+            onUnarchive={unarchiveJob}
             navigate={navigate}
+            invoices={invoices}
           />
         );
 
       case "JobStatusOverview":
-        return <JobStatusOverview jobs={jobs} navigate={navigate} />;
+        return (
+          <JobStatusOverview
+            jobs={jobs}
+            navigate={navigate}
+            invoices={invoices}
+          />
+        );
 
       case "QuoteBuilder":
-        return <QuoteBuilder activeJobId={activeJobId} navigate={navigate} />;
+        return (
+          <QuoteBuilder
+            navData={navData}
+            navigate={navigate}
+            jobs={jobs}
+            onUpdate={updateJob}
+          />
+        );
 
       case "ArchivedJobs":
-        return <ArchivedJobs jobs={jobs} navigate={navigate} />;
+        return (
+          <ArchivedJobs
+            jobs={jobs}
+            navigate={navigate}
+            onUnarchive={unarchiveJob}
+          />
+        );
+
+      case "Transactions":
+        return <Transactions jobs={jobs} navigate={navigate} />;
+
+      case "Invoices":
+        return (
+          <Invoices
+            jobs={jobs}
+            invoices={invoices}
+            navigate={navigate}
+            deleteInvoice={deleteInvoice}
+          />
+        );
+
+      case "LogInvoice":
+        return (
+          <LogInvoice addInvoice={addInvoice} navigate={navigate} jobs={jobs} />
+        );
+
+      case "EditInvoice":
+        return (
+          <EditInvoice
+            invoices={invoices}
+            jobs={jobs}
+            navData={navData}
+            updateInvoice={updateInvoice}
+            navigate={navigate}
+          />
+        );
 
       case "WelcomeScreen":
       default:
-        return <WelcomeScreen />;
+        return <WelcomeScreen jobs={jobs} />;
     }
   }
 

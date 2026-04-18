@@ -1,4 +1,9 @@
-function JobStatusOverview({ jobs, navigate }) {
+import { useState } from "react";
+import JobBox from "./JobBox";
+
+function JobStatusOverview({ jobs, navigate, invoices }) {
+  const [showBentonsJobs, setShowBentonsJobs] = useState(true);
+
   const statuses = [
     "Lead",
     "Contacted",
@@ -10,17 +15,37 @@ function JobStatusOverview({ jobs, navigate }) {
     "Completed",
   ];
 
-  // 🚨 FILTER OUT ARCHIVED JOBS FIRST
-  const activeJobs = jobs.filter((j) => !j.archived);
+  const activeJobs = (jobs || []).filter((j) => !j.archived);
 
-  // Organize jobs by status
+  const visibleJobs = activeJobs.filter((job) => {
+    if (showBentonsJobs) return true;
+    return !job.name?.trim().toUpperCase().startsWith("BNT");
+  });
+
   const jobsByStatus = {};
   statuses.forEach((status) => {
-    jobsByStatus[status] = activeJobs.filter((j) => j.status === status);
+    jobsByStatus[status] = visibleJobs.filter((j) => j.status === status);
   });
 
   return (
     <div className="overview-container">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          marginBottom: "1rem",
+        }}
+      >
+        <input
+          type="checkbox"
+          id="showBentonsJobs"
+          checked={showBentonsJobs}
+          onChange={(e) => setShowBentonsJobs(e.target.checked)}
+        />
+        <label htmlFor="showBentonsJobs">View Bentons jobs?</label>
+      </div>
+
       {statuses.map((status) => (
         <div className="status-group" key={status}>
           <div className="status-header">
@@ -30,15 +55,12 @@ function JobStatusOverview({ jobs, navigate }) {
 
           <div className="status-list">
             {jobsByStatus[status].map((job) => (
-              <div
+              <JobBox
                 key={job.id}
-                className="job-card"
-                onClick={() => {
-                  navigate("JobCard", job.id);
-                }}
-              >
-                {job.name}
-              </div>
+                job={job}
+                navigate={navigate}
+                invoices={invoices}
+              />
             ))}
           </div>
         </div>

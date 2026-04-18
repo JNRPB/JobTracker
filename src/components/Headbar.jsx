@@ -27,22 +27,24 @@ function Headbar({ navigate }) {
           component="WelcomeScreen"
           navigate={navigate}
         />
-        <br></br>
         <SideBarButton
           label="Jobs Overview"
           component="JobStatusOverview"
           navigate={navigate}
         />
-        <br></br>
         <SideBarButton
           label="Create Job"
           component="CreateJob"
           navigate={navigate}
         />
-        <br></br>
         <SideBarButton
           label="Archived Jobs"
           component="ArchivedJobs"
+          navigate={navigate}
+        />
+        <SideBarButton
+          label="Invoices"
+          component="Invoices"
           navigate={navigate}
         />
       </div>

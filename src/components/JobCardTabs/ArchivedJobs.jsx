@@ -1,4 +1,4 @@
-function ArchivedJobs({ jobs, navigate }) {
+function ArchivedJobs({ jobs, navigate, onUnarchive }) {
   const archivedJobs = jobs.filter((j) => j.archived);
 
   return (
@@ -17,15 +17,38 @@ function ArchivedJobs({ jobs, navigate }) {
             <div
               key={job.id}
               className="job-card"
-              onClick={() => {
-                navigate("JobCard", job.id);
-              }}
               style={{
                 opacity: 0.7,
                 background: "#444",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "0.75rem",
               }}
             >
-              {job.name}
+              <span
+                onClick={() => navigate("JobCard", { jobId: job.id })}
+                style={{ cursor: "pointer", flex: 1 }}
+              >
+                {job.name}
+              </span>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUnarchive(job.id);
+                }}
+                style={{
+                  background: "#52c41a",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "4px",
+                  padding: "0.4rem 0.75rem",
+                  cursor: "pointer",
+                }}
+              >
+                Unarchive
+              </button>
             </div>
           ))}
         </div>

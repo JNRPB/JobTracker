@@ -3,15 +3,19 @@ import JobOverview from "./JobCardTabs/JobOverview";
 import ExpectedCost from "./JobCardTabs/ExpectedCost";
 import ActualCost from "./JobCardTabs/ActualCost";
 
-function JobCard({ job, onUpdate, deleteJob, onArchive, navigate }) {
+function JobCard({
+  job,
+  onUpdate,
+  deleteJob,
+  onArchive,
+  onUnarchive,
+  navigate,
+  invoices,
+}) {
   const [activeTab, setActiveTab] = useState(0);
   const [editingExpectedCost, setEditingExpectedCost] = useState(false);
   const [editingActualCost, setEditingActualCost] = useState(false);
   const [editingJobDetails, setEditingJobDetails] = useState(false);
-
-  function handleDeleteJob() {
-    removeJob(job.id);
-  }
 
   return (
     <>
@@ -23,9 +27,12 @@ function JobCard({ job, onUpdate, deleteJob, onArchive, navigate }) {
           editing={editingJobDetails}
           setEditing={setEditingJobDetails}
           onArchive={onArchive}
+          onUnarchive={onUnarchive}
           navigate={navigate}
+          invoices={invoices}
         />
       )}
+
       {activeTab === 1 && (
         <ExpectedCost
           job={job}
@@ -43,6 +50,7 @@ function JobCard({ job, onUpdate, deleteJob, onArchive, navigate }) {
           setEditing={setEditingActualCost}
         />
       )}
+
       <div
         style={{
           display: "flex",

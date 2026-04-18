@@ -1,5 +1,5 @@
 /* -------------------------- */
-/* Global Styles & Typography */
+/* Root / Global              */
 /* -------------------------- */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -16,16 +16,45 @@
   -moz-osx-font-smoothing: grayscale;
 
   --brand-color: rgba(0, 123, 255, 0.7);
+  --bg-main: #1a1a1a;
+  --bg-panel: #1e1e2f;
+  --bg-panel-alt: #1f1f2e;
+  --bg-header: #2a2a3c;
+  --text-main: #e5e7eb;
+  --text-soft: #cbd5e1;
+  --danger: #ff4d4f;
+  --danger-hover: #e63946;
+  --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.4);
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
 
-html, body {
+/* -------------------------- */
+/* Page Reset                 */
+/* -------------------------- */
+html,
+body {
   margin: 0;
-  height: 100%;
   width: 100%;
+  height: 100%;
+  background-color: var(--bg-main);
+  color: var(--text-main);
 }
 
-h1, h2, h3 {
-  margin-bottom: 20px;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* -------------------------- */
+/* Typography                 */
+/* -------------------------- */
+h1,
+h2,
+h3 {
+  margin: 0 0 20px;
   font-weight: 600;
   text-align: center;
 }
@@ -36,68 +65,94 @@ h1 {
 
 h2 {
   font-size: 1.2rem;
-  color: #cbd5e1;
+  color: var(--text-soft);
+}
+
+p {
+  margin: 0;
 }
 
 /* -------------------------- */
-/* Layout: App, Sidebar, Main */
+/* App Layout                 */
 /* -------------------------- */
 .app-container {
   display: flex;
-  flex-direction: column; /* stack vertically */
-  justify-content: center; /* center vertically */
-  align-items: center;     /* center horizontally */
-  height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
   width: 100%;
-  background-color: #1a1a1a;
-
-  box-sizing: border-box;  /* ensures padding doesn’t overflow */
-   
+  background-color: var(--bg-main);
 }
 
+/* -------------------------- */
+/* Header                     */
+/* -------------------------- */
 .headerContainer {
   display: flex;
   flex-direction: column;
-  background-color: #2a2a3c;
-  width: 100vw;
-  align-items: center; 
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--bg-header);
   text-align: center;
-  justify-content: center; /* center vertically */
 }
 
-.stats-widget{
-
-  padding: 20px;
+.stats-widget {
+  padding: 0.75rem 1rem;
   text-align: center;
-  max-width: 20vh;
+  max-width: 220px;
+  width: 100%;
 }
 
+/* -------------------------- */
+/* Tabs                       */
+/* -------------------------- */
+.tabContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 1100px;
+}
+
+.tabContainer > * {
+  flex: 1 1 160px;
+  min-width: 120px;
+  max-width: 220px;
+}
+
+/* -------------------------- */
+/* Sidebar                    */
+/* -------------------------- */
 .sidebar {
-  background-color: #1f1f2e;
+  background-color: var(--bg-panel-alt);
   width: 250px;
   padding: 1.5rem 1rem;
   border-radius: 0 16px 16px 0;
-  box-shadow: 4px 0 12px rgba(0,0,0,0.3);
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  color: #e5e7eb;
+  color: var(--text-main);
   text-align: center;
   overflow: hidden;
 }
 
-
-
-/* Container that holds the job buttons */
+/* -------------------------- */
+/* Job List                   */
+/* -------------------------- */
 .job-list {
   flex: 1;
   overflow-y: auto;
   margin-top: 0.5rem;
   padding-right: 4px;
-  height: 30vh'
+  height: 30vh;
 }
 
-/* Optional nicer scrollbar (Chrome/Edge) */
 .job-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -107,51 +162,40 @@ h2 {
   border-radius: 4px;
 }
 
-
+/* -------------------------- */
+/* Main Panel                 */
+/* -------------------------- */
 .main-panel {
   flex: 1;
-  padding: 2rem;
+  width: 100%;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   overflow-y: auto;
-  align-items: center; /* keep cards centered */
+  align-items: center;
 }
 
 /* -------------------------- */
-/* Job Card (BubbleBox)       */
+/* Bubble Boxes               */
 /* -------------------------- */
 .bubbleBox {
-  background-color: #1e1e2f;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  background-color: var(--bg-panel);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
   width: 70%;
   max-width: 700px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center; /* keep text centered */
+  text-align: center;
   max-height: 70vh;
   overflow-y: auto;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.bubbleBox2 {
-  
-  
-  
-  
-  
-  
-  padding: 2rem;
-  text-align: center; /* keep text centered */
-  
-  
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
 .bubbleBox:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+  box-shadow: var(--shadow-hover);
 }
 
 .bubbleBox h1 {
@@ -164,23 +208,28 @@ h2 {
   margin-bottom: 0.5rem;
 }
 
+.bubbleBox2 {
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
 /* -------------------------- */
-/* Editable Fields            */
+/* Editable Content           */
 /* -------------------------- */
 [contenteditable="true"] {
-  
-  transition: border-color 0.2s, background-color 0.2s;
   padding: 0.2rem 0;
+  transition: border-color 0.2s, background-color 0.2s;
 }
 
 [contenteditable="true"]:hover {
   border-color: var(--brand-color);
-  background-color: rgba(0,123,255,0.05);
+  background-color: rgba(0, 123, 255, 0.05);
 }
 
 [contenteditable="true"]:focus {
   border-color: var(--brand-color);
-  background-color: rgba(0,123,255,0.15);
+  background-color: rgba(0, 123, 255, 0.15);
   outline: none;
 }
 
@@ -201,33 +250,10 @@ button {
   margin-top: 1rem;
 }
 
-button.tabButton {
-    background-color: var(--brand-color);
-  color: #fff;
-  border: solid rgb(65, 46, 235) 0.5px;
-  border-radius: 0px;
-  padding: 0.6rem 1.2rem;
-  font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 90%;
-  margin-top: 1rem;
-}
-
-.tabContainer {
-  display: flex;
-  
-}
-
-.job-button-allJobs {
-  background-color: transparent;
-}
-
 button:hover {
-  background-color: rgba(0,123,255,1);
+  background-color: rgba(0, 123, 255, 1);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 button:active {
@@ -235,16 +261,37 @@ button:active {
   box-shadow: none;
 }
 
+button.tabButton {
+  background-color: var(--brand-color);
+  color: #fff;
+  border: solid rgb(65, 46, 235) 0.5px;
+  border-radius: 0;
+  padding: 0.7rem 1rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.job-button-allJobs {
+  background-color: transparent;
+}
+
 button.delete-job {
-  background-color: #ff4d4f;
+  background-color: var(--danger);
+}
+
+button.delete-job:hover {
+  background-color: var(--danger-hover);
 }
 
 button.delete-small {
   background-color: transparent;
-}
-
-button.delete-job:hover {
-  background-color: #e63946;
 }
 
 /* -------------------------- */
@@ -265,19 +312,14 @@ button.delete-job:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
+  min-width: 90px;
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
-
   font-size: 0.75rem;
   font-weight: 600;
   color: #fff;
-
-  min-width: 90px;
-
-  background: #3b3b4f; /* neutral base */
+  background: #3b3b4f;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-
   transition: all 0.2s ease;
 }
 
@@ -292,14 +334,10 @@ button.delete-job:hover {
 .status-row select {
   border-radius: 8px;
   border: 1px solid #444;
-
   padding: 0.45rem 0.7rem;
-
-  background-color: #1f1f2e;
-  color: #e5e7eb;
-
+  background-color: var(--bg-panel-alt);
+  color: var(--text-main);
   font-size: 0.85rem;
-
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -316,7 +354,7 @@ button.delete-job:hover {
 }
 
 /* -------------------------- */
-/* Tables (Phase Table)       */
+/* Tables                     */
 /* -------------------------- */
 .phase table {
   width: 100%;
@@ -324,84 +362,53 @@ button.delete-job:hover {
   margin-top: 1rem;
 }
 
-.phase th, .phase td {
+.phase th,
+.phase td {
   border: 1px solid #333;
   padding: 12px 10px;
   text-align: center;
 }
 
 .phase th {
-  background-color: #1f1f2e;
+  background-color: var(--bg-panel-alt);
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--text-soft);
 }
 
 .phase tr:nth-child(even) {
-  background-color: #2a2a3c;
+  background-color: var(--bg-header);
 }
 
 .phase tr:hover {
-  background-color: rgba(0,123,255,0.1);
+  background-color: rgba(0, 123, 255, 0.1);
 }
 
 .phase button.delete-row {
   padding: 4px 8px;
   cursor: pointer;
-  background-color: #ff4d4f;
+  background-color: var(--danger);
   color: #fff;
   border: none;
   border-radius: 4px;
   transition: background-color 0.2s;
+  width: auto;
+  margin-top: 0;
 }
 
 .phase button.delete-row:hover {
-  background-color: #e63946;
+  background-color: var(--danger-hover);
 }
-
-/* -------------------------- */
-/* Responsive                  */
-/* -------------------------- */
-@media (max-width: 1024px) {
-  .app-container {
-    flex-direction: column;
-  }
-  .sidebar {
-    
-    
-      height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  }
-  .main-panel {
-    padding: 1rem;
-  }
-  .bubbleBox {
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-@media (max-width: 600px) {
-  .bubbleBox {
-    padding: 1rem;
-  }
-  h1 {
-    font-size: 1.8rem;
-  }
-}
-
-
 
 .phase tr.total-phase-cost {
-  background-color: rgba(0, 0, 0, 0.35); /* stronger highlight for total job cost */
+  background-color: rgba(0, 0, 0, 0.35);
   font-weight: 800;
   color: #fff;
   font-size: 1.05rem;
 }
 
-/* Homepage container */
+/* -------------------------- */
+/* Homepage / Overview        */
+/* -------------------------- */
 .homepage-container {
   display: flex;
   gap: 1rem;
@@ -412,24 +419,20 @@ button.delete-job:hover {
   height: 80vh;
 }
 
-/* Each status column */
 .status-column {
-  background-color: #1e1e2f21;
+  background-color: rgba(30, 30, 47, 0.13);
   border-radius: 12px;
   padding: 1rem;
-  max-width: 100px;
+  width: 220px;
+  min-width: 220px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   max-height: 80vh;
-  
   overflow: visible;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-
-
-/* Column title */
 .status-column h2 {
   text-align: center;
   font-size: 1.2rem;
@@ -438,35 +441,6 @@ button.delete-job:hover {
   padding-bottom: 0.5rem;
 }
 
-/* Job card in column */
-.job-card {
-  background-color: var(--brand-color);
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 0.8rem;
-  max-width: 100%;
-  max-height: 1.2rem;
-  white-space: nowrap;
-  align-items: center;
-  position: relative;
-}
-
-.job-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  white-space: normal;
-  max-height: none;
-}
-
-
-
 .status-column .job-count {
   font-size: 0.9rem;
   color: #c4c3c3;
@@ -474,8 +448,34 @@ button.delete-job:hover {
   margin-bottom: 0.5rem;
 }
 
+.job-card {
+  background-color: var(--brand-color);
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.8rem;
+  width: 100%;
+  max-height: 1.8rem;
+  white-space: nowrap;
+  position: relative;
+}
 
+.job-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  white-space: normal;
+  max-height: none;
+}
 
+/* -------------------------- */
+/* Cashflow                   */
+/* -------------------------- */
 .month-selector {
   display: flex;
   justify-content: center;
@@ -489,30 +489,26 @@ button.delete-job:hover {
   gap: 2rem;
 }
 
-
 .monthly-outgoings li {
   display: flex;
-  justify-content: space-between; 
-  align-items: center;            
-  padding: 0.25rem 0;             
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
 }
 
 .monthly-outgoings li button.delete-small {
-  padding: 0;           /* remove all padding */
-  width: auto;          /* shrink to content */
-  min-width: 0;         /* override any min-width from global button */
-  background: transparent; /* optional: remove background if needed */
-  border: none;         /* remove border */
+  padding: 0;
+  width: auto;
+  min-width: 0;
+  margin-top: 0;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  color: #ff4d4f;       /* keep the color */
+  color: var(--danger);
 }
 
-
-#expectedincome {
-  cursor: default;
-}
-
-#expectedincomelist{
+#expectedincome,
+#expectedincomelist {
   cursor: default;
 }
 
@@ -527,12 +523,14 @@ button.delete-job:hover {
   padding: 0.3rem 0.5rem;
   border-radius: 6px;
   border: 1px solid #444;
-  background-color: #1e1e2f;
+  background-color: var(--bg-panel);
   color: #fff;
 }
 
 .add-outgoing button {
   padding: 0.4rem 0.8rem;
+  width: auto;
+  margin-top: 0;
 }
 
 .net-cashflow {
@@ -542,13 +540,15 @@ button.delete-job:hover {
   font-weight: 700;
 }
 
-.phaseLine{
+/* -------------------------- */
+/* Misc                       */
+/* -------------------------- */
+.phaseLine {
   text-align: center;
-
   border-bottom: dotted #c4c3c3;
 }
 
-.summaryBox{
+.summaryBox {
   border: solid red;
 }
 
@@ -560,7 +560,7 @@ button.delete-job:hover {
 }
 
 .status-group {
-  background: #1e1e2f;
+  background: var(--bg-panel);
   border-radius: 12px;
   padding: 1rem;
 }
@@ -569,8 +569,7 @@ button.delete-job:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 0.5rem;
   margin-bottom: 0.5rem;
 }
@@ -581,7 +580,7 @@ button.delete-job:hover {
 }
 
 .status-header span {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
   font-size: 0.8rem;
@@ -591,4 +590,184 @@ button.delete-job:hover {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+/* -------------------------- */
+/* Responsive                 */
+/* -------------------------- */
+@media (max-width: 1024px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .main-panel {
+    padding: 1rem;
+  }
+
+  .bubbleBox {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cashflowWrapper {
+    width: 100%;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .headerContainer {
+    padding: 0.75rem;
+  }
+
+  .tabContainer > * {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .bubbleBox {
+    width: 95%;
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .status-row {
+    flex-wrap: wrap;
+  }
+
+  .month-selector {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.transactionList {
+  width: 100%;
+}
+
+.transactionMiddle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;   /* 🔥 this is the key */
+  text-align: center;    /* 🔥 and this */
+}
+.transactionBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 0.75rem;
+}
+
+
+.transactionDateBlock {
+  min-width: 110px;
+}
+
+.transactionBox:hover {
+  background: #2a3441;
+}
+
+.transactionLeft {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.transactionRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.transactionName {
+  margin: 0 0 0.3rem 0;
+  font-weight: 600;
+}
+
+.transactionDate {
+  margin: 0;
+  opacity: 0.75;
+  font-size: 0.9rem;
+}
+
+.transactionAmount {
+  margin: 0;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.transactionJob {
+  margin: 0;
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+
+.jobLinkItem {
+  margin-right: 2rem;
+}
+
+.jobLabel {
+  color: #9ca3af;
+}
+
+/* Icons */
+
+
+.pencilIcon,
+.trashIcon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: 0.2s ease;
+}
+
+.pencilIcon:hover,
+.trashIcon:hover {
+  color: #fff;
+  transform: scale(1.08);
+}
+
+.noLink {
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.jobBox {
+  cursor: pointer;
+}
+
+.jobBox:hover {
+  background: #2a3441;
+}
+
+.jobBox .transactionDate {
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.jobBox .transactionJob {
+  opacity: 0.8;
+}
+
+.jobBox .transactionAmount {
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
