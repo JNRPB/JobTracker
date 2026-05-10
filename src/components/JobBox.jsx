@@ -1,23 +1,9 @@
-function JobBox({ job, navigate, invoices }) {
+function JobBox({ job, navigate, invoices, margin }) {
   function goToJob() {
     navigate("JobCard", { jobId: job.id });
   }
 
-  // 🔥 allocated total (already done)
-  const allocatedTotal = invoices.reduce((sum, invoice) => {
-    if (!invoice.jobLinks) return sum;
-
-    const matching = invoice.jobLinks.filter((link) => link.jobId === job.id);
-
-    const jobTotal = matching.reduce(
-      (s, link) => s + Number(link.amount || 0),
-      0,
-    );
-
-    return sum + jobTotal;
-  }, 0);
-
-  const hasQuote = job.quoteTotal && job.quoteTotal > 0;
+  const hasQuote = Number(job.quoteTotal || 0) > 0;
 
   return (
     <div className="transactionBox jobBox" onClick={goToJob}>
@@ -30,10 +16,23 @@ function JobBox({ job, navigate, invoices }) {
         <p className="transactionJob">{job.address || "No address"}</p>
       </div>
 
-      <div className="transactionRight">
+      <div className="transactionRight jobBoxRight">
         <p className="transactionAmount">
-          {hasQuote ? `£${Number(job.quoteTotal).toFixed(0)}` : "No quote"}
+          {hasQuote ? `£${Number(job.quoteTotal).toFixed(2)}` : "No quote"}
         </p>
+
+        {hasQuote && (
+          <p
+            className="jobMargin"
+            style={{
+              color: margin >= 0 ? "#b7eb8f" : "#ff9c9c",
+              fontSize: "0.85rem",
+              marginTop: "0.2rem",
+            }}
+          >
+            £{Number(margin || 0).toFixed(2)}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -3,11 +3,12 @@ import { useState, useEffect } from "react";
 function JobOverview({
   job,
   onUpdate,
-  deleteJob,
   onArchive,
   onUnarchive,
   navigate,
-  invoices,
+  jobFiles = [],
+  fileCount = 0,
+  fileLinkedCost = 0,
 }) {
   const [localJob, setLocalJob] = useState(job);
 
@@ -22,22 +23,44 @@ function JobOverview({
     };
 
     setLocalJob(updated);
+
     if (onUpdate) onUpdate(updated);
   }
 
-  const allocatedInvoiceTotal = invoices.reduce((sum, invoice) => {
-    if (!invoice.jobLinks || invoice.jobLinks.length === 0) return sum;
+  const quoteTotal = Number(localJob.quoteTotal || 0);
+  const costTotal = Number(fileLinkedCost || 0);
+  const margin = quoteTotal - costTotal;
+  const hasQuote = localJob.phases && localJob.phases.length > 0;
 
-    const matchingLinks = invoice.jobLinks.filter(
-      (link) => link.jobId === localJob.id,
-    );
+  const summaryBoxStyle = {
+    marginBottom: "1rem",
+    padding: "0.75rem",
+    borderRadius: "8px",
+    background: "rgba(255,255,255,0.03)",
+  };
 
-    const invoiceTotalForThisJob = matchingLinks.reduce((linkSum, link) => {
-      return linkSum + Number(link.amount || 0);
-    }, 0);
+  const inputStyle = {
+    marginLeft: "0.5rem",
+    padding: "0.4rem 0.6rem",
+    borderRadius: "6px",
+    background: "#1f1f2e",
+    color: "#fff",
+    border: "1px solid #444",
+  };
 
-    return sum + invoiceTotalForThisJob;
-  }, 0);
+  const marginBoxStyle = {
+    marginBottom: "1rem",
+    padding: "0.75rem",
+    borderRadius: "8px",
+    background:
+      margin >= 0 ? "rgba(82, 196, 26, 0.12)" : "rgba(255, 77, 79, 0.12)",
+    border:
+      margin >= 0
+        ? "1px solid rgba(82, 196, 26, 0.35)"
+        : "1px solid rgba(255, 77, 79, 0.35)",
+    color: margin >= 0 ? "#b7eb8f" : "#ff9c9c",
+    fontWeight: "600",
+  };
 
   return (
     <div className="bubbleBox2">
@@ -72,24 +95,18 @@ function JobOverview({
           cursor: "text",
           marginBottom: "1rem",
           minHeight: "60px",
+          textAlign: "left",
         }}
       >
         {localJob.notes || "Click to add notes..."}
       </div>
 
       <div style={{ marginBottom: "1rem" }}>
-        <strong>Status:</strong>{" "}
+        <strong>Status:</strong>
         <select
           value={localJob.status}
           onChange={(e) => update("status", e.target.value)}
-          style={{
-            marginLeft: "0.5rem",
-            padding: "0.4rem 0.6rem",
-            borderRadius: "6px",
-            background: "#1f1f2e",
-            color: "#fff",
-            border: "1px solid #444",
-          }}
+          style={inputStyle}
         >
           {[
             "Lead",
@@ -109,61 +126,36 @@ function JobOverview({
       </div>
 
       <div style={{ marginBottom: "1rem" }}>
-        <strong>Start Date:</strong>{" "}
+        <strong>Start Date:</strong>
         <input
           type="date"
           value={localJob.startDate || ""}
           onChange={(e) => update("startDate", e.target.value)}
-          style={{
-            marginLeft: "0.5rem",
-            padding: "0.4rem 0.6rem",
-            borderRadius: "6px",
-            background: "#1f1f2e",
-            color: "#fff",
-            border: "1px solid #444",
-          }}
+          style={inputStyle}
         />
       </div>
 
-      <div
-        style={{
-          marginBottom: "1rem",
-          padding: "0.75rem",
-          borderRadius: "8px",
-          background: "rgba(255,255,255,0.03)",
-        }}
-      >
-        <strong>Quote Total:</strong> £
-        {Number(localJob.quoteTotal || 0).toFixed(2)}
+      <div style={summaryBoxStyle}>
+        <strong>Quote Total:</strong> £{quoteTotal.toFixed(2)}
       </div>
 
-      <div
-        style={{
-          marginBottom: "1rem",
-          padding: "0.75rem",
-          borderRadius: "8px",
-          background: "rgba(255,255,255,0.03)",
-        }}
-      >
-        <strong>Allocated Invoice Total:</strong> £
-        {allocatedInvoiceTotal.toFixed(2)}
+      <div style={summaryBoxStyle}>
+        <strong>Files Logged:</strong> {fileCount}
+      </div>
+
+      <div style={summaryBoxStyle}>
+        <strong>File-linked Cost:</strong> £{costTotal.toFixed(2)}
+      </div>
+
+      <div style={marginBoxStyle}>
+        <strong>Margin:</strong> £{margin.toFixed(2)}
       </div>
 
       <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
 
-      {!localJob.phases || localJob.phases.length === 0 ? (
-        <button
-          onClick={() => navigate("QuoteBuilder", { jobId: localJob.id })}
-        >
-          Build Quote
-        </button>
-      ) : (
-        <button
-          onClick={() => navigate("QuoteBuilder", { jobId: localJob.id })}
-        >
-          Edit Quote
-        </button>
-      )}
+      <button onClick={() => navigate("QuoteBuilder", { jobId: localJob.id })}>
+        {hasQuote ? "Edit Quote" : "Add Quote"}
+      </button>
 
       <hr style={{ margin: "1rem 0", opacity: 0.1 }} />
 

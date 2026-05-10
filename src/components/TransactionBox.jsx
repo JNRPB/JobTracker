@@ -1,7 +1,13 @@
 import PencilIcon from "./Icons/PencilIcon";
 import TrashIcon from "./Icons/TrashIcon";
 
-function TransactionBox({ invoice, navigate, deleteInvoice, jobs }) {
+function TransactionBox({
+  invoice,
+  navigate,
+  deleteInvoice,
+  jobs,
+  onJobFilter,
+}) {
   function goToEdit() {
     navigate("EditInvoice", { invoiceId: invoice.id });
   }
@@ -17,7 +23,7 @@ function TransactionBox({ invoice, navigate, deleteInvoice, jobs }) {
   }
 
   function getJobName(jobId) {
-    const job = jobs.find((j) => j.id === jobId);
+    const job = jobs.find((j) => String(j.id) === String(jobId));
     return job ? job.name : "Unknown job";
   }
 
@@ -33,41 +39,58 @@ function TransactionBox({ invoice, navigate, deleteInvoice, jobs }) {
     });
   }
 
+  function getPayeeName() {
+    return invoice.payee || "Unknown payee";
+  }
+
+  function getInvoiceTitle() {
+    return (
+      invoice.item || invoice.name || invoice.description || "Untitled invoice"
+    );
+  }
+
+  const multiLinks = invoice.jobLinks && invoice.jobLinks.length > 0;
+  const singleLink = invoice.jobLink && !multiLinks;
+
   return (
-    <div className="transactionBox">
+    <div className="transactionBox invoiceCard">
       <div className="transactionDateBlock">
         <p className="transactionDate">{formatDate(invoice.dateIssued)}</p>
       </div>
 
-      <div className="transactionMiddle">
-        <p className="transactionName">{invoice.item}</p>
+      <div className="transactionMiddle invoiceMiddle">
+        <div className="invoiceHeaderRow">
+          <p className="transactionName invoiceSupplier">{getPayeeName()}</p>
+          <PencilIcon onClick={goToEdit} />
+        </div>
 
-        <p className="transactionJob">
-          <strong>Job Links:</strong>{" "}
-          {(!invoice.jobLinks || invoice.jobLinks.length === 0) &&
-          !invoice.jobLink ? (
-            <span className="noLink">
-              No job link <PencilIcon onClick={goToEdit} />
-            </span>
-          ) : invoice.jobLinks && invoice.jobLinks.length > 0 ? (
-            <>
-              {invoice.jobLinks.map((link, index) => (
-                <span key={index}>
-                  <span className="jobLinkItem">
-                    {getJobName(link.jobId)} (£
-                    {Number(link.amount || 0).toFixed(2)})
-                  </span>
-                  {index < invoice.jobLinks.length - 1 ? "" : ""}
-                </span>
-              ))}
-              <PencilIcon onClick={goToEdit} />
-            </>
+        <p className="invoiceItemName">{getInvoiceTitle()}</p>
+
+        <div className="invoiceJobLinks">
+          {!multiLinks && !singleLink ? (
+            <span className="invoiceNoLink">No job link</span>
+          ) : multiLinks ? (
+            invoice.jobLinks.map((link, index) => (
+              <button
+                key={`${link.jobId}-${index}`}
+                className="jobLinkChip"
+                onClick={() => onJobFilter(String(link.jobId))}
+                type="button"
+              >
+                {getJobName(link.jobId)}
+                {link.amount ? ` · £${Number(link.amount).toFixed(2)}` : ""}
+              </button>
+            ))
           ) : (
-            <>
-              {getJobName(invoice.jobLink)} <PencilIcon onClick={goToEdit} />
-            </>
+            <button
+              className="jobLinkChip"
+              onClick={() => onJobFilter(String(invoice.jobLink))}
+              type="button"
+            >
+              {getJobName(invoice.jobLink)}
+            </button>
           )}
-        </p>
+        </div>
       </div>
 
       <div className="transactionRight">

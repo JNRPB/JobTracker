@@ -5,9 +5,10 @@ import JobStatusOverview from "./JobStatusOverview";
 import WelcomeScreen from "./WelcomeScreen";
 import ArchivedJobs from "./JobCardTabs/ArchivedJobs";
 import Transactions from "./Transactions";
-import Invoices from "./Invoices";
-import LogInvoice from "./LogInvoice";
-import EditInvoice from "./EditInvoice";
+import Files from "./Files";
+import UnsortedFiles from "./UnsortedFiles";
+
+const API_BASE = "http://100.68.229.104:3001";
 
 function Main({
   activeComponent,
@@ -16,14 +17,12 @@ function Main({
   jobs,
   setJobs,
   navigate,
-  addInvoice,
-  invoices,
-  updateInvoice,
-  deleteInvoice,
+  files,
+  refreshFiles,
+  unsortedFiles,
+  refreshUnsortedFiles,
 }) {
-  const job = jobs.find((j) => j.id === navData.jobId);
-
-  window.jobs = jobs;
+  const job = jobs.find((j) => String(j.id) === String(navData.jobId));
 
   async function updateJob(updatedJob) {
     const updatedJobs = jobs.map((j) =>
@@ -31,24 +30,18 @@ function Main({
     );
 
     setJobs(updatedJobs);
-    localStorage.setItem("jobs", JSON.stringify(updatedJobs));
 
     try {
-      const response = await fetch(
-        `http://192.168.0.22:3001/jobs/${updatedJob.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedJob),
+      const response = await fetch(`${API_BASE}/jobs/${updatedJob.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify(updatedJob),
+      });
 
       if (!response.ok) {
         console.error("Failed to update job on server", response.statusText);
-      } else {
-        console.log("Job successfully updated on server");
       }
     } catch (err) {
       console.error("Error updating job on server:", err);
@@ -58,17 +51,14 @@ function Main({
   async function deleteJob(jobId) {
     const updatedJobs = jobs.filter((j) => j.id !== jobId);
     setJobs(updatedJobs);
-    localStorage.setItem("jobs", JSON.stringify(updatedJobs));
 
     try {
-      const response = await fetch(`http://192.168.0.22:3001/jobs/${jobId}`, {
+      const response = await fetch(`${API_BASE}/jobs/${jobId}`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
         console.error("Failed to delete job on server", response.statusText);
-      } else {
-        console.log("Job successfully deleted on server");
       }
     } catch (err) {
       console.error("Error deleting job on server:", err);
@@ -77,15 +67,14 @@ function Main({
 
   async function archiveJob(jobId) {
     try {
-      await fetch(`http://192.168.0.22:3001/jobs/${jobId}/archive`, {
+      await fetch(`${API_BASE}/jobs/${jobId}/archive`, {
         method: "PUT",
       });
 
-      const res = await fetch("http://192.168.0.22:3001/jobs");
+      const res = await fetch(`${API_BASE}/jobs`);
       const data = await res.json();
 
       setJobs(data);
-      localStorage.setItem("jobs", JSON.stringify(data));
     } catch (err) {
       console.error("Error archiving job:", err);
     }
@@ -93,15 +82,14 @@ function Main({
 
   async function unarchiveJob(jobId) {
     try {
-      await fetch(`http://192.168.0.22:3001/jobs/${jobId}/unarchive`, {
+      await fetch(`${API_BASE}/jobs/${jobId}/unarchive`, {
         method: "PUT",
       });
 
-      const res = await fetch("http://192.168.0.22:3001/jobs");
+      const res = await fetch(`${API_BASE}/jobs`);
       const data = await res.json();
 
       setJobs(data);
-      localStorage.setItem("jobs", JSON.stringify(data));
     } catch (err) {
       console.error("Error unarchiving job:", err);
     }
@@ -113,7 +101,17 @@ function Main({
         return <CreateJob addJob={addJob} navigate={navigate} />;
 
       case "JobCard":
-        if (!job) return <WelcomeScreen jobs={jobs} />;
+        if (!job) {
+          return (
+            <WelcomeScreen
+              jobs={jobs}
+              files={files}
+              unsortedFiles={unsortedFiles}
+              navigate={navigate}
+            />
+          );
+        }
+
         return (
           <JobCard
             key={job.id}
@@ -123,17 +121,13 @@ function Main({
             onArchive={archiveJob}
             onUnarchive={unarchiveJob}
             navigate={navigate}
-            invoices={invoices}
+            files={files}
           />
         );
 
       case "JobStatusOverview":
         return (
-          <JobStatusOverview
-            jobs={jobs}
-            navigate={navigate}
-            invoices={invoices}
-          />
+          <JobStatusOverview jobs={jobs} navigate={navigate} files={files} />
         );
 
       case "QuoteBuilder":
@@ -156,37 +150,40 @@ function Main({
         );
 
       case "Transactions":
-        return <Transactions jobs={jobs} navigate={navigate} />;
+        return <Transactions jobs={jobs} navigate={navigate} files={files} />;
 
-      case "Invoices":
+      case "Files":
         return (
-          <Invoices
+          <Files
+            files={files}
             jobs={jobs}
-            invoices={invoices}
             navigate={navigate}
-            deleteInvoice={deleteInvoice}
+            refreshFiles={refreshFiles}
+            navData={navData}
           />
         );
 
-      case "LogInvoice":
+      case "UnsortedFiles":
         return (
-          <LogInvoice addInvoice={addInvoice} navigate={navigate} jobs={jobs} />
-        );
-
-      case "EditInvoice":
-        return (
-          <EditInvoice
-            invoices={invoices}
-            jobs={jobs}
-            navData={navData}
-            updateInvoice={updateInvoice}
+          <UnsortedFiles
+            unsortedFiles={unsortedFiles}
+            refreshUnsortedFiles={refreshUnsortedFiles}
+            refreshFiles={refreshFiles}
             navigate={navigate}
+            jobs={jobs}
           />
         );
 
       case "WelcomeScreen":
       default:
-        return <WelcomeScreen jobs={jobs} />;
+        return (
+          <WelcomeScreen
+            jobs={jobs}
+            files={files}
+            unsortedFiles={unsortedFiles}
+            navigate={navigate}
+          />
+        );
     }
   }
 

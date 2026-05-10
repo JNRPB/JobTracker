@@ -1,54 +1,73 @@
-import { useState, useEffect } from "react";
-import SideBarButton from "./SideBarButton";
+import { useEffect, useState } from "react";
+import logo from "../assets/logo.png";
 
-function Headbar({ navigate }) {
+const navItems = [
+  { label: "Home", component: "WelcomeScreen" },
+  { label: "Jobs", component: "JobStatusOverview" },
+  { label: "Create Job", component: "CreateJob" },
+  { label: "Archived", component: "ArchivedJobs" },
+  { label: "Files", component: "Files" },
+];
+
+function Headbar({ navigate, activeComponent }) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Update every second
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
-    return () => clearInterval(interval); // cleanup
+
+    return () => clearInterval(interval);
   }, []);
 
-  return (
-    <div className="headerContainer">
-      <div className="stats-widget">
-        {currentTime.toLocaleTimeString()} <br></br>{" "}
-        {currentTime.toLocaleDateString()}
-      </div>
-      <p>Welcome to JNR Plastering & Building Dashboard</p>
+  const timeLabel = currentTime.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
-      <div className="tabContainer">
-        {" "}
-        <SideBarButton
-          label="Homepage"
-          component="WelcomeScreen"
-          navigate={navigate}
-        />
-        <SideBarButton
-          label="Jobs Overview"
-          component="JobStatusOverview"
-          navigate={navigate}
-        />
-        <SideBarButton
-          label="Create Job"
-          component="CreateJob"
-          navigate={navigate}
-        />
-        <SideBarButton
-          label="Archived Jobs"
-          component="ArchivedJobs"
-          navigate={navigate}
-        />
-        <SideBarButton
-          label="Invoices"
-          component="Invoices"
-          navigate={navigate}
-        />
+  const dateLabel = currentTime.toLocaleDateString("en-GB", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+  });
+
+  return (
+    <header className="app-headbar">
+      <div className="headbar-inner">
+        <div
+          className="headbar-brand"
+          onClick={() => navigate("WelcomeScreen")}
+        >
+          <img src={logo} alt="JNR logo" className="headbar-logo" />
+
+          <div>
+            <h1>JNR Dashboard</h1>
+            <p>Plastering & Building</p>
+          </div>
+        </div>
+
+        <nav className="headbar-nav">
+          {navItems.map((item) => {
+            const isActive = activeComponent === item.component;
+
+            return (
+              <button
+                key={item.component}
+                className={`headbar-nav-button ${isActive ? "active" : ""}`}
+                onClick={() => navigate(item.component)}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="headbar-meta">
+          <strong>{timeLabel}</strong>
+          <span>{dateLabel}</span>
+        </div>
       </div>
-    </div>
+    </header>
   );
 }
 
