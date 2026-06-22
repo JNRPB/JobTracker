@@ -3,36 +3,32 @@ import SideBarButton from "./SideBarButton";
 
 const API_BASE = "http://192.168.0.22:3001";
 
-const businessTargets = [
-  { id: "ppe", name: "PPE / Workwear" },
-  { id: "fuel", name: "Fuel" },
-  { id: "tools", name: "Tools" },
-  { id: "van", name: "Van / Repairs" },
-  { id: "stock", name: "Stock / Materials Held" },
-  { id: "office", name: "Office / Admin" },
-  { id: "insurance", name: "Insurance" },
-  { id: "accounting", name: "Accounting" },
-  { id: "certificates-licences", name: "Certificates & Licences" },
-  { id: "general", name: "General Business Expense" },
+const tagOptions = [
+  "Fuel",
+  "PPE / Workwear",
+  "Waste Removal",
+  "Tools",
+  "Office / Admin",
+  "Advertising",
+  "Van Maintenance",
+  "Labour",
+  "Materials",
 ];
 
 const fileCategories = [
-  "Materials",
-  "Tools",
-  "Fuel",
-  "Van",
-  "PPE",
-  "Office / Admin",
-  "Insurance",
-  "Accounting",
-  "Other",
+  "invoice",
+  "receipt",
+  "quote",
+  "photo",
+  "drawing",
+  "certificate",
+  "licence",
+  "other",
 ];
 
 function Files({ jobs = [], navigate, navData }) {
   const [loggedFiles, setLoggedFiles] = useState([]);
-  const [selectedBusinessId, setSelectedBusinessId] = useState(
-    navData?.businessTargetId || "all",
-  );
+  const [selectedTag, setSelectedTag] = useState(navData?.tag || "all");
   const [selectedJobId, setSelectedJobId] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedMonth, setSelectedMonth] = useState("all");
@@ -52,8 +48,8 @@ function Files({ jobs = [], navigate, navData }) {
   }, []);
 
   useEffect(() => {
-    if (navData?.businessTargetId) {
-      setSelectedBusinessId(navData.businessTargetId);
+    if (navData?.tag) {
+      setSelectedTag(navData.tag);
       setSelectedJobId("all");
       setSelectedCategory("all");
       setSelectedMonth("all");
@@ -85,14 +81,17 @@ function Files({ jobs = [], navigate, navData }) {
     return `${API_BASE}${file.url}`;
   }
 
-  function getBusinessName(id) {
-    const target = businessTargets.find((item) => item.id === id);
-    return target?.name || id || "Business";
-  }
-
   function getJobName(jobId) {
     const job = jobs.find((job) => String(job.id) === String(jobId));
     return job?.name || job?.address || `Job ${jobId}`;
+  }
+
+  function getTargetName(link) {
+    if (link.targetType === "job") {
+      return link.targetName || getJobName(link.targetId);
+    }
+
+    return "No Job Link";
   }
 
   function getFileTotal(file) {
@@ -135,13 +134,75 @@ function Files({ jobs = [], navigate, navData }) {
 
   function getDefaultLink() {
     return {
-      targetType: "business",
-      targetId: "general",
-      targetName: "General Business Expense",
-      category: "Other",
+      targetType: "general",
+      targetId: "no-job",
+      targetName: "No Job Link",
+      category: "other",
+      tag: "",
       cost: "",
       note: "",
     };
+  }
+
+  function normaliseOldLink(link) {
+    if (link.targetType === "business") {
+      return {
+        targetType: "general",
+        targetId: "no-job",
+        targetName: "No Job Link",
+        category: normaliseOldCategory(link.category),
+        tag: normaliseOldBusinessTag(link.targetId, link.targetName),
+        cost: link.cost ?? "",
+        note: link.note || "",
+      };
+    }
+
+    return {
+      targetType: link.targetType || "general",
+      targetId: link.targetId || "no-job",
+      targetName: link.targetName || "",
+      category: normaliseOldCategory(link.category),
+      tag: link.tag || "",
+      cost: link.cost ?? "",
+      note: link.note || "",
+    };
+  }
+
+  function normaliseOldCategory(category) {
+    const value = String(category || "")
+      .trim()
+      .toLowerCase();
+
+    if (fileCategories.includes(value)) return value;
+
+    if (value === "materials") return "invoice";
+    if (value === "van") return "receipt";
+    if (value === "ppe") return "receipt";
+    if (value === "office / admin") return "receipt";
+    if (value === "insurance") return "receipt";
+    if (value === "accounting") return "receipt";
+    if (value === "tools") return "receipt";
+    if (value === "fuel") return "receipt";
+    if (value === "other") return "other";
+
+    return "other";
+  }
+
+  function normaliseOldBusinessTag(targetId, targetName) {
+    const value = String(targetId || targetName || "").toLowerCase();
+
+    if (value.includes("fuel")) return "Fuel";
+    if (value.includes("ppe") || value.includes("workwear"))
+      return "PPE / Workwear";
+    if (value.includes("tool")) return "Tools";
+    if (value.includes("van")) return "Van Maintenance";
+    if (value.includes("office") || value.includes("admin"))
+      return "Office / Admin";
+    if (value.includes("advert")) return "Advertising";
+    if (value.includes("labour") || value.includes("labor")) return "Labour";
+    if (value.includes("waste")) return "Waste Removal";
+
+    return "";
   }
 
   function startEditingFile(file) {
@@ -152,14 +213,7 @@ function Files({ jobs = [], navigate, navData }) {
       purchaseDate: file.purchaseDate || "",
       links:
         Array.isArray(file.links) && file.links.length > 0
-          ? file.links.map((link) => ({
-              targetType: link.targetType || "business",
-              targetId: link.targetId || "general",
-              targetName: link.targetName || "",
-              category: link.category || "Other",
-              cost: link.cost ?? "",
-              note: link.note || "",
-            }))
+          ? file.links.map(normaliseOldLink)
           : [getDefaultLink()],
     });
   }
@@ -182,10 +236,20 @@ function Files({ jobs = [], navigate, navData }) {
         [field]: value,
       };
 
-      if (field === "targetType") {
-        updatedLinks[index].targetId = value === "business" ? "general" : "";
-        updatedLinks[index].targetName =
-          value === "business" ? "General Business Expense" : "";
+      if (field === "targetValue") {
+        const [targetType, targetId] = value.split(":");
+
+        if (targetType === "job") {
+          updatedLinks[index].targetType = "job";
+          updatedLinks[index].targetId = targetId;
+          updatedLinks[index].targetName = getJobName(targetId);
+        }
+
+        if (targetType === "general") {
+          updatedLinks[index].targetType = "general";
+          updatedLinks[index].targetId = "no-job";
+          updatedLinks[index].targetName = "No Job Link";
+        }
       }
 
       return {
@@ -209,26 +273,32 @@ function Files({ jobs = [], navigate, navData }) {
     }));
   }
 
+  function getTargetValue(link) {
+    if (link.targetType === "job") return `job:${link.targetId}`;
+    return "general:no-job";
+  }
+
   async function saveFileEdit(file) {
     try {
       const cleanedLinks = editForm.links
-        .filter((link) => link.targetType && link.targetId)
+        .filter(
+          (link) =>
+            link.targetType && link.targetId && link.category && link.tag,
+        )
         .map((link) => {
-          let targetName = link.targetName || "";
+          let targetName = "No Job Link";
 
           if (link.targetType === "job") {
             targetName = getJobName(link.targetId);
           }
 
-          if (link.targetType === "business") {
-            targetName = getBusinessName(link.targetId);
-          }
-
           return {
-            targetType: link.targetType,
-            targetId: String(link.targetId),
+            targetType: link.targetType === "job" ? "job" : "general",
+            targetId:
+              link.targetType === "job" ? String(link.targetId) : "no-job",
             targetName,
-            category: link.category || "Other",
+            category: link.category || "other",
+            tag: link.tag || "",
             cost: link.cost === "" ? null : Number(link.cost),
             note: link.note || "",
           };
@@ -294,7 +364,7 @@ function Files({ jobs = [], navigate, navData }) {
   }
 
   function clearFilters() {
-    setSelectedBusinessId("all");
+    setSelectedTag("all");
     setSelectedJobId("all");
     setSelectedCategory("all");
     setSelectedMonth("all");
@@ -304,7 +374,7 @@ function Files({ jobs = [], navigate, navData }) {
 
   function viewWarning(type) {
     setWarningView(type);
-    setSelectedBusinessId("all");
+    setSelectedTag("all");
     setSelectedJobId("all");
     setSelectedCategory("all");
     setSelectedMonth("all");
@@ -330,11 +400,17 @@ function Files({ jobs = [], navigate, navData }) {
     return !getFileDate(file);
   }
 
+  function fileHasMissingTag(file) {
+    const links = Array.isArray(file.links) ? file.links : [];
+    return links.length === 0 || links.some((link) => !link.tag);
+  }
+
   const warningCounts = useMemo(() => {
     return {
       missingCost: loggedFiles.filter(fileHasMissingCost).length,
       missingSupplier: loggedFiles.filter(fileHasMissingSupplier).length,
       missingDate: loggedFiles.filter(fileHasMissingDate).length,
+      missingTag: loggedFiles.filter(fileHasMissingTag).length,
     };
   }, [loggedFiles]);
 
@@ -393,22 +469,22 @@ function Files({ jobs = [], navigate, navData }) {
       }));
   }, [loggedFiles]);
 
-  function fileMatchesBusiness(file) {
-    if (selectedBusinessId === "all") return true;
+  function fileMatchesTag(file) {
+    if (selectedTag === "all") return true;
 
     const links = Array.isArray(file.links) ? file.links : [];
 
-    return links.some(
-      (link) =>
-        link.targetType === "business" &&
-        String(link.targetId) === String(selectedBusinessId),
-    );
+    return links.some((link) => link.tag === selectedTag);
   }
 
   function fileMatchesJob(file) {
     if (selectedJobId === "all") return true;
 
     const links = Array.isArray(file.links) ? file.links : [];
+
+    if (selectedJobId === "no-job") {
+      return links.some((link) => link.targetType !== "job");
+    }
 
     return links.some(
       (link) =>
@@ -444,6 +520,7 @@ function Files({ jobs = [], navigate, navData }) {
         link.targetName,
         link.targetId,
         link.category,
+        link.tag,
         link.note,
       ]),
     ]
@@ -459,13 +536,14 @@ function Files({ jobs = [], navigate, navData }) {
     if (warningView === "missing-cost") return fileHasMissingCost(file);
     if (warningView === "missing-supplier") return fileHasMissingSupplier(file);
     if (warningView === "missing-date") return fileHasMissingDate(file);
+    if (warningView === "missing-tag") return fileHasMissingTag(file);
     return true;
   }
 
   const filteredFiles = loggedFiles.filter((file) => {
     return (
       fileMatchesWarning(file) &&
-      fileMatchesBusiness(file) &&
+      fileMatchesTag(file) &&
       fileMatchesJob(file) &&
       fileMatchesCategory(file) &&
       fileMatchesMonth(file) &&
@@ -480,27 +558,24 @@ function Files({ jobs = [], navigate, navData }) {
   const filteredVat = getVatFromGross(filteredTotal);
   const filteredNet = getNetFromGross(filteredTotal);
 
-  const businessBreakdown = businessTargets
-    .map((target) => {
+  const tagBreakdown = tagOptions
+    .map((tag) => {
       const total = filteredFiles.reduce((sum, file) => {
         const links = Array.isArray(file.links) ? file.links : [];
 
-        const targetTotal = links
-          .filter(
-            (link) =>
-              link.targetType === "business" && link.targetId === target.id,
-          )
+        const tagTotal = links
+          .filter((link) => link.tag === tag)
           .reduce((linkSum, link) => linkSum + Number(link.cost || 0), 0);
 
-        return sum + targetTotal;
+        return sum + tagTotal;
       }, 0);
 
       return {
-        ...target,
+        tag,
         total,
       };
     })
-    .filter((target) => target.total > 0)
+    .filter((item) => item.total > 0)
     .sort((a, b) => b.total - a.total);
 
   const monthlySpend = useMemo(() => {
@@ -533,16 +608,16 @@ function Files({ jobs = [], navigate, navData }) {
     const jobLinks = links.filter((link) => link.targetType === "job");
 
     if (jobLinks.length === 0) {
-      if (!acc.business) {
-        acc.business = {
-          title: "Business / General",
+      if (!acc["no-job"]) {
+        acc["no-job"] = {
+          title: "No Job Link",
           files: [],
           total: 0,
         };
       }
 
-      acc.business.files.push(file);
-      acc.business.total += getFileTotal(file);
+      acc["no-job"].files.push(file);
+      acc["no-job"].total += getFileTotal(file);
       return acc;
     }
 
@@ -571,9 +646,10 @@ function Files({ jobs = [], navigate, navData }) {
         "File",
         "Supplier",
         "Date",
-        "Assigned Type",
-        "Assigned To",
+        "Link Type",
+        "Linked To",
         "File Type",
+        "Tag",
         "Gross",
         "VAT",
         "Net",
@@ -593,11 +669,10 @@ function Files({ jobs = [], navigate, navData }) {
           getFileName(file),
           file.supplier || "",
           getFileDate(file) || "",
-          link.targetType === "job" ? "Job" : "Business",
-          link.targetType === "job"
-            ? link.targetName || getJobName(link.targetId)
-            : getBusinessName(link.targetId),
+          link.targetType === "job" ? "Job" : "No Job Link",
+          getTargetName(link),
           link.category || "",
+          link.tag || "",
           gross.toFixed(2),
           vat.toFixed(2),
           net.toFixed(2),
@@ -630,6 +705,7 @@ function Files({ jobs = [], navigate, navData }) {
       return "Showing files with missing supplier";
     if (warningView === "missing-date")
       return "Showing files with missing date";
+    if (warningView === "missing-tag") return "Showing files with missing tag";
     return "";
   }
 
@@ -741,53 +817,26 @@ function Files({ jobs = [], navigate, navData }) {
 
           {editForm.links.map((link, index) => (
             <div className="file-edit-link-row" key={index}>
-              <div className="file-edit-field">
-                <label>Assign Type</label>
+              <div className="file-edit-field wide">
+                <label>Link To</label>
+
                 <select
-                  value={link.targetType}
+                  value={getTargetValue(link)}
                   onChange={(e) =>
-                    updateEditLink(index, "targetType", e.target.value)
+                    updateEditLink(index, "targetValue", e.target.value)
                   }
                 >
-                  <option value="business">Business</option>
-                  <option value="job">Job</option>
-                </select>
-              </div>
+                  <option value="">Select job link</option>
+                  <option value="general:no-job">No Job Link</option>
 
-              <div className="file-edit-field wide">
-                <label>Assign To</label>
-
-                {link.targetType === "job" ? (
-                  <select
-                    value={link.targetId}
-                    onChange={(e) =>
-                      updateEditLink(index, "targetId", e.target.value)
-                    }
-                  >
-                    <option value="">Select job</option>
-
+                  <optgroup label="Jobs">
                     {jobs.map((job) => (
-                      <option key={job.id} value={job.id}>
+                      <option key={job.id} value={`job:${job.id}`}>
                         {job.name || job.address || `Job ${job.id}`}
                       </option>
                     ))}
-                  </select>
-                ) : (
-                  <select
-                    value={link.targetId}
-                    onChange={(e) =>
-                      updateEditLink(index, "targetId", e.target.value)
-                    }
-                  >
-                    <option value="">Select business category</option>
-
-                    {businessTargets.map((target) => (
-                      <option key={target.id} value={target.id}>
-                        {target.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
+                  </optgroup>
+                </select>
               </div>
 
               <div className="file-edit-field">
@@ -803,6 +852,22 @@ function Files({ jobs = [], navigate, navData }) {
                   {fileCategories.map((category) => (
                     <option key={category} value={category}>
                       {category}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="file-edit-field">
+                <label>Tag</label>
+                <select
+                  value={link.tag}
+                  onChange={(e) => updateEditLink(index, "tag", e.target.value)}
+                >
+                  <option value="">Select tag</option>
+
+                  {tagOptions.map((tag) => (
+                    <option key={tag} value={tag}>
+                      {tag}
                     </option>
                   ))}
                 </select>
@@ -874,11 +939,11 @@ function Files({ jobs = [], navigate, navData }) {
 
         {links.map((link, index) => (
           <div key={index} className="soft-text">
-            {link.targetType === "job"
-              ? link.targetName || getJobName(link.targetId)
-              : getBusinessName(link.targetId)}
+            {getTargetName(link)}
             {" — "}
-            {link.category || "uncategorised"}
+            {link.category || "no file type"}
+            {" — "}
+            {link.tag || "no tag"}
             {link.cost ? ` — £${Number(link.cost).toFixed(2)}` : " — no cost"}
             {link.note ? ` — ${link.note}` : ""}
           </div>
@@ -1001,6 +1066,11 @@ function Files({ jobs = [], navigate, navData }) {
           warningCounts.missingDate,
           "with missing date",
         )}
+        {renderWarningCard(
+          "missing-tag",
+          warningCounts.missingTag,
+          "with missing tag",
+        )}
       </div>
 
       {warningView !== "all" && (
@@ -1019,7 +1089,7 @@ function Files({ jobs = [], navigate, navData }) {
           <input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search supplier, file name, note, job..."
+            placeholder="Search supplier, file name, note, job, tag..."
           />
         </div>
 
@@ -1040,28 +1110,29 @@ function Files({ jobs = [], navigate, navData }) {
         </div>
 
         <div className="invoiceFilterGroup">
-          <label>Business Category</label>
+          <label>Tag</label>
           <select
-            value={selectedBusinessId}
-            onChange={(e) => setSelectedBusinessId(e.target.value)}
+            value={selectedTag}
+            onChange={(e) => setSelectedTag(e.target.value)}
           >
-            <option value="all">All business categories</option>
+            <option value="all">All tags</option>
 
-            {businessTargets.map((target) => (
-              <option key={target.id} value={target.id}>
-                {target.name}
+            {tagOptions.map((tag) => (
+              <option key={tag} value={tag}>
+                {tag}
               </option>
             ))}
           </select>
         </div>
 
         <div className="invoiceFilterGroup">
-          <label>Job</label>
+          <label>Job Link</label>
           <select
             value={selectedJobId}
             onChange={(e) => setSelectedJobId(e.target.value)}
           >
-            <option value="all">All jobs</option>
+            <option value="all">All job links</option>
+            <option value="no-job">No Job Link</option>
 
             {jobOptions.map((job) => (
               <option key={job.value} value={job.value}>
@@ -1099,15 +1170,15 @@ function Files({ jobs = [], navigate, navData }) {
       {renderSpendGraph()}
 
       <div className="files-breakdown-panel">
-        <h3>Spend Breakdown</h3>
+        <h3>Tag Breakdown</h3>
 
-        {businessBreakdown.length === 0 ? (
-          <p className="soft-text">No business category spend in this view.</p>
+        {tagBreakdown.length === 0 ? (
+          <p className="soft-text">No tagged spend in this view.</p>
         ) : (
           <div className="files-breakdown-grid">
-            {businessBreakdown.map((item) => (
-              <div className="files-breakdown-card" key={item.id}>
-                <span>{item.name}</span>
+            {tagBreakdown.map((item) => (
+              <div className="files-breakdown-card" key={item.tag}>
+                <span>{item.tag}</span>
                 <strong>£{item.total.toFixed(2)}</strong>
               </div>
             ))}

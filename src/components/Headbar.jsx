@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
+import BusinessFacts from "./BusinessFacts";
 
 const navItems = [
   { label: "Home", component: "WelcomeScreen" },
   { label: "Jobs", component: "JobStatusOverview" },
+  { label: "Spend Timeline", component: "SpendCalendar" },
+  { label: "Journeys", component: "JobHeatMap" },
   { label: "Create Job", component: "CreateJob" },
   { label: "Archived", component: "ArchivedJobs" },
   { label: "Files", component: "Files" },
+  { label: "Business Facts", component: "BusinessFacts" },
+  { label: "Forecast Page", component: "ForecastPage" },
 ];
 
 function Headbar({ navigate, activeComponent }) {

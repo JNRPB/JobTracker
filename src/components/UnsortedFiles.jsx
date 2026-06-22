@@ -2,17 +2,16 @@ import { useState, useEffect } from "react";
 
 const API_BASE = "http://192.168.0.22:3001";
 
-const businessTargets = [
-  { id: "ppe", name: "PPE / Workwear" },
-  { id: "fuel", name: "Fuel" },
-  { id: "tools", name: "Tools" },
-  { id: "van", name: "Van / Repairs" },
-  { id: "stock", name: "Stock / Materials Held" },
-  { id: "office", name: "Office / Admin" },
-  { id: "insurance", name: "Insurance" },
-  { id: "accounting", name: "Accounting" },
-  { id: "certificates-licences", name: "Certificates & Licences" },
-  { id: "general", name: "General Business Expense" },
+const tagOptions = [
+  "Fuel",
+  "PPE / Workwear",
+  "Waste Removal",
+  "Tools",
+  "Office / Admin",
+  "Advertising",
+  "Van Maintenance",
+  "Labour",
+  "Materials",
 ];
 
 const linkCategories = [
@@ -104,27 +103,6 @@ function UnsortedFiles({
     return Number(a || 0).toFixed(2) === Number(b || 0).toFixed(2);
   }
 
-  function findPossibleDuplicate(preparedLinks) {
-    const newTotal = getLinkTotal(preparedLinks);
-    const newDate = purchaseDate || null;
-    const newSupplier = supplier.trim().toLowerCase();
-
-    if (!newDate || !newTotal) return null;
-
-    return allLoggedFiles.find((file) => {
-      const existingTotal = getLinkTotal(file.links);
-      const existingDate = file.purchaseDate || null;
-      const existingSupplier = (file.supplier || "").trim().toLowerCase();
-
-      const sameDate = existingDate === newDate;
-      const sameAmount = moneyMatches(existingTotal, newTotal);
-      const sameSupplier =
-        newSupplier && existingSupplier && existingSupplier === newSupplier;
-
-      return sameDate && sameAmount && (sameSupplier || !newSupplier);
-    });
-  }
-
   function fileAlreadyExists(fileName) {
     const lowerName = fileName.toLowerCase();
 
@@ -153,10 +131,31 @@ function UnsortedFiles({
     );
 
     if (ignoredMatch) {
-      return "Previously reviewed/deleted — will be skipped";
+      return "Previously deleted/blacklisted — will be skipped";
     }
 
     return "Already uploaded — will be skipped";
+  }
+
+  function findPossibleDuplicate(preparedLinks) {
+    const newTotal = getLinkTotal(preparedLinks);
+    const newDate = purchaseDate || null;
+    const newSupplier = supplier.trim().toLowerCase();
+
+    if (!newDate || !newTotal) return null;
+
+    return allLoggedFiles.find((file) => {
+      const existingTotal = getLinkTotal(file.links);
+      const existingDate = file.purchaseDate || null;
+      const existingSupplier = (file.supplier || "").trim().toLowerCase();
+
+      const sameDate = existingDate === newDate;
+      const sameAmount = moneyMatches(existingTotal, newTotal);
+      const sameSupplier =
+        newSupplier && existingSupplier && existingSupplier === newSupplier;
+
+      return sameDate && sameAmount && (sameSupplier || !newSupplier);
+    });
   }
 
   function resetReviewState() {
@@ -185,13 +184,13 @@ function UnsortedFiles({
 
   async function uploadFiles() {
     const filesToUpload = selectedFiles.filter((item) => !item.alreadyExists);
+    const skippedFiles = selectedFiles.filter((item) => item.alreadyExists);
 
     if (filesToUpload.length === 0) {
-      alert("All selected files are already uploaded or previously reviewed.");
+      alert("All selected files are already uploaded or blacklisted.");
       return;
     }
 
-    const skippedFiles = selectedFiles.filter((item) => item.alreadyExists);
     const formData = new FormData();
 
     filesToUpload.forEach((item) => {
@@ -204,9 +203,7 @@ function UnsortedFiles({
         body: formData,
       });
 
-      if (!res.ok) {
-        throw new Error("Upload failed");
-      }
+      if (!res.ok) throw new Error("Upload failed");
 
       await refreshUnsortedFiles();
       await refreshAllFileData();
@@ -215,7 +212,7 @@ function UnsortedFiles({
 
       if (skippedFiles.length > 0) {
         alert(
-          `${filesToUpload.length} file(s) uploaded. ${skippedFiles.length} file(s) skipped because they were already uploaded or previously reviewed.`,
+          `${filesToUpload.length} file(s) uploaded. ${skippedFiles.length} file(s) skipped because they were already uploaded or blacklisted.`,
         );
       }
     } catch (err) {
@@ -226,7 +223,7 @@ function UnsortedFiles({
 
   async function deleteUnsortedFile(file) {
     const confirmed = window.confirm(
-      `Delete "${file.name}"?\n\nThis will permanently remove it from unsorted files, but it will NOT be remembered as reviewed.`,
+      `Delete "${file.name}"?\n\nThis removes it from unsorted files only. It can still be uploaded again later.`,
     );
 
     if (!confirmed) return;
@@ -243,9 +240,7 @@ function UnsortedFiles({
         },
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to delete unsorted file");
-      }
+      if (!res.ok) throw new Error("Failed to delete unsorted file");
 
       await refreshUnsortedFiles();
       await refreshAllFileData();
@@ -256,6 +251,45 @@ function UnsortedFiles({
     } catch (err) {
       console.error("Failed to delete unsorted file:", err);
       alert("Could not delete this file.");
+    }
+  }
+
+  async function deleteAndBlacklistUnsortedFile(file) {
+    const confirmed = window.confirm(
+      `Delete and blacklist "${file.name}"?\n\nThis deletes it and remembers it, so it will be skipped if uploaded again.`,
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/files/ignore-and-delete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileName: file.name,
+          reason: "manually-blacklisted",
+          duplicateOfFileId: null,
+          duplicateOfFileName: "",
+          supplier: "",
+          purchaseDate: null,
+          total: null,
+          ignoredAt: new Date().toISOString(),
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to delete and blacklist file");
+
+      await refreshUnsortedFiles();
+      await refreshAllFileData();
+
+      if (reviewFile?.name === file.name) {
+        resetReviewState();
+      }
+    } catch (err) {
+      console.error("Failed to delete and blacklist file:", err);
+      alert("Could not delete and blacklist this file.");
     }
   }
 
@@ -270,6 +304,7 @@ function UnsortedFiles({
       {
         targetValue: "",
         category: "",
+        tag: "",
         cost: "",
         note: "",
       },
@@ -299,15 +334,11 @@ function UnsortedFiles({
       };
     }
 
-    if (targetType === "business") {
-      const foundTarget = businessTargets.find(
-        (target) => target.id === targetId,
-      );
-
+    if (targetType === "general") {
       return {
-        targetType: "business",
-        targetId,
-        targetName: foundTarget?.name || targetId,
+        targetType: "general",
+        targetId: "no-job",
+        targetName: "No Job Link",
       };
     }
 
@@ -316,7 +347,7 @@ function UnsortedFiles({
 
   function buildSortedPayload() {
     const preparedLinks = links
-      .filter((link) => link.targetValue && link.category)
+      .filter((link) => link.targetValue && link.category && link.tag)
       .map((link) => {
         const target = parseTarget(link.targetValue);
 
@@ -328,6 +359,7 @@ function UnsortedFiles({
         return {
           ...target,
           category: link.category,
+          tag: link.tag,
           cost: parsedCost,
           note: link.note || "",
         };
@@ -352,9 +384,7 @@ function UnsortedFiles({
       body: JSON.stringify(payload),
     });
 
-    if (!res.ok) {
-      throw new Error("Failed to save sorted file");
-    }
+    if (!res.ok) throw new Error("Failed to save sorted file");
 
     await refreshUnsortedFiles();
     await refreshAllFileData();
@@ -367,7 +397,7 @@ function UnsortedFiles({
     const payload = buildSortedPayload();
 
     if (payload.links.length === 0) {
-      alert("Please add at least one link.");
+      alert("Please add at least one complete link, file type and tag.");
       return;
     }
 
@@ -414,9 +444,7 @@ function UnsortedFiles({
         },
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to attach file");
-      }
+      if (!res.ok) throw new Error("Failed to attach file");
 
       await refreshUnsortedFiles();
       await refreshAllFileData();
@@ -467,9 +495,7 @@ function UnsortedFiles({
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to ignore and delete file");
-      }
+      if (!res.ok) throw new Error("Failed to ignore and delete file");
 
       await refreshUnsortedFiles();
       await refreshAllFileData();
@@ -603,7 +629,7 @@ function UnsortedFiles({
               className="sleekButton dangerButton"
               onClick={cancelAndDeleteDuplicate}
             >
-              Cancel and delete
+              Cancel and blacklist
             </button>
           </div>
         </div>
@@ -624,12 +650,21 @@ function UnsortedFiles({
             ← Back to unsorted
           </button>
 
-          <button
-            className="sleekButton dangerButton"
-            onClick={() => deleteUnsortedFile(reviewFile)}
-          >
-            Delete File
-          </button>
+          <div className="unsorted-file-actions">
+            <button
+              className="sleekButton dangerButton"
+              onClick={() => deleteUnsortedFile(reviewFile)}
+            >
+              Delete File
+            </button>
+
+            <button
+              className="sleekButton dangerButton"
+              onClick={() => deleteAndBlacklistUnsortedFile(reviewFile)}
+            >
+              Delete & Blacklist
+            </button>
+          </div>
         </div>
 
         <h2>Review & Sort</h2>
@@ -672,8 +707,8 @@ function UnsortedFiles({
               <div>
                 <h3>Links</h3>
                 <p className="soft-text">
-                  Link this file to a job, fuel, tools, PPE, certificates,
-                  licences, or another business category.
+                  Link this file to a job or mark it as having no job link. Then
+                  choose the file type and tag.
                 </p>
               </div>
 
@@ -701,23 +736,13 @@ function UnsortedFiles({
                         updateLink(index, "targetValue", e.target.value)
                       }
                     >
-                      <option value="">Select job or business category</option>
+                      <option value="">Select job link</option>
+                      <option value="general:no-job">No Job Link</option>
 
                       <optgroup label="Jobs">
                         {jobs.map((job) => (
                           <option key={job.id} value={`job:${job.id}`}>
                             {job.name || job.address || `Job ${job.id}`}
-                          </option>
-                        ))}
-                      </optgroup>
-
-                      <optgroup label="Business">
-                        {businessTargets.map((target) => (
-                          <option
-                            key={target.id}
-                            value={`business:${target.id}`}
-                          >
-                            {target.name}
                           </option>
                         ))}
                       </optgroup>
@@ -737,6 +762,22 @@ function UnsortedFiles({
                       {linkCategories.map((category) => (
                         <option key={category} value={category}>
                           {category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="sort-field">
+                    <label>Tag</label>
+                    <select
+                      value={link.tag}
+                      onChange={(e) => updateLink(index, "tag", e.target.value)}
+                    >
+                      <option value="">Select tag</option>
+
+                      {tagOptions.map((tag) => (
+                        <option key={tag} value={tag}>
+                          {tag}
                         </option>
                       ))}
                     </select>
@@ -860,6 +901,13 @@ function UnsortedFiles({
                       onClick={() => deleteUnsortedFile(file)}
                     >
                       Delete
+                    </button>
+
+                    <button
+                      className="sleekButton dangerButton"
+                      onClick={() => deleteAndBlacklistUnsortedFile(file)}
+                    >
+                      Delete & Blacklist
                     </button>
                   </div>
                 </div>

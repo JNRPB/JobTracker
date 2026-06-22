@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import JobOverview from "./JobCardTabs/JobOverview";
+import JobVisitReview from "./JobCardTabs/JobVisitReview";
 
 const API_BASE = "http://192.168.0.22:3001";
 
@@ -33,6 +34,7 @@ function JobCard({
 
   useEffect(() => {
     fetchJobFiles();
+    setActiveTab("overview");
   }, [job?.id]);
 
   function getLinksForThisJob(file) {
@@ -53,7 +55,7 @@ function JobCard({
     if (!dateString) return "no-date";
 
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "no-date";
+    if (Number.isNaN(date.getTime())) return "no-date";
 
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -210,6 +212,7 @@ function JobCard({
     <>
       <div className="job-tab-shell">
         {renderTabButton("overview", "Overview")}
+        {renderTabButton("review", "Visit Review")}
         {renderTabButton("files", "Files", fileCount)}
       </div>
 
@@ -221,9 +224,18 @@ function JobCard({
           onArchive={onArchive}
           onUnarchive={onUnarchive}
           navigate={navigate}
+          openVisitReview={() => setActiveTab("review")}
           jobFiles={jobFiles}
           fileCount={fileCount}
           fileLinkedCost={fileLinkedCost}
+        />
+      )}
+
+      {activeTab === "review" && (
+        <JobVisitReview
+          jobId={job.id}
+          navigate={navigate}
+          backToOverview={() => setActiveTab("overview")}
         />
       )}
 

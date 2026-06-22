@@ -7,6 +7,10 @@ import ArchivedJobs from "./JobCardTabs/ArchivedJobs";
 import Transactions from "./Transactions";
 import Files from "./Files";
 import UnsortedFiles from "./UnsortedFiles";
+import SpendCalendar from "./SpendCalendar";
+import JobHeatMap from "./JobHeatMap";
+import BusinessFacts from "./BusinessFacts";
+import ForecastPage from "./ForecastPage";
 
 const API_BASE = "http://100.68.229.104:3001";
 
@@ -130,6 +134,9 @@ function Main({
           <JobStatusOverview jobs={jobs} navigate={navigate} files={files} />
         );
 
+      case "BusinessFacts":
+        return <BusinessFacts />;
+
       case "QuoteBuilder":
         return (
           <QuoteBuilder
@@ -151,7 +158,10 @@ function Main({
 
       case "Transactions":
         return <Transactions jobs={jobs} navigate={navigate} files={files} />;
-
+      case "SpendCalendar":
+        return <SpendCalendar jobs={jobs} />;
+      case "JobHeatMap":
+        return <JobHeatMap jobs={jobs} navigate={navigate} />;
       case "Files":
         return (
           <Files
@@ -173,6 +183,9 @@ function Main({
             jobs={jobs}
           />
         );
+
+      case "ForecastPage":
+        return <ForecastPage jobs={jobs} />;
 
       case "WelcomeScreen":
       default:

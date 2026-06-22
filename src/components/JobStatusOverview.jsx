@@ -4,20 +4,27 @@ import JobBox from "./JobBox";
 function JobStatusOverview({ jobs = [], navigate }) {
   const [showBentonsJobs, setShowBentonsJobs] = useState(false);
   const [loggedFiles, setLoggedFiles] = useState([]);
+  const [tripLinks, setTripLinks] = useState([]);
 
   useEffect(() => {
-    async function fetchFiles() {
+    async function fetchData() {
       try {
-        const res = await fetch("http://192.168.0.22:3001/api/files");
-        const data = await res.json();
+        const [filesRes, tripLinksRes] = await Promise.all([
+          fetch("http://192.168.0.22:3001/api/files"),
+          fetch("http://192.168.0.22:3001/api/traccar/trip-links"),
+        ]);
 
-        setLoggedFiles(Array.isArray(data) ? data : []);
+        const filesData = await filesRes.json();
+        const tripLinksData = await tripLinksRes.json();
+
+        setLoggedFiles(Array.isArray(filesData) ? filesData : []);
+        setTripLinks(Array.isArray(tripLinksData) ? tripLinksData : []);
       } catch (err) {
-        console.error("Failed to fetch logged files:", err);
+        console.error("Failed to fetch overview data:", err);
       }
     }
 
-    fetchFiles();
+    fetchData();
   }, []);
 
   const statuses = [
@@ -53,6 +60,27 @@ function JobStatusOverview({ jobs = [], navigate }) {
 
       return sum + jobCost;
     }, 0);
+  }
+
+  function getJobTripStats(jobId) {
+    const jobLinks = tripLinks.filter(
+      (link) => String(link.jobId) === String(jobId),
+    );
+
+    const visitDays = new Set(
+      jobLinks
+        .filter((link) => link.type === "job_visit")
+        .map((link) => link.date),
+    );
+
+    const milesAllocated = jobLinks.reduce((sum, link) => {
+      return sum + Number(link.distanceMiles || 0);
+    }, 0);
+
+    return {
+      daysVisited: visitDays.size,
+      milesAllocated,
+    };
   }
 
   const jobsByStatus = {};
@@ -101,6 +129,7 @@ function JobStatusOverview({ jobs = [], navigate }) {
                   navigate={navigate}
                   margin={margin}
                   fileLinkedCost={fileLinkedCost}
+                  tripStats={getJobTripStats(job.id)}
                 />
               );
             })}

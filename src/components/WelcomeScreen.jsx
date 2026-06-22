@@ -33,7 +33,7 @@ const statuses = [
 
 function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
   const [loggedFiles, setLoggedFiles] = useState([]);
-  const [datePreset, setDatePreset] = useState("thisMonth");
+  const [datePreset, setDatePreset] = useState("all");
   const [vatExcludedSuppliers, setVatExcludedSuppliers] = useState(() => {
     const saved = localStorage.getItem("vatExcludedSuppliers");
     return saved ? JSON.parse(saved) : VAT_EXCLUDED_DEFAULTS;
@@ -171,6 +171,24 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
     return target?.name || id || "Business";
   }
 
+  function isWasteDisposal(file, link = {}) {
+    const searchableText = [
+      getFileName(file),
+      file.description,
+      file.notes,
+      file.supplier,
+      link.description,
+      link.notes,
+      link.category,
+      link.targetName,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return searchableText.includes("waste") || searchableText.includes("skip");
+  }
+
   function addExcludedSupplier() {
     const clean = newExcludedSupplier.trim();
     if (!clean) return;
@@ -241,6 +259,17 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
     );
   }, 0);
 
+  const wasteDisposalSpend = periodFiles.reduce((sum, file) => {
+    const links = Array.isArray(file.links) ? file.links : [];
+
+    return (
+      sum +
+      links
+        .filter((link) => isWasteDisposal(file, link))
+        .reduce((linkSum, link) => linkSum + Number(link.cost || 0), 0)
+    );
+  }, 0);
+
   const jobsByStatus = statuses.map((status) => ({
     status,
     count: activeJobs.filter((job) => job.status === status).length,
@@ -265,7 +294,9 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
           link.targetType === "job"
             ? link.targetName || `Job ${link.targetId}`
             : getBusinessName(link.targetId),
-        category: link.category || "uncategorised",
+        category: isWasteDisposal(file, link)
+          ? "Waste Disposal"
+          : link.category || "uncategorised",
       }));
   });
 
@@ -303,7 +334,7 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
     missingDateCount +
     jobsWithoutStartDate;
 
-  const spendBreakdown = businessTargets
+  const businessSpendBreakdown = businessTargets
     .map((target) => {
       const total = periodFiles.reduce((sum, file) => {
         const links = Array.isArray(file.links) ? file.links : [];
@@ -321,6 +352,16 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
 
       return { ...target, total };
     })
+    .filter((item) => item.total > 0);
+
+  const spendBreakdown = [
+    ...businessSpendBreakdown,
+    {
+      id: "waste-disposal",
+      name: "Waste Disposal",
+      total: wasteDisposalSpend,
+    },
+  ]
     .filter((item) => item.total > 0)
     .sort((a, b) => b.total - a.total);
 
@@ -344,10 +385,10 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
             value={datePreset}
             onChange={(e) => setDatePreset(e.target.value)}
           >
+            <option value="all">All time</option>
             <option value="thisMonth">This month</option>
             <option value="lastMonth">Last month</option>
             <option value="thisYear">This year</option>
-            <option value="all">All time</option>
           </select>
 
           <SideBarButton
@@ -362,6 +403,7 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
           />
         </div>
       </div>
+
       <div className="dashboard-shortcut-row">
         <button
           className="sleekButton primaryButton"
@@ -374,6 +416,7 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
           Certificates & Licences
         </button>
       </div>
+
       <div className="files-stat-grid">
         <div className="file-stat-card">
           <h3>Active Jobs</h3>
@@ -391,11 +434,6 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
         </div>
 
         <div className="file-stat-card">
-          <h3>Needs Attention</h3>
-          <p>{needsAttention}</p>
-        </div>
-
-        <div className="file-stat-card">
           <h3>Period Spend</h3>
           <p>£{periodSpend.toFixed(2)}</p>
         </div>
@@ -408,6 +446,11 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
         <div className="file-stat-card">
           <h3>Fuel Spend</h3>
           <p>£{fuelSpend.toFixed(2)}</p>
+        </div>
+
+        <div className="file-stat-card">
+          <h3>Waste Disposal</h3>
+          <p>£{wasteDisposalSpend.toFixed(2)}</p>
         </div>
 
         <div className="file-stat-card">

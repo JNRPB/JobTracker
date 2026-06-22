@@ -1,9 +1,20 @@
-function JobBox({ job, navigate, invoices, margin }) {
+function JobBox({
+  job,
+  navigate,
+  invoices,
+  margin,
+  fileLinkedCost,
+  tripStats,
+}) {
   function goToJob() {
     navigate("JobCard", { jobId: job.id });
   }
 
   const hasQuote = Number(job.quoteTotal || 0) > 0;
+  const hasTracking =
+    tripStats &&
+    (Number(tripStats.daysVisited || 0) > 0 ||
+      Number(tripStats.milesAllocated || 0) > 0);
 
   return (
     <div className="transactionBox jobBox" onClick={goToJob}>
@@ -14,6 +25,25 @@ function JobBox({ job, navigate, invoices, margin }) {
       <div className="transactionMiddle">
         <p className="transactionName">{job.name}</p>
         <p className="transactionJob">{job.address || "No address"}</p>
+
+        <div className="jobMiniStats">
+          {hasTracking ? (
+            <>
+              <span>{Number(tripStats.daysVisited || 0)} day(s)</span>
+              <span>{Number(tripStats.milesAllocated || 0).toFixed(1)} mi</span>
+
+              {tripStats.lastVisitDate && (
+                <span>Last: {tripStats.lastVisitDate}</span>
+              )}
+            </>
+          ) : (
+            <span>No visits logged</span>
+          )}
+
+          {fileLinkedCost > 0 && (
+            <span>Costs: £{Number(fileLinkedCost || 0).toFixed(0)}</span>
+          )}
+        </div>
       </div>
 
       <div className="transactionRight jobBoxRight">
