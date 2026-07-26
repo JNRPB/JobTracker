@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+﻿import { createContext, useContext } from "react";
 
 const Context = createContext(null);
 
@@ -17,3 +17,4 @@ export const useMainProvider = () => {
   }
   return context;
 };
+

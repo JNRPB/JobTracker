@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import logo from "../../assets/logo.png";
 import {
   MapContainer,
@@ -11,7 +11,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-const API_BASE = "http://192.168.0.22:3001";
+const API_BASE = "";
 const DEFAULT_CENTER = [52.7689, -0.9007];
 const TRAVEL_COST_PER_MILE = 0.45;
 
@@ -99,7 +99,6 @@ function JobOverview({
   onArchive,
   onUnarchive,
   navigate,
-  openVisitReview,
   fileCount = 0,
   fileLinkedCost = 0,
 }) {
@@ -358,14 +357,8 @@ function JobOverview({
     }
   }
 
-  function goToQuoteBuilder() {
-    if (!hasCustomerDetails(localJob.customerDetails)) {
-      setCustomerMessage("Save customer details before creating a quote.");
-      setEditingCustomer(true);
-      return;
-    }
-
-    navigate("QuoteBuilder", { jobId: localJob.id });
+  function goToDocuments() {
+    navigate("JobDocuments", { jobId: localJob.id });
   }
 
   function printOverview() {
@@ -422,8 +415,6 @@ function JobOverview({
       : DEFAULT_CENTER;
 
   const hasStarted = visitDays > 0 || localJob.status === "In Progress";
-  const quote = localJob.quote;
-  const customerSaved = hasCustomerDetails(localJob.customerDetails);
 
   return (
     <div className="jobOverviewPage" ref={printRef}>
@@ -445,10 +436,9 @@ function JobOverview({
 
               <button
                 className="sleekButton primaryButton"
-                onClick={openVisitReview}
-                disabled={!hasStarted}
+                onClick={goToDocuments}
               >
-                Review Visits
+                Documents
               </button>
 
               <button
@@ -585,23 +575,51 @@ function JobOverview({
       </section>
 
       <section className="overviewMetricGrid">
-        <Metric title="Quote Total" value={money(quoteTotal)} />
-        <Metric title="Total Costs" value={money(costTotal)} />
-        <Metric
-          title="Travel Cost"
-          value={money(travelCost)}
-          sub="45p / mile"
+        <DashboardCard
+          title="Documents"
+          value={`${(localJob.quotes || []).length} Quotes`}
+          sub={`${(localJob.invoices || []).length} Invoices`}
+          onClick={goToDocuments}
         />
-        <Metric
-          title="Gross Margin"
-          value={money(margin)}
-          sub={`${marginPercent.toFixed(1)}%`}
-          good={margin >= 0}
+
+        <DashboardCard
+          title="Files"
+          value={`${fileCount} Files`}
+          sub={money(fileLinkedCost)}
+          onClick={() => navigate("Files", { jobId: localJob.id })}
         />
-        <Metric
-          title="Profit After Travel"
+        <DashboardCard
+          title="Photos"
+          value={`${immichPhotos.length}`}
+          sub="Linked Images"
+          onClick={() => {
+            const photosSection = document.querySelector(".overviewPhotoGrid");
+            photosSection?.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }}
+        />
+
+        <DashboardCard
+          title="Trips"
+          value={`${visitDays} Visits`}
+          sub={`${totalMiles.toFixed(1)} miles`}
+          onClick={() => navigate("JobHeatMap", { jobId: localJob.id })}
+        />
+
+        <DashboardCard
+          title="Financial"
           value={money(profitAfterTravel)}
-          good={profitAfterTravel >= 0}
+          sub="Profit After Travel"
+          onClick={() => {
+            const financialSection =
+              document.querySelector(".overviewSideStack");
+            financialSection?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }}
         />
       </section>
 
@@ -609,19 +627,26 @@ function JobOverview({
         <section className="job-standard-card profileHeroCard customerDetailsCard">
           <div className="profileHeroHeader">
             <div>
-              <h2>Customer Details</h2>
-              <p className="soft-text">
-                Saved once, then reused for quotes and invoices.
-              </p>
+              <h2>Customer</h2>
+              <p className="soft-text">Contact information for this job.</p>
             </div>
 
             {!editingCustomer && (
-              <button
-                className="sleekButton ghostButton"
-                onClick={() => setEditingCustomer(true)}
-              >
-                Edit Customer
-              </button>
+              <div className="buttonRow">
+                <button
+                  className="sleekButton ghostButton"
+                  onClick={() => setEditingCustomer(true)}
+                >
+                  Edit
+                </button>
+
+                <button
+                  className="sleekButton primaryButton"
+                  onClick={goToDocuments}
+                >
+                  Documents
+                </button>
+              </div>
             )}
           </div>
 
@@ -727,65 +752,77 @@ function JobOverview({
             </div>
           )}
         </section>
-
         <section className="job-standard-card quoteLaunchCard">
           <div className="profileHeroHeader">
             <div>
-              <h2>Quote Details</h2>
+              <h2>Documents</h2>
               <p className="soft-text">
-                Built to feel like Invoice Simple, but tied directly to this
-                job.
+                Quotes, invoices, payments and future paperwork for this job.
               </p>
             </div>
           </div>
 
-          {quote ? (
-            <div className="quoteSummaryPanel">
-              <div className="quoteSummaryTop">
-                <span>{quote.quoteNumber || "Draft Quote"}</span>
-                <strong>{money(quote.total)}</strong>
-              </div>
+          <div className="quoteSummaryPanel">
+            <SideRow label="Quotes" value={(localJob.quotes || []).length} />
+            <SideRow
+              label="Invoices"
+              value={(localJob.invoices || []).length}
+            />
+            <SideRow
+              label="Payments"
+              value={(localJob.payments || []).length}
+            />
 
-              <SideRow label="Status" value={quote.status || "Draft"} />
-              <SideRow
-                label="Customer"
-                value={localJob.customerDetails?.name || "—"}
-              />
+            <hr className="jobCardDivider" />
 
-              <button
-                className="sleekButton primaryButton"
-                onClick={goToQuoteBuilder}
+            <SideRow
+              label="Job Portal"
+              value={localJob.portal?.enabled ? "Active" : "Not Created"}
+            />
+
+            {localJob.portal?.enabled ? (
+              <a
+                href={`/job-tracker/portal/${localJob.portal.token}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sleekButton successButton"
+                style={{
+                  textDecoration: "none",
+                  textAlign: "center",
+                  display: "block",
+                }}
               >
-                Open Quote Builder
-              </button>
-            </div>
-          ) : (
-            <div className="quoteEmptyState">
-              <div className="quoteMockCard">
-                <div>
-                  <span>QUOTE</span>
-                  <strong>
-                    {localJob.customerDetails?.name || "Customer"}
-                  </strong>
-                </div>
-                <p>Line items • VAT • totals • notes • signature-ready PDF</p>
-              </div>
-
+                Open Client Portal ↗
+              </a>
+            ) : (
               <button
-                className="sleekButton primaryButton"
-                disabled={!customerSaved}
-                onClick={goToQuoteBuilder}
-              >
-                Create Quote
-              </button>
+                className="sleekButton ghostButton"
+                onClick={async () => {
+                  const updatedJob = {
+                    ...localJob,
+                    portal: {
+                      enabled: true,
+                      token: crypto.randomUUID(),
+                      activity: [],
+                    },
+                  };
 
-              {!customerSaved && (
-                <p className="soft-text">
-                  Save customer details before building the quote.
-                </p>
-              )}
-            </div>
-          )}
+                  await onUpdate(updatedJob);
+
+                  setLocalJob(updatedJob);
+                }}
+              >
+                Generate Portal
+              </button>
+            )}
+
+            <button
+              className="sleekButton primaryButton"
+              onClick={goToDocuments}
+            >
+              Open Documents
+            </button>
+          </div>
         </section>
       </section>
 
@@ -1001,20 +1038,6 @@ function JobOverview({
   );
 }
 
-function Metric({ title, value, sub, good }) {
-  return (
-    <div className="overviewMetric job-standard-card">
-      <span>{title}</span>
-      <strong
-        className={good === true ? "goodText" : good === false ? "badText" : ""}
-      >
-        {value}
-      </strong>
-      {sub && <small>{sub}</small>}
-    </div>
-  );
-}
-
 function SideRow({ label, value }) {
   return (
     <div className="overviewSideRow">
@@ -1033,4 +1056,25 @@ function InfoBox({ title, value }) {
   );
 }
 
+function DashboardCard({ title, value, sub, onClick }) {
+  return (
+    <div
+      className="overviewMetric dashboardCard job-standard-card"
+      onClick={onClick}
+      style={{
+        cursor: onClick ? "pointer" : "default",
+      }}
+    >
+      <div className="dashboardCardContent">
+        <span>{title}</span>
+        <strong>{value}</strong>
+        {sub && <small>{sub}</small>}
+      </div>
+
+      {onClick && <div className="dashboardCardOverlay">Open {title} →</div>}
+    </div>
+  );
+}
+
 export default JobOverview;
+

@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 
-const API_BASE = "http://192.168.0.22:3001";
+const API_BASE = "";
 
 function formatTime(value) {
   if (!value) return "—";
@@ -157,3 +157,4 @@ export default function JobVisitReview({ jobId, navigate }) {
     </div>
   );
 }
+

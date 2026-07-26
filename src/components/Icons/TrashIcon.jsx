@@ -1,4 +1,4 @@
-function TrashIcon({ onClick }) {
+﻿function TrashIcon({ onClick }) {
   return (
     <svg
       onClick={onClick}
@@ -19,3 +19,4 @@ function TrashIcon({ onClick }) {
 }
 
 export default TrashIcon;
+

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import SideBarButton from "./SideBarButton";
 
-const API_BASE = "http://192.168.0.22:3001";
+const API_BASE = "";
 
 const tagOptions = [
   "Fuel",
@@ -1233,3 +1233,4 @@ function Files({ jobs = [], navigate, navData }) {
 }
 
 export default Files;
+

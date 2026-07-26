@@ -1,4 +1,4 @@
-function SideBarButton({ label, component, navigate }) {
+﻿function SideBarButton({ label, component, navigate }) {
   return (
     <button className="tabButton" onClick={() => navigate(component)}>
       {label}
@@ -7,3 +7,4 @@ function SideBarButton({ label, component, navigate }) {
 }
 
 export default SideBarButton;
+

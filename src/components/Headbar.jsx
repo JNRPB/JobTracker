@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
-import BusinessFacts from "./BusinessFacts";
 
 const navItems = [
   { label: "Home", component: "WelcomeScreen" },
@@ -14,7 +13,14 @@ const navItems = [
   { label: "Forecast Page", component: "ForecastPage" },
 ];
 
-function Headbar({ navigate, activeComponent }) {
+function Headbar({
+  navigate,
+  activeComponent,
+  goBack,
+  goForward,
+  canGoBack,
+  canGoForward,
+}) {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -45,9 +51,31 @@ function Headbar({ navigate, activeComponent }) {
         >
           <img src={logo} alt="JNR logo" className="headbar-logo" />
 
-          <div>
+          <div className="headbar-brand-info">
             <h1>JNR Dashboard</h1>
             <p>Plastering & Building</p>
+
+            <div className="headbar-history-controls">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goBack();
+                }}
+                disabled={!canGoBack}
+              >
+                ←
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goForward();
+                }}
+                disabled={!canGoForward}
+              >
+                →
+              </button>
+            </div>
           </div>
         </div>
 
@@ -77,3 +105,4 @@ function Headbar({ navigate, activeComponent }) {
 }
 
 export default Headbar;
+

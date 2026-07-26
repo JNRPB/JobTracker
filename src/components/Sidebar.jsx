@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import SidebarButton from "./SideBarButton";
 
 function Sidebar({ setActiveComponent, jobs, setActiveJobId }) {
@@ -70,3 +70,4 @@ function Sidebar({ setActiveComponent, jobs, setActiveJobId }) {
 }
 
 export default Sidebar;
+

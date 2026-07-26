@@ -1,4 +1,4 @@
-import JobCard from "../JobCard";
+﻿import JobCard from "../JobCard";
 
 function ExpectedCost({ job, onUpdate, editing, setEditing }) {
   const phases = job.phases || [];
@@ -325,3 +325,4 @@ function ExpectedCost({ job, onUpdate, editing, setEditing }) {
 }
 
 export default ExpectedCost;
+

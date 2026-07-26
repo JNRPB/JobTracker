@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "jnr_month_calendar_v2";
 
@@ -309,3 +309,4 @@ export default function ForecastPage({ jobs }) {
     </div>
   );
 }
+

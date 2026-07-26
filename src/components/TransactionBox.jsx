@@ -1,4 +1,4 @@
-import PencilIcon from "./Icons/PencilIcon";
+﻿import PencilIcon from "./Icons/PencilIcon";
 import TrashIcon from "./Icons/TrashIcon";
 
 function TransactionBox({
@@ -104,3 +104,4 @@ function TransactionBox({
 }
 
 export default TransactionBox;
+

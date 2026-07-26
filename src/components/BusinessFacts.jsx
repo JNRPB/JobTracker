@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 
-const API_BASE = "http://192.168.0.22:3001";
+const API_BASE = "";
 const TRAVEL_COST_PER_MILE = 0.45;
 
 function money(value) {
@@ -986,3 +986,4 @@ const styles = `
   }
 }
 `;
+

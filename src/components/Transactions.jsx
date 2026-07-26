@@ -1,4 +1,4 @@
-import TransactionBox from "./TransactionBox";
+﻿import TransactionBox from "./TransactionBox";
 
 const transArray = [
   {
@@ -29,3 +29,4 @@ function Transactions(navigate, jobs) {
 }
 
 export default Transactions;
+

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 
-const API_BASE = "http://192.168.0.22:3001";
+const API_BASE = "";
 
 const tagOptions = [
   "Fuel",
@@ -921,3 +921,4 @@ function UnsortedFiles({
 }
 
 export default UnsortedFiles;
+

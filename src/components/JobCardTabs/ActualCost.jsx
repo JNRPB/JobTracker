@@ -1,4 +1,4 @@
-function ActualCost({ job, onUpdate, editing, setEditing }) {
+﻿function ActualCost({ job, onUpdate, editing, setEditing }) {
   const actualCosts = job.actualCosts || [];
 
   function updateRow(index, field, value) {
@@ -212,3 +212,4 @@ function ActualCost({ job, onUpdate, editing, setEditing }) {
 }
 
 export default ActualCost;
+

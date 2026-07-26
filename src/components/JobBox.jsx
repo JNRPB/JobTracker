@@ -1,36 +1,44 @@
-function JobBox({
-  job,
-  navigate,
-  invoices,
-  margin,
-  fileLinkedCost,
-  tripStats,
-}) {
+﻿function JobBox({ job, navigate, financials = {}, tripStats = {} }) {
   function goToJob() {
     navigate("JobCard", { jobId: job.id });
   }
 
-  const hasQuote = Number(job.quoteTotal || 0) > 0;
-  const hasTracking =
-    tripStats &&
-    (Number(tripStats.daysVisited || 0) > 0 ||
-      Number(tripStats.milesAllocated || 0) > 0);
+  function money(value) {
+    return `£${Number(value || 0).toFixed(2)}`;
+  }
+
+  const contractValue = Number(financials.contractValue || job.quoteTotal || 0);
+  const extrasValue = Number(financials.extrasValue || 0);
+  const paid = Number(financials.paid || 0);
+  const remainingContract = Number(
+    financials.remainingContract ?? Math.max(contractValue - paid, 0),
+  );
+
+  const profit = Number(financials.profit || 0);
+
+  const daysVisited = Number(tripStats.daysVisited || 0);
+  const milesAllocated = Number(tripStats.milesAllocated || 0);
+
+  const hasContractValue = contractValue > 0;
+  const hasTracking = daysVisited > 0 || milesAllocated > 0;
+  const isPaidUp = hasContractValue && remainingContract <= 0;
+  const isProfitGood = profit >= 0;
 
   return (
     <div className="transactionBox jobBox" onClick={goToJob}>
       <div className="transactionDateBlock">
-        <p className="transactionDate">{job.status}</p>
+        <p className="transactionDate">{job.status || "No status"}</p>
       </div>
 
       <div className="transactionMiddle">
-        <p className="transactionName">{job.name}</p>
+        <p className="transactionName">{job.name || "Unnamed job"}</p>
         <p className="transactionJob">{job.address || "No address"}</p>
 
         <div className="jobMiniStats">
           {hasTracking ? (
             <>
-              <span>{Number(tripStats.daysVisited || 0)} day(s)</span>
-              <span>{Number(tripStats.milesAllocated || 0).toFixed(1)} mi</span>
+              <span>{daysVisited} day(s)</span>
+              <span>{milesAllocated.toFixed(1)} mi</span>
 
               {tripStats.lastVisitDate && (
                 <span>Last: {tripStats.lastVisitDate}</span>
@@ -40,32 +48,63 @@ function JobBox({
             <span>No visits logged</span>
           )}
 
-          {fileLinkedCost > 0 && (
-            <span>Costs: £{Number(fileLinkedCost || 0).toFixed(0)}</span>
+          {financials.invoiceCount > 0 && (
+            <span>
+              Invoices: {financials.paidInvoiceCount || 0}/
+              {financials.invoiceCount}
+            </span>
+          )}
+
+          {financials.fileCosts > 0 && (
+            <span>Costs: {money(financials.fileCosts)}</span>
+          )}
+
+          {financials.travelCost > 0 && (
+            <span>Travel: {money(financials.travelCost)}</span>
           )}
         </div>
       </div>
 
       <div className="transactionRight jobBoxRight">
-        <p className="transactionAmount">
-          {hasQuote ? `£${Number(job.quoteTotal).toFixed(2)}` : "No quote"}
-        </p>
+        <div className="jobFinanceGrid">
+          <div>
+            <span>Contract</span>
+            <strong>
+              {hasContractValue ? money(contractValue) : "No quote"}
+            </strong>
+          </div>
 
-        {hasQuote && (
-          <p
-            className="jobMargin"
+          <div>
+            <span>Extras</span>
+            <strong>{money(extrasValue)}</strong>
+          </div>
+
+          <div>
+            <span>Paid</span>
+            <strong>{money(paid)}</strong>
+          </div>
+
+          <div>
+            <span>Remaining</span>
+            <strong style={{ color: isPaidUp ? "#b7eb8f" : "#ffd666" }}>
+              {money(remainingContract)}
+            </strong>
+          </div>
+        </div>
+
+        <div className="jobFinanceFooter">
+          <span
             style={{
-              color: margin >= 0 ? "#b7eb8f" : "#ff9c9c",
-              fontSize: "0.85rem",
-              marginTop: "0.2rem",
+              color: isProfitGood ? "#b7eb8f" : "#ff9c9c",
             }}
           >
-            £{Number(margin || 0).toFixed(2)}
-          </p>
-        )}
+            Profit: {money(profit)}
+          </span>
+        </div>
       </div>
     </div>
   );
 }
 
 export default JobBox;
+

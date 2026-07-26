@@ -368,8 +368,45 @@ a:hover {
   margin: 0 auto;
   display: grid;
   grid-template-columns: auto 1fr auto;
+  grid-template-areas:
+    "brand nav meta"
+    "brand subnav meta";
   align-items: center;
-  gap: 1rem;
+  gap: 0.6rem 1rem;
+}
+
+.headbar-brand {
+  grid-area: brand;
+}
+
+.headbar-nav {
+  grid-area: nav;
+}
+
+.headbar-meta {
+  grid-area: meta;
+}
+
+.headbar-brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.headbar-history-controls {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.headbar-history-controls button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  font-weight: 700;
 }
 
 .headbar-brand {
@@ -2778,5 +2815,433 @@ select option {
 
   .calendar-day-cell {
     min-height: 130px;
+  }
+}
+
+/* ==========================
+   DASHBOARD CARDS
+========================== */
+
+.dashboardCard {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.dashboardCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.35);
+}
+
+.dashboardCardContent {
+  transition: all .2s ease;
+}
+
+.dashboardCardOverlay {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(88,166,255,.22);
+  backdrop-filter: blur(3px);
+
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+
+  opacity: 0;
+  transition: opacity .18s ease;
+}
+
+.dashboardCard:hover .dashboardCardOverlay {
+  opacity: 1;
+}
+
+.dashboardCard:hover .dashboardCardContent {
+  opacity: .15;
+  transform: scale(.96);
+}
+
+.headbar-history-controls {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+
+.headbar-history-controls button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
+.headbar-subnav {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.historyButton {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.jobBoxRight {
+  min-width: 260px;
+}
+
+.jobFinanceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem 0.8rem;
+  text-align: right;
+}
+
+.jobFinanceGrid div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.jobFinanceGrid span {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.jobFinanceGrid strong {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.jobFinanceFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+/* ==========================
+   MOBILE HARDENING PATCH
+   Add at very bottom of main CSS
+========================== */
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+iframe,
+video {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+/* Better tap targets */
+button,
+.sleekButton,
+.buttonLike {
+  min-height: 38px;
+}
+
+/* Prevent long names / addresses blowing layout */
+.transactionName,
+.transactionJob,
+.invoiceSupplier,
+.invoiceItemName,
+.headbar-brand h1,
+.headbar-brand p,
+.publicEstimateItemContent h3,
+.publicEstimateItemContent p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Public estimate / invoice mobile */
+.publicEstimatePage {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.publicEstimateCard,
+.publicEstimateToolbar {
+  max-width: 100%;
+}
+
+.publicEstimateItem,
+.publicEstimateProjectCard div,
+.publicEstimateTotalsPanel,
+.publicEstimateNextBox,
+.publicEstimateTerms pre {
+  min-width: 0;
+}
+
+.publicEstimateItemContent {
+  min-width: 0;
+}
+
+/* Financial documents mobile */
+@media (max-width: 768px) {
+  .estimatePage,
+  .job-documents-page {
+    width: 100%;
+    padding: 0;
+  }
+
+  .estimateTopbar,
+  .job-documents-hero,
+  .financial-tree-header,
+  .invoice-tree-row-shell,
+  .invoice-tree-row {
+    grid-template-columns: 1fr !important;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .estimateTopActions,
+  .document-actions,
+  .jobOverviewActions,
+  .buttonRow {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .estimateTopActions button,
+  .document-actions button,
+  .buttonRow button {
+    width: 100%;
+  }
+
+  .estimateLayout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .estimateCanvas,
+  .estimateSidebar {
+    width: 100%;
+    min-width: 0;
+    padding: 14px;
+  }
+
+  .estimateSidebar {
+    position: static;
+  }
+
+  .estimateHeaderBlock {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .estimateLogoBox {
+    width: 100%;
+    height: 110px;
+  }
+
+  .estimateTwoCol {
+    grid-template-columns: 1fr !important;
+    gap: 18px;
+  }
+
+  .estimateDetailsColumn label,
+  .estimateNumberRow label,
+  .estimateSidebar label,
+  .lockedDetailsBox p {
+    grid-template-columns: 1fr !important;
+  }
+
+  .estimateItemsHeader {
+    display: none;
+  }
+
+  .estimateItemRow {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: var(--border-soft);
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.035);
+  }
+
+  .estimateItemRow button.dangerButton {
+    width: 38px;
+  }
+
+  .estimateItemRow textarea {
+    min-height: 110px;
+  }
+
+  .estimateItemRow > strong {
+    text-align: left;
+    padding-top: 0;
+  }
+
+  .estimateTotals,
+  .estimatePreviewTotals {
+    width: 100% !important;
+  }
+
+  .invoiceAttachmentPicker {
+    grid-template-columns: 1fr !important;
+  }
+
+  .invoiceAttachmentPreviewRow {
+    grid-template-columns: 48px 1fr !important;
+  }
+
+  .attachmentOpenText {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Job status cards mobile */
+@media (max-width: 768px) {
+  .transactionBox {
+    grid-template-columns: 1fr !important;
+    align-items: stretch;
+  }
+
+  .transactionDateBlock,
+  .transactionRight,
+  .jobBoxRight {
+    width: 100%;
+    min-width: 0;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .jobFinanceGrid {
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+    text-align: left;
+  }
+
+  .jobFinanceFooter {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-panel {
+    padding: 0.75rem 0.75rem 80px;
+  }
+
+  h1 {
+    font-size: 1.45rem;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+  }
+
+  .jobFinanceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .publicEstimateIntro h1 {
+    font-size: 1.9rem;
+  }
+
+  .publicEstimateHeroTotal strong {
+    font-size: 2rem;
+  }
+}
+
+/* ==========================
+   MOBILE HEADBAR FIX
+========================== */
+
+@media (max-width: 768px) {
+  .app-headbar {
+    padding: 10px;
+  }
+
+  .headbar-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .headbar-brand {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .headbar-brand-info {
+    min-width: 0;
+  }
+
+  .headbar-brand h1 {
+    font-size: 1rem;
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: normal;
+    text-align: center;
+  }
+
+  .headbar-brand p {
+    text-align: center;
+    font-size: 0.78rem;
+  }
+
+  .headbar-logo,
+  .headbar-logo-mark {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+  }
+
+  .headbar-nav {
+    width: 100%;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .headbar-nav-button {
+    padding: 8px 13px;
+    font-size: 12px;
+  }
+
+  .headbar-history-controls {
+    justify-content: center;
+    margin: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .headbar-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .headbar-nav-button {
+    width: 100%;
   }
 }

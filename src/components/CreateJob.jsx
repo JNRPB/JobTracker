@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 
 function CreateJob({ addJob, navigate }) {
   const [formData, setFormData] = useState({
@@ -77,3 +77,4 @@ function CreateJob({ addJob, navigate }) {
 }
 
 export default CreateJob;
+

@@ -1,0 +1,656 @@
+.publicEstimatePage {
+  min-height: 100vh;
+  background: var(--bg-main);
+  color: var(--text-main);
+  padding: 24px;
+}
+
+.publicEstimateToolbar,
+.publicEstimateCard {
+  width: 100%;
+  max-width: var(--page-max);
+  margin: 0 auto;
+}
+
+.publicEstimateToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.publicEstimateToolbar div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.publicEstimateToolbar span,
+.publicEstimateMuted {
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+.publicEstimateCard {
+  background: var(--bg-panel);
+  border: var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.publicEstimateHero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.publicEstimateBrandBlock {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.publicEstimateBrandBlock img {
+  width: 86px;
+  height: 86px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  background: #000;
+  border: var(--border-soft);
+}
+
+.publicEstimateBrandBlock span,
+.publicEstimateHeroTotal span,
+.publicEstimateProjectCard span,
+.publicEstimateTotalsPanel span,
+.publicEstimateFooter span {
+  display: block;
+  color: var(--text-soft);
+  font-size: 0.8rem;
+}
+
+.publicEstimateBrandBlock strong {
+  display: block;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.publicEstimateHeroTotal {
+  text-align: right;
+}
+
+.publicEstimateHeroTotal strong {
+  display: block;
+  color: #fff;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1;
+  margin-top: 6px;
+}
+
+.publicEstimateHeroTotal p,
+.publicEstimateBrandBlock p {
+  color: var(--text-soft);
+  margin-top: 6px;
+}
+
+.publicEstimateIntro {
+  max-width: 820px;
+}
+
+.publicEstimateIntro h1 {
+  margin: 6px 0;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.05;
+}
+
+.publicEstimateIntro p {
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.publicEstimateEyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  color: var(--brand-text) !important;
+  font-weight: 900;
+}
+
+.publicEstimateProjectCard {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.publicEstimateProjectCard div,
+.publicEstimateItem,
+.publicEstimateTotalsPanel,
+.publicEstimateNextBox {
+  background: rgba(255, 255, 255, 0.035);
+  border: var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.publicEstimateProjectCard strong {
+  display: block;
+  margin-top: 6px;
+  color: #fff;
+}
+
+.publicEstimateSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.publicEstimateSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.publicEstimateSectionHeader h2,
+.publicEstimateNextBox h2 {
+  margin: 4px 0 0;
+}
+
+.publicEstimateSectionHeader > span {
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+
+.publicEstimateItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.publicEstimateItem {
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.publicEstimateItemNumber {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--brand-color);
+  border: 1px solid var(--brand-border);
+  color: var(--brand-text);
+  font-weight: 900;
+}
+
+.publicEstimateItemContent h3 {
+  margin: 0 0 6px;
+}
+
+.publicEstimateItemContent p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.publicEstimateItem > strong {
+  color: #fff;
+  white-space: nowrap;
+}
+
+.publicEstimateTotalsPanel {
+  width: min(360px, 100%);
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.publicEstimateTotalsPanel div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.publicEstimateGrandTotal {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: var(--border-soft);
+}
+
+.publicEstimateGrandTotal strong {
+  font-size: 1.35rem;
+  color: #fff;
+}
+
+.publicEstimateNextBox {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  background: var(--brand-color);
+  border-color: var(--brand-border);
+}
+
+.publicEstimateNextBox p {
+  color: var(--text-soft);
+  line-height: 1.5;
+  max-width: 700px;
+}
+
+.publicEstimateTerms {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.publicEstimateTerms > button {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.035);
+  color: #fff;
+  border: var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.publicEstimateTerms pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+  color: var(--text-soft);
+  line-height: 1.6;
+  background: rgba(255, 255, 255, 0.025);
+  border: var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.publicEstimateFooter {
+  border-top: var(--border-soft);
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.publicEstimateFooter p {
+  color: var(--text-soft);
+  margin-top: 4px;
+}
+
+.publicEstimateFooter div:last-child {
+  text-align: right;
+  display: grid;
+  gap: 4px;
+}
+
+.publicEstimateError {
+  text-align: center;
+  max-width: 520px;
+}
+
+.publicEstimateError img {
+  width: 90px;
+  margin: 0 auto 12px;
+}
+
+@media (max-width: 900px) {
+  .publicEstimateProjectCard {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .publicEstimateHero,
+  .publicEstimateNextBox,
+  .publicEstimateFooter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .publicEstimateHeroTotal,
+  .publicEstimateFooter div:last-child {
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .publicEstimatePage {
+    padding: 12px;
+  }
+
+  .publicEstimateToolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .publicEstimateProjectCard {
+    grid-template-columns: 1fr;
+  }
+
+  .publicEstimateItem {
+    grid-template-columns: 1fr;
+  }
+
+  .publicEstimateTotalsPanel {
+    width: 100%;
+  }
+}
+
+@media print {
+  .publicEstimatePage {
+    background: #fff;
+    color: #000;
+    padding: 0;
+  }
+
+  .publicEstimateToolbar,
+  .publicEstimateNextBox button {
+    display: none;
+  }
+
+  .publicEstimateCard {
+    max-width: none;
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    color: #000;
+  }
+}
+
+/* =========================
+   CLIENT PORTAL TREE
+========================= */
+
+.portalContractCard {
+  align-items: flex-start;
+  border-color: rgba(79, 209, 133, 0.45);
+}
+
+.portalContractTotal {
+  font-size: 1.4rem;
+  white-space: nowrap;
+}
+
+.portalTree {
+  margin-top: 14px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  display: grid;
+  gap: 10px;
+}
+
+.portalTreeRow {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 24px 42px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.portalTreeRow:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.portalTreeIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(85, 122, 255, 0.18);
+  border: 1px solid rgba(115, 145, 255, 0.45);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.portalTreeMain {
+  display: grid;
+  gap: 3px;
+}
+
+.portalTreeMain span {
+  opacity: 0.75;
+  font-size: 0.85rem;
+}
+
+.portalTreeStatus {
+  text-align: right;
+  display: grid;
+  gap: 5px;
+}
+
+.portalStatusPill {
+  justify-self: end;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.portalStatusPill.paid {
+  color: #75e6a0;
+  border: 1px solid rgba(117, 230, 160, 0.4);
+  background: rgba(117, 230, 160, 0.1);
+}
+
+.portalStatusPill.due {
+  color: #ffd166;
+  border: 1px solid rgba(255, 209, 102, 0.4);
+  background: rgba(255, 209, 102, 0.1);
+}
+
+/* =========================
+   LIGHTBOX
+========================= */
+
+.fileLightboxBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.82);
+  padding: 20px;
+  overflow: auto;
+}
+
+.fileLightbox {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+  background: #111;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.fileLightboxHeader {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 58px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  background: #111;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.fileLightboxHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fileLightboxHeaderActions button:first-child {
+  background: linear-gradient(135deg, #4fd185, #34b76b);
+  color: white;
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  width: auto;
+  min-width: auto;
+}
+
+.fileLightboxHeaderActions button:last-child {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.fileLightboxBody {
+  padding: 18px;
+  overflow-x: auto;
+}
+
+.fileLightboxBody .estimatePreview {
+  width: 794px;
+  max-width: none;
+  margin: 0 auto;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 800px) {
+  .portalTreeRow {
+    grid-template-columns: 38px 1fr auto;
+  }
+
+  .portalTreeBranch {
+    display: none;
+  }
+
+  .portalTreeStatus {
+    grid-column: 2 / 4;
+    text-align: left;
+    justify-items: start;
+  }
+
+  .fileLightboxBackdrop {
+    padding: 0;
+  }
+
+  .fileLightbox {
+    min-height: 100vh;
+    border-radius: 0;
+  }
+
+  .fileLightboxHeader {
+    padding: 10px;
+  }
+
+  .fileLightboxBody {
+    padding: 10px;
+  }
+
+  .fileLightboxBody .estimatePreview {
+    transform: scale(0.48);
+    transform-origin: top left;
+  }
+
+  .estimatePreviewHeader img {
+    width: 70px !important;
+    height: auto !important;
+  }
+}
+
+/* =========================
+   PRINT ONLY SELECTED DOCUMENT
+========================= */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  body.printingDocument * {
+    visibility: hidden !important;
+  }
+
+  body.printingDocument .printOnlyDocument,
+  body.printingDocument .printOnlyDocument * {
+    visibility: visible !important;
+  }
+
+  body.printingDocument .printOnlyDocument {
+    position: absolute !important;
+    inset: 0 auto auto 0 !important;
+    width: 100% !important;
+    background: white !important;
+  }
+
+  body.printingDocument .estimatePreview {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  body.printingDocument .fileLightboxHeader,
+  body.printingDocument .fileLightboxHeaderActions {
+    display: none !important;
+  }
+}
+
+.printDocumentPage {
+  min-height: 100vh;
+}
+
+.printDocumentCanvas {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .printDocumentPage {
+    background: #fff !important;
+    padding: 0 !important;
+  }
+
+  .printDocumentCanvas {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .printDocumentCanvas .estimatePreview {
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+}
+

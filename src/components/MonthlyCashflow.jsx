@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 
 function MonthlyCashflow({ jobs }) {
   const [month, setMonth] = useState(new Date().getMonth()); // 0 = Jan
@@ -148,3 +148,4 @@ function MonthlyCashflow({ jobs }) {
 }
 
 export default MonthlyCashflow;
+

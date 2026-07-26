@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import SideBarButton from "./SideBarButton";
 
-const API_BASE = "http://192.168.0.22:3001";
+const API_BASE = "";
 
 const VAT_EXCLUDED_DEFAULTS = [
   "Callum Mullineaux",
@@ -708,3 +708,4 @@ function WelcomeScreen({ jobs = [], unsortedFiles = [], navigate }) {
 }
 
 export default WelcomeScreen;
+

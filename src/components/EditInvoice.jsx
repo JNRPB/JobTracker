@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 
 function EditInvoice({ invoices, jobs, navData, updateInvoice, navigate }) {
   const invoiceId = navData.invoiceId;
@@ -254,3 +254,4 @@ function EditInvoice({ invoices, jobs, navData, updateInvoice, navigate }) {
 }
 
 export default EditInvoice;
+

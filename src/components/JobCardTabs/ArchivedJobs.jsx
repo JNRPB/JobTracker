@@ -1,4 +1,4 @@
-function ArchivedJobs({ jobs, navigate, onUnarchive }) {
+﻿function ArchivedJobs({ jobs, navigate, onUnarchive }) {
   const archivedJobs = jobs.filter((j) => j.archived);
 
   return (
@@ -58,3 +58,4 @@ function ArchivedJobs({ jobs, navigate, onUnarchive }) {
 }
 
 export default ArchivedJobs;
+

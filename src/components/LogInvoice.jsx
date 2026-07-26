@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useMainProvider } from "./Provider";
 
 function LogInvoice({ navigate, addInvoice, jobs, invoices = [] }) {
@@ -188,3 +188,4 @@ function LogInvoice({ navigate, addInvoice, jobs, invoices = [] }) {
 }
 
 export default LogInvoice;
+

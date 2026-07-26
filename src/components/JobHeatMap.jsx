@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import jsPDF from "jspdf";
 import {
   MapContainer,
@@ -15,7 +15,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import jnrLogo from "../assets/logo.png";
 
-const API_BASE = "http://192.168.0.22:3001";
+const API_BASE = "";
 const DEFAULT_CENTER = [52.7689, -0.9007];
 const MILEAGE_RATE = 1.8;
 
@@ -1754,3 +1754,4 @@ export default function JobHeatMap({ jobs = [] }) {
     </div>
   );
 }
+

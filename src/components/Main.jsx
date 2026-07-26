@@ -1,6 +1,8 @@
-import CreateJob from "./CreateJob";
+﻿import CreateJob from "./CreateJob";
 import JobCard from "./JobCard";
 import QuoteBuilder from "./QuoteBuilder";
+import InvoiceBuilder from "./InvoiceBuilder";
+import JobDocuments from "./JobDocuments";
 import JobStatusOverview from "./JobStatusOverview";
 import WelcomeScreen from "./WelcomeScreen";
 import ArchivedJobs from "./JobCardTabs/ArchivedJobs";
@@ -12,25 +14,25 @@ import JobHeatMap from "./JobHeatMap";
 import BusinessFacts from "./BusinessFacts";
 import ForecastPage from "./ForecastPage";
 
-const API_BASE = "http://100.68.229.104:3001";
+const API_BASE = "";
 
 function Main({
   activeComponent,
   addJob,
-  navData,
-  jobs,
+  navData = {},
+  jobs = [],
   setJobs,
   navigate,
-  files,
+  files = [],
   refreshFiles,
-  unsortedFiles,
+  unsortedFiles = [],
   refreshUnsortedFiles,
 }) {
   const job = jobs.find((j) => String(j.id) === String(navData.jobId));
 
   async function updateJob(updatedJob) {
     const updatedJobs = jobs.map((j) =>
-      j.id === updatedJob.id ? updatedJob : j,
+      String(j.id) === String(updatedJob.id) ? updatedJob : j,
     );
 
     setJobs(updatedJobs);
@@ -53,7 +55,7 @@ function Main({
   }
 
   async function deleteJob(jobId) {
-    const updatedJobs = jobs.filter((j) => j.id !== jobId);
+    const updatedJobs = jobs.filter((j) => String(j.id) !== String(jobId));
     setJobs(updatedJobs);
 
     try {
@@ -69,16 +71,23 @@ function Main({
     }
   }
 
+  async function refreshJobsFromServer() {
+    try {
+      const res = await fetch(`${API_BASE}/jobs`);
+      const data = await res.json();
+      setJobs(data);
+    } catch (err) {
+      console.error("Error refreshing jobs:", err);
+    }
+  }
+
   async function archiveJob(jobId) {
     try {
       await fetch(`${API_BASE}/jobs/${jobId}/archive`, {
         method: "PUT",
       });
 
-      const res = await fetch(`${API_BASE}/jobs`);
-      const data = await res.json();
-
-      setJobs(data);
+      await refreshJobsFromServer();
     } catch (err) {
       console.error("Error archiving job:", err);
     }
@@ -90,13 +99,38 @@ function Main({
         method: "PUT",
       });
 
-      const res = await fetch(`${API_BASE}/jobs`);
-      const data = await res.json();
-
-      setJobs(data);
+      await refreshJobsFromServer();
     } catch (err) {
       console.error("Error unarchiving job:", err);
     }
+  }
+
+  function renderWelcome() {
+    return (
+      <WelcomeScreen
+        jobs={jobs}
+        files={files}
+        unsortedFiles={unsortedFiles}
+        navigate={navigate}
+      />
+    );
+  }
+
+  function renderJobCard() {
+    if (!job) return renderWelcome();
+
+    return (
+      <JobCard
+        key={job.id}
+        job={job}
+        onUpdate={updateJob}
+        deleteJob={deleteJob}
+        onArchive={archiveJob}
+        onUnarchive={unarchiveJob}
+        navigate={navigate}
+        files={files}
+      />
+    );
   }
 
   function renderActiveComponent() {
@@ -105,28 +139,11 @@ function Main({
         return <CreateJob addJob={addJob} navigate={navigate} />;
 
       case "JobCard":
-        if (!job) {
-          return (
-            <WelcomeScreen
-              jobs={jobs}
-              files={files}
-              unsortedFiles={unsortedFiles}
-              navigate={navigate}
-            />
-          );
-        }
+        return renderJobCard();
 
+      case "JobDocuments":
         return (
-          <JobCard
-            key={job.id}
-            job={job}
-            onUpdate={updateJob}
-            deleteJob={deleteJob}
-            onArchive={archiveJob}
-            onUnarchive={unarchiveJob}
-            navigate={navigate}
-            files={files}
-          />
+          <JobDocuments job={job} navigate={navigate} onUpdate={updateJob} />
         );
 
       case "JobStatusOverview":
@@ -147,6 +164,17 @@ function Main({
           />
         );
 
+      case "InvoiceBuilder":
+        return (
+          <InvoiceBuilder
+            navData={navData}
+            navigate={navigate}
+            jobs={jobs}
+            files={files}
+            onUpdate={updateJob}
+          />
+        );
+
       case "ArchivedJobs":
         return (
           <ArchivedJobs
@@ -158,10 +186,13 @@ function Main({
 
       case "Transactions":
         return <Transactions jobs={jobs} navigate={navigate} files={files} />;
+
       case "SpendCalendar":
         return <SpendCalendar jobs={jobs} />;
+
       case "JobHeatMap":
         return <JobHeatMap jobs={jobs} navigate={navigate} />;
+
       case "Files":
         return (
           <Files
@@ -189,14 +220,7 @@ function Main({
 
       case "WelcomeScreen":
       default:
-        return (
-          <WelcomeScreen
-            jobs={jobs}
-            files={files}
-            unsortedFiles={unsortedFiles}
-            navigate={navigate}
-          />
-        );
+        return renderWelcome();
     }
   }
 
@@ -204,3 +228,4 @@ function Main({
 }
 
 export default Main;
+

@@ -1,11 +1,59 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 
 import Headbar from "./components/Headbar";
 import Main from "./components/Main";
 import { MainProvider } from "./components/Provider";
+import PublicPortal from "./components/PublicPortal";
+import PublicDocumentPage from "./components/PublicDocumentPage";
+
+function normalizeJob(job) {
+  return {
+    ...job,
+
+    customerDetails: job.customerDetails || {
+      name: "",
+      phone: "",
+      email: "",
+      address: job.address || "",
+    },
+
+    phases: job.phases || [],
+    actualCosts: job.actualCosts || [],
+
+    quotes: job.quotes || [],
+    invoices: job.invoices || [],
+    payments: job.payments || [],
+
+    portal: job.portal || {
+      enabled: false,
+      token: null,
+      activity: [],
+    },
+  };
+}
 
 function App() {
-  const API_BASE = "http://100.68.229.104:3001";
+  const API_BASE = "";
+
+  const publicPortalMatch = window.location.pathname.match(
+    /^.*\/portal\/([^/]+)$/,
+  );
+
+  const publicPrintMatch = window.location.pathname.match(
+    /^.*\/portal\/([^/]+)\/print\/(estimate|invoice)\/([^/]+)$/,
+  );
+
+  const publicEstimateMatch =
+    window.location.pathname.match(/\/estimate\/([^/]+)$/);
+
+  const publicInvoiceMatch =
+    window.location.pathname.match(/\/invoice\/([^/]+)$/);
+
+  const isPublicPage =
+    publicPortalMatch ||
+    publicEstimateMatch ||
+    publicInvoiceMatch ||
+    publicPrintMatch;
 
   const [jobs, setJobs] = useState([]);
   const [files, setFiles] = useState([]);
@@ -58,8 +106,10 @@ function App() {
       const res = await fetch(`${API_BASE}/jobs`);
       const data = await res.json();
 
-      setJobs(data);
-      localStorage.setItem("jobs", JSON.stringify(data));
+      const normalizedJobs = data.map(normalizeJob);
+
+      setJobs(normalizedJobs);
+      localStorage.setItem("jobs", JSON.stringify(normalizedJobs));
     } catch (err) {
       console.error("Error fetching jobs:", err);
     }
@@ -88,6 +138,8 @@ function App() {
   }
 
   useEffect(() => {
+    if (isPublicPage) return;
+
     refreshJobs();
     refreshFiles();
     refreshUnsortedFiles();
@@ -100,12 +152,13 @@ function App() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newJob),
+        body: JSON.stringify(normalizeJob(newJob)),
       });
 
-      const savedJob = await res.json();
+      const savedJob = normalizeJob(await res.json());
 
       const updatedJobs = [...jobs, savedJob];
+
       setJobs(updatedJobs);
       localStorage.setItem("jobs", JSON.stringify(updatedJobs));
     } catch (err) {
@@ -114,26 +167,47 @@ function App() {
   }
 
   function updateJobs(updatedJobs) {
-    setJobs(updatedJobs);
-    localStorage.setItem("jobs", JSON.stringify(updatedJobs));
+    const normalizedJobs = updatedJobs.map(normalizeJob);
+
+    setJobs(normalizedJobs);
+    localStorage.setItem("jobs", JSON.stringify(normalizedJobs));
+  }
+
+  if (publicPrintMatch) {
+    return (
+      <PublicDocumentPage
+        navData={{
+          token: publicPrintMatch[1],
+          type: publicPrintMatch[2],
+          id: publicPrintMatch[3],
+        }}
+      />
+    );
+  }
+
+  if (isPublicPage) {
+    return (
+      <PublicPortal
+        navData={{
+          token:
+            publicPortalMatch?.[1] ||
+            publicEstimateMatch?.[1] ||
+            publicInvoiceMatch?.[1],
+        }}
+      />
+    );
   }
 
   return (
     <div className="app-container">
-      <Headbar navigate={navigate} activeComponent={activeComponent} />
-
-      <div className="bottomNav">
-        <button onClick={goBack} disabled={navState.index === 0}>
-          ◀ Back
-        </button>
-
-        <button
-          onClick={goForward}
-          disabled={navState.index >= navState.history.length - 1}
-        >
-          Forward ▶
-        </button>
-      </div>
+      <Headbar
+        navigate={navigate}
+        activeComponent={activeComponent}
+        goBack={goBack}
+        goForward={goForward}
+        canGoBack={navState.index > 0}
+        canGoForward={navState.index < navState.history.length - 1}
+      />
 
       <MainProvider>
         <Main
@@ -154,3 +228,4 @@ function App() {
 }
 
 export default App;
+
