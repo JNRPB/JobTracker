@@ -1,5 +1,6 @@
 ﻿import React from "react";
 import "./JobDocuments.css";
+import { getJobColour } from "./jobColour";
 
 import "./FinancialDocuments.css";
 
@@ -20,11 +21,17 @@ function formatMoney(value) {
 
 function formatDate(value) {
   if (!value) return "—";
+  return new Date(value).toLocaleDateString("en-GB");
+}
+
+function formatDateTime(value) {
+  if (!value) return "—";
 
   return new Date(value).toLocaleString("en-GB", {
     day: "2-digit",
     month: "short",
-    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
@@ -160,7 +167,10 @@ function JobDocuments({ job, navigate, onUpdate }) {
   }
 
   return (
-    <div className="job-documents-page">
+    <div
+      className="job-documents-page"
+      style={{ "--job-colour": getJobColour(job) }}
+    >
       <div className="job-documents-hero">
         <div>
           <p className="eyebrow">Financial Documents</p>
@@ -269,12 +279,25 @@ function JobDocuments({ job, navigate, onUpdate }) {
                       <p>
                         {estimate.issuedAt &&
                           `Issued ${formatDate(estimate.issuedAt)}`}
-                        {estimate.issuedAt && estimate.acceptedAt ? " · " : ""}
                         {estimate.acceptedAt &&
-                          `Accepted ${formatDate(estimate.acceptedAt)}`}
-                        {!estimate.issuedAt &&
-                          !estimate.acceptedAt &&
-                          "No official dates yet"}
+                          ` • Accepted ${formatDate(estimate.acceptedAt)}`}
+                        {estimate.declinedAt &&
+                          ` • Declined ${formatDate(estimate.declinedAt)}`}
+                      </p>
+
+                      <p>
+                        {estimate.emailedAt &&
+                          `Emailed ${formatDateTime(estimate.emailedAt)}`}
+
+                        {estimate.lastViewedAt
+                          ? ` • Viewed ${formatDateTime(estimate.lastViewedAt)}${
+                              Number(estimate.viewCount || 0) > 1
+                                ? ` • ${estimate.viewCount} views`
+                                : ""
+                            }`
+                          : estimate.emailedAt
+                            ? " • Not viewed yet"
+                            : ""}
                       </p>
                     </div>
                   </div>
@@ -354,6 +377,21 @@ function JobDocuments({ job, navigate, onUpdate }) {
                                     ? `Dated ${formatDate(invoice.invoiceDate)}`
                                     : "No invoice date"}
                               </p>
+
+                              <p>
+                                {invoice.emailedAt &&
+                                  `Emailed ${formatDateTime(invoice.emailedAt)}`}
+
+                                {invoice.lastViewedAt
+                                  ? ` • Viewed ${formatDateTime(invoice.lastViewedAt)}${
+                                      Number(invoice.viewCount || 0) > 1
+                                        ? ` • ${invoice.viewCount} views`
+                                        : ""
+                                    }`
+                                  : invoice.emailedAt
+                                    ? " • Not viewed yet"
+                                    : ""}
+                              </p>
                             </div>
                           </div>
 
@@ -386,10 +424,18 @@ function JobDocuments({ job, navigate, onUpdate }) {
                           <div className="invoice-tree-total">
                             <span
                               className={`document-status ${
-                                invoice.status || "draft"
+                                invoice.status === "paid"
+                                  ? "paid"
+                                  : Number(invoice.viewCount || 0) > 0
+                                    ? "viewed"
+                                    : invoice.status || "draft"
                               }`}
                             >
-                              {invoice.status || "draft"}
+                              {invoice.status === "paid"
+                                ? "paid"
+                                : Number(invoice.viewCount || 0) > 0
+                                  ? "viewed"
+                                  : invoice.status || "draft"}
                             </span>
 
                             <strong>{formatMoney(invoice.total)}</strong>
@@ -498,6 +544,21 @@ function JobDocuments({ job, navigate, onUpdate }) {
                             ? `Dated ${formatDate(invoice.invoiceDate)}`
                             : "No invoice date"}
                       </p>
+
+                      <p>
+                        {invoice.emailedAt &&
+                          `Emailed ${formatDateTime(invoice.emailedAt)}`}
+
+                        {invoice.lastViewedAt
+                          ? ` • Viewed ${formatDateTime(invoice.lastViewedAt)}${
+                              Number(invoice.viewCount || 0) > 1
+                                ? ` • ${invoice.viewCount} views`
+                                : ""
+                            }`
+                          : invoice.emailedAt
+                            ? " • Not viewed yet"
+                            : ""}
+                      </p>
                     </div>
                   </div>
 
@@ -527,9 +588,19 @@ function JobDocuments({ job, navigate, onUpdate }) {
 
                   <div className="invoice-tree-total">
                     <span
-                      className={`document-status ${invoice.status || "draft"}`}
+                      className={`document-status ${
+                        invoice.status === "paid"
+                          ? "paid"
+                          : Number(invoice.viewCount || 0) > 0
+                            ? "viewed"
+                            : invoice.status || "draft"
+                      }`}
                     >
-                      {invoice.status || "draft"}
+                      {invoice.status === "paid"
+                        ? "paid"
+                        : Number(invoice.viewCount || 0) > 0
+                          ? "viewed"
+                          : invoice.status || "draft"}
                     </span>
 
                     <strong>{formatMoney(invoice.total)}</strong>
@@ -605,4 +676,3 @@ function EmptyDocuments({ label }) {
 }
 
 export default JobDocuments;
-

@@ -17,7 +17,9 @@ export function upsertEstimateOnJob(job, estimate) {
 
   return {
     ...job,
-    quoteTotal: Number(estimate.total || job.quoteTotal || 0),
+    quoteTotal: shouldSetActiveEstimate
+      ? Number(estimate.total || 0)
+      : Number(job.quoteTotal || 0),
     activeEstimateId: shouldSetActiveEstimate
       ? estimate.id
       : job.activeEstimateId,

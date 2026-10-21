@@ -126,10 +126,10 @@ function getOrCreatePortalToken(job) {
   return job?.portal?.token || crypto.randomUUID();
 }
 
-function buildPublicEstimateUrl(portalToken) {
-  if (!portalToken) return "";
+function buildPublicEstimateUrl(publicToken) {
+  if (!publicToken) return "";
 
-  return `${window.location.origin}/job-tracker/portal/${portalToken}`;
+  return `${window.location.origin}/estimate/${publicToken}`;
 }
 
 function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
@@ -147,6 +147,9 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
   }, [job, navData]);
 
   const isExisting = Boolean(existingEstimate);
+  const importedFromPricingNotes = Boolean(
+    navData?.fromPricingNotes || existingEstimate?.source?.type === "pricing_notes",
+  );
   const isIssued = ["issued", "emailed", "accepted"].includes(
     existingEstimate?.status,
   );
@@ -219,6 +222,8 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
           if (data.defaultTerms) {
             setNotes(data.defaultTerms);
           }
+        } else if (importedFromPricingNotes && !existingEstimate.notes) {
+          setNotes(data.defaultTerms || DEFAULT_TERMS);
         }
       } catch (err) {
         console.error("Failed to load business settings:", err);
@@ -228,7 +233,7 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
     }
 
     loadBusinessSettings();
-  }, [existingEstimate]);
+  }, [existingEstimate, importedFromPricingNotes]);
 
   if (loadingSettings) {
     return (
@@ -252,7 +257,9 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
   const vatAmount = totals.vatAmount;
   const total = totals.total;
 
-  const publicEstimateUrl = buildPublicEstimateUrl(job.portal?.token);
+  const publicEstimateUrl = buildPublicEstimateUrl(
+    existingEstimate?.publicToken,
+  );
 
   function updateItem(id, field, value) {
     if (isIssued) return;
@@ -341,6 +348,61 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
     await saveEstimateToJob(draft);
   }
 
+  async function handleEmailEstimate() {
+    if (!existingEstimate?.publicToken) {
+      alert("Publish the estimate before emailing it.");
+      return;
+    }
+
+    const defaultEmail =
+      sendEmail ||
+      existingEstimate.customerSnapshot?.email ||
+      customerDetails.email ||
+      "";
+
+    const recipientEmail = window.prompt("Send estimate to:", defaultEmail);
+
+    if (!recipientEmail) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_BASE}/api/estimates/${existingEstimate.publicToken}/email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            to: recipientEmail.trim(),
+          }),
+        },
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.error || "Could not email the estimate.");
+      }
+
+      alert(responseData.message);
+
+      navigate("JobDocuments", {
+        jobId: job.id,
+      });
+    } catch (error) {
+      console.error("Could not email estimate:", error);
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Could not email the estimate.",
+      );
+    }
+  }
+
   async function handleIssueEstimate() {
     if (isIssued) return;
 
@@ -369,41 +431,18 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
     }
 
     const number = estimateNumber || (await getNextEstimateNumber());
-    const portalToken = job.portal?.token || crypto.randomUUID();
+    const publicToken = baseEstimate.publicToken || crypto.randomUUID();
 
     const issuedEstimate = {
       ...issueEstimate(baseEstimate, number),
-      publicToken: portalToken,
-      portalToken,
+      publicToken,
       history: [
         ...(baseEstimate.history || []),
-        createHistoryEvent(
-          "estimate_published",
-          "Estimate published to portal",
-        ),
+        createHistoryEvent("estimate_published", "Estimate published"),
       ],
     };
 
-    const portalActivity = {
-      id: crypto.randomUUID(),
-      type: "estimate",
-      title: "Estimate Available",
-      message: `You have received an estimate for ${job.name}.`,
-      createdAt: new Date().toISOString(),
-      read: false,
-    };
-
-    const updatedJob = upsertEstimateOnJob(
-      {
-        ...job,
-        portal: {
-          enabled: true,
-          token: portalToken,
-          activity: [portalActivity, ...(job.portal?.activity || [])],
-        },
-      },
-      issuedEstimate,
-    );
+    const updatedJob = upsertEstimateOnJob(job, issuedEstimate);
 
     setEstimateNumber(number);
     await onUpdate(updatedJob);
@@ -419,7 +458,7 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
 
     try {
       await navigator.clipboard.writeText(publicEstimateUrl);
-      alert("Portal link copied.");
+      alert("Estimate link copied.");
     } catch (err) {
       console.error("Could not copy portal link:", err);
       alert(publicEstimateUrl);
@@ -530,6 +569,17 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
 
       <div className="estimateLayout">
         <main className="estimateCanvas">
+          {importedFromPricingNotes && !isIssued && mode !== "preview" && (
+            <div className="estimateImportNotice">
+              <span className="estimateImportIcon" aria-hidden="true">↗</span>
+              <div>
+                <strong>Draft created from pricing notes</strong>
+                <p>
+                  Block subtotals, optional hidden JNR overhead and your chosen markup have been rolled into these customer prices. The internal breakdown is not shown on the estimate.
+                </p>
+              </div>
+            </div>
+          )}
           {mode === "preview" || isIssued ? (
             <EstimatePreview
               estimate={existingEstimate}
@@ -829,7 +879,11 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
             <>
               <h3>Next Actions</h3>
 
-              <button className="sleekButton primaryButton" type="button">
+              <button
+                className="sleekButton primaryButton"
+                type="button"
+                onClick={handleEmailEstimate}
+              >
                 Email Estimate
               </button>
 
@@ -845,9 +899,9 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
                 Create Invoice from {estimateNumber}
               </button>
 
-              {job.portal?.token ? (
+              {existingEstimate?.publicToken ? (
                 <div className="currencyBox">
-                  PORTAL LINK READY
+                  ESTIMATE LINK READY
                   <br />
                   <br />
                   <button
@@ -855,14 +909,12 @@ function QuoteBuilder({ navData, jobs, onUpdate, navigate }) {
                     type="button"
                     onClick={copyPublicUrl}
                   >
-                    Copy Portal Link
+                    Copy Estimate Link
                   </button>
                 </div>
               ) : (
                 <div className="currencyBox">
-                  No portal link yet.
-                  <br />
-                  Publish the estimate to create one.
+                  Publish the estimate to create its link.
                 </div>
               )}
             </>
@@ -1054,4 +1106,3 @@ function EstimatePreview({
 }
 
 export default QuoteBuilder;
-

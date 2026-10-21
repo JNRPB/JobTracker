@@ -1,0 +1,18 @@
+{
+  "name": "JNR HQ",
+  "short_name": "JNR HQ",
+  "description": "JNR Plastering & Building operations dashboard",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#111214",
+  "theme_color": "#15161d",
+  "icons": [
+    {
+      "src": "/jnr-hq-icon.png",
+      "sizes": "500x500",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

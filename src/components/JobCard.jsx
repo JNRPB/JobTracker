@@ -10,6 +10,7 @@ function JobCard({
   onArchive,
   onUnarchive,
   navigate,
+  currentUser,
 }) {
   const [jobFiles, setJobFiles] = useState([]);
 
@@ -69,6 +70,7 @@ function JobCard({
       jobFiles={jobFiles}
       fileCount={fileCount}
       fileLinkedCost={fileLinkedCost}
+      currentUser={currentUser}
     />
   );
 }

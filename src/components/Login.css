@@ -1,0 +1,74 @@
+.hqLoginPage {
+  --login-panel: #1c1c1c;
+  --login-panel-soft: #202020;
+  --login-input: #191919;
+  --login-border: rgba(255,255,255,.095);
+  --login-border-strong: rgba(255,255,255,.16);
+  --login-text: #f8fafc;
+  --login-muted: #9ca3af;
+  --login-blue: #3578e5;
+  min-height: 100vh;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 32px;
+  box-sizing: border-box;
+  background-color: #121212;
+  background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 42px 42px;
+  color: var(--login-text);
+}
+
+.hqLoginPage * { box-sizing: border-box; }
+.hqLoginGlow { position: absolute; width: 580px; height: 580px; border-radius: 50%; background: rgba(53,120,229,.12); filter: blur(110px); transform: translate(-290px,-210px); pointer-events: none; }
+.hqLoginShell { position: relative; width: min(940px, 100%); min-height: 570px; display: grid; grid-template-columns: minmax(340px,.92fr) minmax(410px,1.08fr); overflow: hidden; border: 1px solid var(--login-border); border-radius: 16px; background: var(--login-panel); box-shadow: 0 30px 90px rgba(0,0,0,.5); }
+.hqLoginBrandPanel { position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; padding: 42px; border-right: 1px solid var(--login-border); background: #171717; }
+.hqLoginBrandPanel::after { content: ""; position: absolute; inset: 0; background: linear-gradient(145deg, rgba(53,120,229,.14), transparent 52%); pointer-events: none; }
+.hqLoginBrandTop,.hqLoginSecureBadge { position: relative; z-index: 2; }
+.hqLoginBrandTop { display: grid; gap: 26px; }
+.hqLoginLogo { display: block; width: 150px; height: 150px; object-fit: contain; border-radius: 12px; }
+.hqLoginKicker { color: #9db8ff; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.hqLoginBrandTop h1 { margin: 8px 0 4px; color: #fff; font-size: clamp(2rem,4vw,3.2rem); letter-spacing: -.04em; }
+.hqLoginBrandTop p { margin: 0; color: var(--login-muted); font-size: .92rem; }
+.hqLoginSquares { position: absolute; right: -12px; bottom: 60px; z-index: 1; width: 210px; display: grid; grid-template-columns: repeat(4,42px); gap: 7px; transform: rotate(-5deg); opacity: .28; }
+.hqLoginSquares i { aspect-ratio: 1; border: 1px solid rgba(90,130,255,.4); background: rgba(53,120,229,.18); }
+.hqLoginSquares i:nth-child(3n+1) { background: rgba(53,120,229,.35); }
+.hqLoginSecureBadge { width: max-content; display: flex; align-items: center; gap: 8px; padding: 8px 11px; border: 1px solid rgba(40,180,100,.3); border-radius: 999px; background: rgba(40,180,100,.1); color: #75e6a0; font-size: .7rem; font-weight: 750; }
+.hqLoginStatusDot { width: 7px; height: 7px; border-radius: 50%; background: #36d675; box-shadow: 0 0 0 4px rgba(54,214,117,.1); }
+.hqLoginFormPanel { display: flex; flex-direction: column; justify-content: center; padding: 52px; background: var(--login-panel); }
+.hqLoginFormHeading > span { display: block; margin-bottom: 8px; color: #9db8ff; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.hqLoginFormHeading h2 { margin: 0 0 7px; color: #fff; font-size: 1.75rem; letter-spacing: -.03em; }
+.hqLoginFormHeading p { margin: 0; color: var(--login-muted); font-size: .82rem; }
+.hqLoginError { margin-top: 20px; padding: 11px 13px; border: 1px solid rgba(239,68,68,.38); border-radius: 9px; background: rgba(239,68,68,.1); color: #ff9292; font-size: .78rem; font-weight: 700; }
+.hqLoginForm { display: grid; gap: 17px; margin-top: 26px; }
+.hqLoginForm label { display: grid; gap: 6px; color: #d4d4d8; font-size: .72rem; font-weight: 750; }
+.hqLoginForm input { width: 100%; min-height: 44px; border: 1px solid var(--login-border-strong); border-radius: 9px; outline: none; background: var(--login-input); color: var(--login-text); padding: 10px 12px; font: inherit; }
+.hqLoginForm input:focus { border-color: rgba(53,120,229,.8); box-shadow: 0 0 0 3px rgba(53,120,229,.12); }
+.hqLoginPasswordField { position: relative; }
+.hqLoginPasswordField input { padding-right: 62px; }
+.hqLoginPasswordField button { position: absolute; top: 50%; right: 7px; transform: translateY(-50%); border: 0; background: transparent; color: #9db8ff; padding: 7px; font: inherit; font-size: .68rem; font-weight: 800; cursor: pointer; }
+.hqLoginCapsWarning { color: #ffd38a; font-size: .68rem; }
+.hqLoginSubmit { min-height: 46px; display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 3px; border: 1px solid rgba(53,120,229,.65); border-radius: 9px; background: #3578e5; color: #fff; font: inherit; font-size: .8rem; font-weight: 850; cursor: pointer; transition: transform 140ms ease, background 140ms ease; }
+.hqLoginSubmit:not(:disabled):hover { transform: translateY(-1px); background: #4385ed; }
+.hqLoginSubmit:disabled { cursor: wait; opacity: .7; }
+.hqLoginSpinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%; animation: hqLoginSpin .7s linear infinite; }
+.hqLoginFootnote { margin: 22px 0 0; color: #686868; font-size: .66rem; text-align: center; }
+@keyframes hqLoginSpin { to { transform: rotate(360deg); } }
+
+@media (max-width: 760px) {
+  .hqLoginPage { padding: 16px; }
+  .hqLoginShell { grid-template-columns: 1fr; }
+  .hqLoginBrandPanel { min-height: 250px; padding: 28px; border-right: 0; border-bottom: 1px solid var(--login-border); }
+  .hqLoginBrandTop { grid-template-columns: 90px 1fr; align-items: center; gap: 18px; }
+  .hqLoginLogo { width: 90px; height: 90px; }
+  .hqLoginBrandTop h1 { font-size: 2rem; }
+  .hqLoginSquares { bottom: 10px; }
+  .hqLoginFormPanel { padding: 32px 28px; }
+}
+
+@media (max-width: 470px) {
+  .hqLoginBrandTop { grid-template-columns: 1fr; }
+  .hqLoginBrandPanel { min-height: 330px; }
+  .hqLoginFormPanel { padding: 28px 22px; }
+}

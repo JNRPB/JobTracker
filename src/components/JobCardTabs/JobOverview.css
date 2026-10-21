@@ -1,0 +1,1732 @@
+.jnrJobPage {
+  --job-colour: #4f7cff;
+  --jnr-page: #111111;
+  --jnr-card: #1d1d1d;
+  --jnr-card-soft: #242424;
+  --jnr-input: #292929;
+  --jnr-border: #313131;
+  --jnr-border-strong: #3b3b3b;
+  --jnr-text: #f5f5f5;
+  --jnr-muted: #b8b8b8;
+  --jnr-faint: #858585;
+  --jnr-blue: #8eb0ff;
+  --jnr-blue-bg: rgba(84, 118, 224, 0.16);
+  --jnr-blue-border: rgba(104, 139, 255, 0.44);
+  --jnr-green: #65dfa0;
+  --jnr-green-bg: rgba(36, 174, 99, 0.15);
+  --jnr-green-border: rgba(42, 186, 109, 0.42);
+  --jnr-amber: #efc779;
+  --jnr-red: #e59696;
+  width: min(1540px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 26px 0 56px;
+  color: var(--jnr-text);
+  background: transparent;
+  font-family: inherit;
+}
+
+.jnrJobPage *,
+.jnrJobPage *::before,
+.jnrJobPage *::after {
+  box-sizing: border-box;
+}
+
+.jnrJobPage button,
+.jnrJobPage input,
+.jnrJobPage select,
+.jnrJobPage textarea {
+  font: inherit;
+}
+
+.jnrJobPage h1,
+.jnrJobPage h2,
+.jnrJobPage h3,
+.jnrJobPage p {
+  margin-top: 0;
+}
+
+.jnrJobPage h2 {
+  margin-bottom: 15px;
+  font-size: 1.04rem;
+  line-height: 1.2;
+  font-weight: 850;
+  letter-spacing: -0.015em;
+  color: #ffffff;
+}
+
+.jnrJobCard {
+  border: 1px solid var(--jnr-border);
+  border-radius: 12px;
+  background: var(--jnr-card);
+  box-shadow: none;
+}
+
+.jnrJobHeader {
+  position: relative;
+  min-height: 215px;
+  padding: 22px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  overflow: hidden;
+  isolation: isolate;
+  border-color: color-mix(in srgb, var(--job-colour) 35%, var(--jnr-border));
+  background: #18191c;
+  box-shadow: inset 4px 0 var(--job-colour);
+}
+
+.jnrJobHeader::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: "";
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--job-colour) 13%, transparent), transparent 34%),
+    linear-gradient(
+      90deg,
+      #1d1d1d 0%,
+      rgba(29, 29, 29, 0.98) 31%,
+      rgba(29, 29, 29, 0.76) 51%,
+      rgba(14, 15, 18, 0.34) 100%
+    );
+}
+
+.jnrJobHeroMedia {
+  position: absolute;
+  inset: 0 0 0 42%;
+  z-index: 0;
+  overflow: hidden;
+  background: #17191e;
+}
+
+.jnrJobHeroMedia::after {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(8, 9, 12, 0.05), rgba(8, 9, 12, 0.36));
+}
+
+.jnrJobHeroMedia > img,
+.jnrJobHeroMedia > .leaflet-container,
+.jnrJobHeroDefault {
+  width: 100%;
+  height: 100%;
+}
+
+.jnrJobHeroMedia > img {
+  display: block;
+  object-fit: cover;
+  filter: saturate(0.92) contrast(1.04);
+}
+
+.jnrJobHeroMedia > .leaflet-container {
+  pointer-events: none;
+  filter: grayscale(0.78) brightness(0.58) contrast(1.14);
+}
+
+.jnrJobHeroDefault {
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(rgba(69, 105, 196, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(69, 105, 196, 0.09) 1px, transparent 1px),
+    radial-gradient(circle at 64% 40%, rgba(74, 121, 235, 0.22), transparent 42%),
+    #14161a;
+  background-size: 34px 34px, 34px 34px, auto, auto;
+}
+
+.jnrJobHeroDefault img {
+  width: 86px;
+  height: 86px;
+  border-radius: 14px;
+  object-fit: contain;
+  opacity: 0.52;
+}
+
+.jnrJobHeroDefault span {
+  position: absolute;
+  right: 22px;
+  bottom: 17px;
+  color: rgba(170, 193, 255, 0.48);
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.jnrJobIdentity {
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+  max-width: min(64%, 830px);
+}
+
+.jnrJobIdentity > p {
+  margin: 7px 0 0;
+  color: var(--jnr-muted);
+  font-size: 0.96rem;
+}
+
+.jnrJobTitleRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.jnrJobTitleRow h1 {
+  margin: 0;
+  font-size: clamp(1.65rem, 2.5vw, 2.25rem);
+  line-height: 1.05;
+  font-weight: 850;
+  letter-spacing: -0.035em;
+  color: #fff;
+}
+
+.jnrStatusPill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 4px 10px;
+  border: 1px solid var(--jnr-border-strong);
+  border-radius: 8px;
+  background: #252525;
+  color: #d7d7d7;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.jnrStatusPill.active {
+  border-color: var(--jnr-blue-border);
+  background: var(--jnr-blue-bg);
+  color: var(--jnr-blue);
+}
+
+.jnrStatusPill.success {
+  border-color: var(--jnr-green-border);
+  background: var(--jnr-green-bg);
+  color: var(--jnr-green);
+}
+
+.jnrStatusPill.warning {
+  border-color: rgba(220, 172, 80, 0.35);
+  background: rgba(220, 172, 80, 0.1);
+  color: var(--jnr-amber);
+}
+
+.jnrStatusPill.lost {
+  border-color: rgba(230, 105, 105, 0.42);
+  background: rgba(196, 66, 66, 0.14);
+  color: #ff9b9b;
+}
+
+.jnrHeaderActions,
+.jnrButtonRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.jnrHeaderActions {
+  position: relative;
+  z-index: 2;
+  justify-content: flex-end;
+}
+
+.jnrButton,
+.jnrTextButton {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    color 140ms ease,
+    transform 140ms ease;
+}
+
+.jnrButton:disabled,
+.jnrTextButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.jnrButton {
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid var(--jnr-border-strong);
+  border-radius: 9px;
+  background: #252525;
+  color: #efefef;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.jnrButton:not(:disabled):hover {
+  border-color: #555;
+  background: #2b2b2b;
+}
+
+.jnrButton.primary {
+  border-color: var(--jnr-blue-border);
+  background: var(--jnr-blue-bg);
+  color: var(--jnr-blue);
+}
+
+.jnrButton.primary:not(:disabled):hover {
+  border-color: rgba(124, 154, 255, 0.68);
+  background: rgba(84, 118, 224, 0.23);
+}
+
+.jnrButton.success {
+  border-color: var(--jnr-green-border);
+  background: var(--jnr-green-bg);
+  color: var(--jnr-green);
+}
+
+.jnrButton.success:not(:disabled):hover {
+  background: rgba(36, 174, 99, 0.23);
+}
+
+.jnrButton.lost {
+  border-color: rgba(230, 105, 105, 0.48);
+  background: rgba(196, 66, 66, 0.14);
+  color: #ff9b9b;
+}
+
+.jnrButton.lost:not(:disabled):hover {
+  background: rgba(196, 66, 66, 0.22);
+}
+
+.jnrButton.archive {
+  color: #c4c4c4;
+  background: transparent;
+}
+
+.jnrButton.archive:not(:disabled):hover {
+  border-color: rgba(216, 99, 99, 0.5);
+  background: rgba(194, 75, 75, 0.1);
+  color: var(--jnr-red);
+}
+
+.jnrButton.quiet {
+  background: #242424;
+  color: #d3d3d3;
+}
+
+.jnrTextButton {
+  padding: 0;
+  background: transparent;
+  color: var(--jnr-blue);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.jnrTextButton:hover {
+  color: #b9ccff;
+}
+
+.jnrEditPanel {
+  margin-top: 12px;
+  padding: 22px;
+}
+
+.jnrClosePanel {
+  margin-top: 12px;
+  padding: 22px;
+  border-color: rgba(219, 100, 100, 0.34);
+  background: linear-gradient(135deg, rgba(126, 38, 38, 0.12), #1d1d1d 48%);
+}
+
+.jnrCloseStage {
+  padding: 6px 9px;
+  border: 1px solid var(--jnr-border-strong);
+  border-radius: 999px;
+  color: var(--jnr-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.jnrCloseWarning {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(220, 172, 80, 0.3);
+  border-radius: 8px;
+  background: rgba(220, 172, 80, 0.08);
+  color: var(--jnr-amber);
+  font-size: 0.78rem;
+}
+
+.jnrClosePanel .jnrButtonRow {
+  margin-top: 16px;
+}
+
+.jnrOutcomeSummary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 12px;
+  overflow: hidden;
+  border-color: rgba(219, 100, 100, 0.28);
+}
+
+.jnrOutcomeSummary > div {
+  padding: 14px 18px;
+}
+
+.jnrOutcomeSummary > div + div {
+  border-left: 1px solid var(--jnr-border);
+}
+
+.jnrOutcomeSummary span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--jnr-faint);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.jnrOutcomeSummary strong {
+  color: #f4f4f4;
+  font-size: 0.82rem;
+}
+
+.jnrOutcomeSummary > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 18px;
+  border-top: 1px solid var(--jnr-border);
+  color: var(--jnr-muted);
+  font-size: 0.8rem;
+}
+
+.jnrSectionHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 14px;
+}
+
+.jnrSectionHeading.compact {
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--jnr-border);
+}
+
+.jnrSectionHeading h2,
+.jnrSectionHeading.compact h2 {
+  margin-bottom: 0;
+}
+
+.jnrSectionHeading p {
+  margin: 5px 0 0;
+  color: var(--jnr-muted);
+  font-size: 0.8rem;
+}
+
+.jnrFormGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.jnrFormGrid label,
+.jnrClientForm label,
+.jnrRadiusField {
+  display: grid;
+  gap: 6px;
+  color: var(--jnr-muted);
+  font-size: 0.77rem;
+  font-weight: 750;
+}
+
+.jnrFormGrid label.wide {
+  grid-column: span 2;
+}
+
+.jnrFormGrid label.full {
+  grid-column: 1 / -1;
+}
+
+.jnrJobColourField {
+  display: grid;
+  gap: 6px;
+  grid-column: 1 / -1;
+  color: var(--jnr-muted);
+  font-size: 0.77rem;
+  font-weight: 750;
+}
+
+.jnrJobPage input,
+.jnrJobPage select,
+.jnrJobPage textarea {
+  width: 100%;
+  border: 1px solid var(--jnr-border-strong);
+  border-radius: 8px;
+  outline: none;
+  background: var(--jnr-input);
+  color: #f4f4f4;
+}
+
+.jnrJobPage input,
+.jnrJobPage select {
+  min-height: 39px;
+  padding: 8px 11px;
+}
+
+.jnrJobPage textarea {
+  min-height: 92px;
+  padding: 10px 11px;
+  resize: vertical;
+}
+
+.jnrJobPage input:focus,
+.jnrJobPage select:focus,
+.jnrJobPage textarea:focus {
+  border-color: var(--jnr-blue-border);
+  box-shadow: 0 0 0 2px rgba(90, 130, 255, 0.1);
+}
+
+.jnrFormMessage,
+.jnrPageMessage {
+  color: var(--jnr-muted);
+  font-size: 0.8rem;
+}
+
+.jnrFormMessage {
+  margin: 12px 0 0;
+}
+
+.jnrPageMessage {
+  margin: 10px 2px -2px;
+}
+
+.jnrEditPanel .jnrButtonRow {
+  margin-top: 16px;
+}
+
+.jnrMoneyStrip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.jnrMetric {
+  min-width: 0;
+  padding: 18px 20px;
+  text-align: center;
+}
+
+.jnrMetric + .jnrMetric {
+  border-left: 1px solid var(--jnr-border);
+}
+
+.jnrMetric span,
+.jnrInfoBox span,
+.jnrRadiusField > span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--jnr-muted);
+  font-size: 0.75rem;
+}
+
+.jnrMetric strong {
+  display: block;
+  color: #f4f4f4;
+  font-size: clamp(1.05rem, 1.75vw, 1.42rem);
+  line-height: 1.15;
+  font-weight: 850;
+}
+
+.jnrMetric.positive strong,
+.jnrInfoBox.positive strong {
+  color: var(--jnr-green);
+}
+
+.jnrMetric.negative strong {
+  color: var(--jnr-red);
+}
+
+.jnrShortcutGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1180px) {
+  .jnrShortcutGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.jnrShortcut {
+  width: 100%;
+  min-height: 72px;
+  padding: 13px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: var(--jnr-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.jnrShortcut:hover {
+  border-color: color-mix(in srgb, var(--job-colour) 38%, #484848);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--job-colour) 8%, transparent), #222 48%);
+}
+
+.jnrShortcut > span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.jnrShortcut strong {
+  color: #f4f4f4;
+  font-size: 0.91rem;
+  font-weight: 800;
+}
+
+.jnrShortcut small {
+  color: var(--jnr-faint);
+  font-size: 0.72rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jnrShortcut b {
+  color: #b3b3b3;
+  font-size: 1.55rem;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.jnrReferenceDocuments {
+  margin-top: 12px;
+  padding: 18px;
+}
+
+.jnrSectionKicker {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--jnr-blue);
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.jnrReferenceHeadingActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.jnrReferenceHeadingActions > strong {
+  color: var(--jnr-muted);
+  font-size: 0.76rem;
+}
+
+.jnrReferenceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.jnrReferenceDocument {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--jnr-border);
+  border-radius: 10px;
+  background: var(--jnr-card-soft);
+}
+
+.jnrReferencePreview {
+  height: 155px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--jnr-border);
+  background: #15161a;
+}
+
+.jnrReferencePreview iframe,
+.jnrReferencePreview img,
+.jnrReferenceFallback {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+}
+
+.jnrReferencePreview iframe {
+  background: #eceff4;
+  pointer-events: none;
+}
+
+.jnrReferencePreview img {
+  object-fit: cover;
+}
+
+.jnrReferenceFallback {
+  display: grid;
+  place-items: center;
+  background:
+    linear-gradient(rgba(86, 123, 220, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(86, 123, 220, 0.08) 1px, transparent 1px),
+    #17191e;
+  background-size: 22px 22px;
+}
+
+.jnrReferenceFallback span {
+  padding: 10px 12px;
+  border: 1px solid rgba(102, 139, 238, 0.36);
+  border-radius: 8px;
+  color: var(--jnr-blue);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.jnrReferenceCopy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  padding: 12px 13px 9px;
+}
+
+.jnrReferenceCopy > span {
+  color: var(--jnr-blue);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.jnrReferenceCopy strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #f4f4f4;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jnrReferenceCopy small {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--jnr-faint);
+  font-size: 0.68rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jnrReferenceDocument > a,
+.jnrReferenceUnavailable {
+  display: block;
+  margin: 0 13px 12px;
+  color: var(--jnr-blue);
+  font-size: 0.69rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.jnrReferenceDocument > a:hover {
+  color: #c3d2ff;
+}
+
+.jnrReferenceUnavailable {
+  color: var(--jnr-faint);
+}
+
+.jnrReferenceMore {
+  margin-top: 13px;
+}
+
+.jnrTodoCard {
+  margin-top: 12px;
+  padding: 18px;
+}
+
+.jnrTodoComposer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 9px;
+}
+
+.jnrTodoComposer > label {
+  min-height: 39px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 11px;
+  border: 1px solid var(--jnr-border-strong);
+  border-radius: 8px;
+  color: var(--jnr-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.jnrTodoComposer > label.selected {
+  border-color: rgba(230, 105, 105, 0.44);
+  background: rgba(196, 66, 66, 0.1);
+  color: #ff9b9b;
+}
+
+.jnrTodoComposer > label input {
+  width: 15px;
+  min-height: 15px;
+  padding: 0;
+}
+
+.jnrInlineTodoList {
+  display: grid;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.jnrInlineTodo {
+  min-height: 47px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--jnr-border);
+  border-radius: 9px;
+  background: var(--jnr-card-soft);
+}
+
+.jnrInlineTodo.high {
+  border-color: rgba(230, 105, 105, 0.36);
+  background: linear-gradient(90deg, rgba(196, 66, 66, 0.1), var(--jnr-card-soft) 26%);
+}
+
+.jnrInlineTodo strong {
+  color: #eeeeee;
+  font-size: 0.82rem;
+}
+
+.jnrTodoCheck,
+.jnrTodoPriority,
+.jnrTodoDelete {
+  appearance: none;
+  border: 1px solid var(--jnr-border-strong);
+  border-radius: 7px;
+  background: #1d1d1d;
+  color: var(--jnr-muted);
+  cursor: pointer;
+}
+
+.jnrTodoCheck,
+.jnrTodoPriority {
+  width: 29px;
+  height: 29px;
+  padding: 0;
+  font-weight: 900;
+}
+
+.jnrTodoCheck:hover {
+  border-color: var(--jnr-green-border);
+  color: var(--jnr-green);
+}
+
+.jnrTodoPriority.active {
+  border-color: rgba(230, 105, 105, 0.48);
+  background: rgba(196, 66, 66, 0.14);
+  color: #ff9b9b;
+}
+
+.jnrTodoDelete {
+  padding: 6px 9px;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.jnrTodoDelete:hover {
+  color: var(--jnr-red);
+}
+
+.jnrTodoClear {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px dashed var(--jnr-green-border);
+  border-radius: 9px;
+  color: var(--jnr-green);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.jnrJobContentGrid {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.76fr) minmax(520px, 2.15fr) minmax(260px, 0.98fr);
+  gap: 12px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+.jnrContentStack {
+  display: grid;
+  gap: 12px;
+}
+
+.jnrContentStack > .jnrJobCard,
+.jnrClientCard,
+.jnrNotesCard,
+.jnrGeofenceCard,
+.jnrPhotosCard {
+  padding: 18px;
+}
+
+.jnrClientDetails {
+  display: grid;
+  gap: 14px;
+}
+
+.jnrClientDetails > strong {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.jnrContactLine {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.jnrContactLine span {
+  color: var(--jnr-faint);
+  font-size: 0.7rem;
+  font-weight: 750;
+}
+
+.jnrContactLine strong,
+.jnrContactLine a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #e2e2e2;
+  font-size: 0.8rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.jnrContactLine a:hover {
+  color: var(--jnr-blue);
+}
+
+.jnrClientForm {
+  display: grid;
+  gap: 12px;
+}
+
+.jnrClientForm .jnrButtonRow {
+  margin-top: 2px;
+}
+
+.jnrNotesCard p {
+  margin: 0;
+  color: var(--jnr-muted);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+
+.jnrGeofenceCard {
+  min-width: 0;
+}
+
+.jnrGeofenceSearch {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 9px;
+  margin-bottom: 11px;
+}
+
+.jnrJobMap {
+  height: 390px;
+  overflow: hidden;
+  border: 1px solid var(--jnr-border);
+  border-radius: 10px;
+  background: #d9d9d9;
+}
+
+.jnrJobMap .leaflet-container {
+  width: 100%;
+  height: 100%;
+  background: #d9d9d9;
+  font-family: inherit;
+}
+
+.jnrGeoInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.jnrInfoBox,
+.jnrRadiusField {
+  min-width: 0;
+  min-height: 68px;
+  padding: 11px 12px;
+  border: 1px solid var(--jnr-border);
+  border-radius: 9px;
+  background: var(--jnr-card-soft);
+}
+
+.jnrInfoBox strong {
+  display: block;
+  overflow: hidden;
+  color: #f1f1f1;
+  font-size: 0.83rem;
+  font-weight: 850;
+  text-overflow: ellipsis;
+}
+
+.jnrRadiusField > div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.jnrRadiusField input {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 0.83rem;
+  font-weight: 850;
+  box-shadow: none;
+}
+
+.jnrRadiusField input:focus {
+  box-shadow: none;
+}
+
+.jnrRadiusField small {
+  color: var(--jnr-muted);
+}
+
+.jnrGeofenceFooter {
+  min-height: 40px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.jnrGeofenceFooter span {
+  color: var(--jnr-muted);
+  font-size: 0.75rem;
+}
+
+.jnrSideRow {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-top: 1px solid var(--jnr-border);
+}
+
+.jnrSideRow span {
+  color: var(--jnr-muted);
+  font-size: 0.76rem;
+}
+
+.jnrSideRow strong {
+  color: #f1f1f1;
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-align: right;
+}
+
+.jnrActivityList {
+  display: grid;
+}
+
+.jnrActivityItem {
+  min-height: 40px;
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid var(--jnr-border);
+}
+
+.jnrActivityItem > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--jnr-blue);
+}
+
+.jnrActivityItem strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #e7e7e7;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jnrActivityItem small {
+  color: var(--jnr-faint);
+  font-size: 0.67rem;
+}
+
+.jnrEmptyText {
+  margin: 0;
+  color: var(--jnr-muted);
+  font-size: 0.79rem;
+}
+
+.jnrMissingDetails {
+  width: 100%;
+  margin: 0 0 8px;
+  padding: 9px 10px;
+  appearance: none;
+  border: 1px solid rgba(220, 172, 80, 0.32);
+  border-radius: 8px;
+  background: rgba(220, 172, 80, 0.08);
+  color: var(--jnr-amber);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+
+.jnrPhotosCard {
+  margin-top: 12px;
+}
+
+.jnrPhotoHeadingActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.jnrPhotoHeadingActions > strong {
+  color: var(--jnr-muted);
+  font-size: 0.9rem;
+}
+
+.jnrPhotoHeadingActions .jnrButton {
+  min-height: 34px;
+  padding: 6px 10px;
+  font-size: 0.74rem;
+}
+
+.jnrPhotoMessage {
+  margin: -3px 0 12px;
+  color: var(--jnr-muted);
+  font-size: 0.76rem;
+}
+
+.jnrPhotoMessage.error {
+  color: var(--jnr-red);
+}
+
+.jnrPhotoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.jnrPhotoChoice {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--jnr-border);
+  border-radius: 10px;
+  background: #171717;
+  box-shadow: none;
+  isolation: isolate;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.jnrPhotoCoverAction {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  display: block;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.jnrPhotoCoverAction:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.jnrPhotoChoice:hover {
+  border-color: rgba(112, 148, 255, 0.72);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.jnrPhotoChoice.isCover {
+  border-color: #5f89ff;
+  box-shadow:
+    0 0 0 2px rgba(86, 128, 255, 0.2),
+    0 10px 28px rgba(18, 50, 135, 0.3);
+}
+
+.jnrPhotoChoice img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: block;
+  object-fit: cover;
+  border: 0;
+  border-radius: 0;
+  background: #171717;
+  transition: transform 220ms ease, filter 220ms ease;
+}
+
+.jnrPhotoChoice:hover .jnrPhotoCoverAction img {
+  filter: brightness(1.08);
+  transform: scale(1.025);
+}
+
+.jnrPhotoChoice span {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  left: 7px;
+  z-index: 1;
+  padding: 7px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 7px;
+  background: rgba(8, 10, 15, 0.82);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  color: #dbe5ff;
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-align: left;
+  backdrop-filter: blur(9px);
+}
+
+.jnrPhotoChoice.isCover span {
+  border-color: rgba(112, 151, 255, 0.48);
+  background: rgba(36, 73, 172, 0.9);
+  color: #fff;
+}
+
+.jnrPhotoReject {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  z-index: 3;
+  min-height: 28px;
+  margin: 0;
+  padding: 5px 9px;
+  appearance: none;
+  border: 1px solid rgba(255, 108, 108, 0.5);
+  border-radius: 7px;
+  background: rgba(18, 12, 15, 0.86);
+  color: #ffb1b1;
+  font-size: 0.66rem;
+  font-weight: 850;
+  line-height: 1;
+  cursor: pointer;
+  backdrop-filter: blur(9px);
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    color 150ms ease;
+}
+
+.jnrPhotoReject:not(:disabled):hover {
+  border-color: #ff6b6b;
+  background: rgba(92, 24, 30, 0.94);
+  color: #fff;
+}
+
+.jnrPhotoReject:disabled {
+  cursor: wait;
+  opacity: 0.64;
+}
+
+.jnrPhotoFooter {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.jnrPhotoFooter p {
+  margin: 0;
+  color: var(--jnr-muted);
+  font-size: 0.76rem;
+}
+
+.jnrPhotoFooter p.error {
+  color: var(--jnr-red);
+}
+
+.jnrEmptyBox {
+  min-height: 105px;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  border: 1px dashed var(--jnr-border-strong);
+  border-radius: 9px;
+  color: var(--jnr-muted);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.jnrPrintReport {
+  display: none;
+}
+
+@media (max-width: 1220px) {
+  .jnrJobContentGrid {
+    grid-template-columns: minmax(210px, 0.78fr) minmax(460px, 1.8fr);
+  }
+
+  .jnrJobContentGrid > .jnrContentStack:last-child {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 940px) {
+  .jnrJobPage {
+    width: min(100% - 24px, 760px);
+    padding-top: 16px;
+  }
+
+  .jnrJobHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    min-height: 245px;
+  }
+
+  .jnrJobHeroMedia {
+    inset: 0;
+  }
+
+  .jnrJobHeader::before {
+    background: linear-gradient(
+      90deg,
+      rgba(25, 25, 27, 0.98),
+      rgba(25, 25, 27, 0.82) 62%,
+      rgba(13, 14, 17, 0.5)
+    );
+  }
+
+  .jnrJobIdentity {
+    max-width: 82%;
+  }
+
+  .jnrHeaderActions {
+    justify-content: flex-start;
+  }
+
+  .jnrMoneyStrip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .jnrMetric {
+    border-bottom: 1px solid var(--jnr-border);
+  }
+
+  .jnrMetric + .jnrMetric {
+    border-left: 0;
+  }
+
+  .jnrMetric:nth-child(even) {
+    border-left: 1px solid var(--jnr-border);
+  }
+
+  .jnrMetric:last-child {
+    grid-column: 1 / -1;
+    border-bottom: 0;
+  }
+
+  .jnrShortcutGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .jnrOutcomeSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .jnrOutcomeSummary > div:nth-child(3) {
+    border-left: 0;
+    border-top: 1px solid var(--jnr-border);
+  }
+
+  .jnrOutcomeSummary > div:nth-child(4) {
+    border-top: 1px solid var(--jnr-border);
+  }
+
+  .jnrJobContentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .jnrJobContentGrid > .jnrContentStack:last-child {
+    grid-column: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .jnrContentStack:first-child {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .jnrFormGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .jnrPhotoGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .jnrReferenceGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .jnrJobPage {
+    width: calc(100% - 16px);
+    padding-top: 10px;
+  }
+
+  .jnrJobHeader,
+  .jnrEditPanel,
+  .jnrContentStack > .jnrJobCard,
+  .jnrClientCard,
+  .jnrNotesCard,
+  .jnrGeofenceCard,
+  .jnrPhotosCard,
+  .jnrReferenceDocuments {
+    padding: 14px;
+  }
+
+  .jnrHeaderActions,
+  .jnrButtonRow {
+    width: 100%;
+  }
+
+  .jnrJobHeader {
+    min-height: 285px;
+  }
+
+  .jnrJobIdentity {
+    max-width: 100%;
+  }
+
+  .jnrReferenceHeadingActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .jnrReferenceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .jnrReferencePreview {
+    height: 175px;
+  }
+
+  .jnrHeaderActions .jnrButton {
+    flex: 1;
+  }
+
+  .jnrJobTitleRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .jnrShortcutGrid,
+  .jnrContentStack:first-child,
+  .jnrJobContentGrid > .jnrContentStack:last-child,
+  .jnrFormGrid,
+  .jnrGeoInfoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .jnrTodoComposer {
+    grid-template-columns: 1fr;
+  }
+
+  .jnrInlineTodo {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .jnrTodoDelete {
+    grid-column: 2 / -1;
+    justify-self: end;
+  }
+
+  .jnrOutcomeSummary {
+    grid-template-columns: 1fr;
+  }
+
+  .jnrOutcomeSummary > div + div,
+  .jnrOutcomeSummary > div:nth-child(3),
+  .jnrOutcomeSummary > div:nth-child(4) {
+    border-top: 1px solid var(--jnr-border);
+    border-left: 0;
+  }
+
+  .jnrFormGrid label.wide,
+  .jnrFormGrid label.full {
+    grid-column: auto;
+  }
+
+  .jnrMoneyStrip {
+    grid-template-columns: 1fr;
+  }
+
+  .jnrMetric,
+  .jnrMetric:nth-child(even),
+  .jnrMetric:last-child {
+    grid-column: auto;
+    border-left: 0;
+    border-bottom: 1px solid var(--jnr-border);
+    text-align: left;
+  }
+
+  .jnrMetric:last-child {
+    border-bottom: 0;
+  }
+
+  .jnrGeofenceSearch {
+    grid-template-columns: 1fr;
+  }
+
+  .jnrJobMap {
+    height: 320px;
+  }
+
+  .jnrGeofenceFooter {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .jnrPhotoGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .jnrPhotoHeadingActions,
+  .jnrPhotoFooter {
+    width: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media print {
+  .jnrJobPage > :not(.jnrPrintReport) {
+    display: none !important;
+  }
+
+  .jnrJobPage {
+    width: 100%;
+    padding: 0;
+    color: #111;
+  }
+
+  .jnrPrintReport {
+    display: block;
+    color: #111;
+    background: #fff;
+  }
+
+  .jnrPrintHeader {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #111;
+  }
+
+  .jnrPrintHeader img {
+    width: 68px;
+    height: auto;
+  }
+
+  .jnrPrintHeader h1,
+  .jnrPrintHeader p {
+    margin: 0;
+    color: #111;
+  }
+
+  .jnrPrintGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 18px 0;
+  }
+
+  .jnrPrintGrid .jnrInfoBox {
+    border-color: #ccc;
+    background: #fff;
+  }
+
+  .jnrPrintGrid .jnrInfoBox span,
+  .jnrPrintGrid .jnrInfoBox strong {
+    color: #111;
+  }
+}
+.jnrAssignedTeam {
+  margin: 4px 0 0;
+  padding: 14px;
+  border: 1px solid rgba(90, 132, 247, 0.28);
+  border-radius: 11px;
+  background: rgba(69, 104, 197, 0.065);
+}
+
+.jnrAssignedTeam legend {
+  padding: 0 6px;
+  color: #86a7ff;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.jnrAssignedTeam > p {
+  margin: 0 0 10px;
+  color: #8993a4;
+  font-size: 0.7rem;
+}
+
+.jnrAssignedTeam > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.jnrAssignedTeam label {
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.jnrAssignedTeam label.selected {
+  border-color: rgba(91, 139, 255, 0.65);
+  background: rgba(72, 115, 224, 0.14);
+}
+
+.jnrAssignedTeam label span {
+  display: grid;
+  gap: 1px;
+}
+
+.jnrAssignedTeam label small {
+  color: #7e8798;
+  font-size: 0.62rem;
+}
+
+.jnrJobSchedule {
+  margin-top: 12px;
+}
+
+.jnrJobScheduleList {
+  display: grid;
+  gap: 8px;
+}
+
+.jnrJobScheduleList > article {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.095);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.jnrJobScheduleList article > span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.jnrJobScheduleList article small {
+  overflow: hidden;
+  color: #919aaa;
+  font-size: 0.7rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jnrJobScheduleDate {
+  padding-left: 11px;
+  border-left: 3px solid #5b88ff;
+}
+
+.jnrScheduleState {
+  padding: 6px 9px;
+  border: 1px solid rgba(86, 132, 247, 0.34);
+  border-radius: 99px;
+  color: #8faeff;
+  font-size: 0.62rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.jnrScheduleState.confirmed,
+.jnrScheduleState.completed {
+  border-color: rgba(41, 200, 124, 0.34);
+  color: #59e49b;
+}
+
+.jnrScheduleEmpty {
+  width: 100%;
+  min-height: 62px;
+  border: 1px dashed rgba(98, 137, 241, 0.34);
+  border-radius: 10px;
+  background: rgba(68, 104, 200, 0.055);
+  color: #8eafff;
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .jnrJobScheduleList > article {
+    grid-template-columns: 1fr;
+  }
+}

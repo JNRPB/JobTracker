@@ -1,0 +1,1358 @@
+.pricingNotesPage {
+  --pricing-bg: #121313;
+  --pricing-card: #1c1d1d;
+  --pricing-card-soft: #202121;
+  --pricing-border: #353737;
+  --pricing-muted: #9ca1aa;
+  width: min(1540px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 36px 0 80px;
+  color: #f5f6f7;
+}
+
+.pricingNotesPage *,
+.pricingNotesPage *::before,
+.pricingNotesPage *::after {
+  box-sizing: border-box;
+}
+
+.pricingNotesPage button,
+.pricingNotesPage input,
+.pricingNotesPage textarea {
+  font: inherit;
+}
+
+.pricingPageHeader {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: end;
+  gap: 28px;
+  padding: 26px 28px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--job-colour) 38%, var(--pricing-border));
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 82% 25%, color-mix(in srgb, var(--job-colour) 19%, transparent), transparent 32%),
+    linear-gradient(120deg, color-mix(in srgb, var(--job-colour) 8%, #1b1c1c), #1b1c1c 48%);
+  box-shadow: 0 18px 50px rgb(0 0 0 / 24%);
+}
+
+.pricingPageHeader::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--job-colour);
+}
+
+.pricingBack {
+  padding: 0;
+  border: 0;
+  color: color-mix(in srgb, var(--job-colour) 72%, #c9d5ff);
+  background: transparent;
+  cursor: pointer;
+}
+
+.pricingBack:hover {
+  color: #fff;
+}
+
+.pricingTitleLine {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.pricingTitleLine h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+
+.pricingInternalBadge,
+.pricingKicker {
+  color: #ffca66;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.pricingInternalBadge {
+  padding: 6px 9px;
+  border: 1px solid #735a27;
+  border-radius: 999px;
+  background: #302715;
+}
+
+.pricingJobName {
+  margin: 14px 0 3px;
+  font-size: 1.05rem;
+  font-weight: 850;
+}
+
+.pricingJobAddress {
+  margin: 0;
+  color: var(--pricing-muted);
+  font-size: 0.84rem;
+}
+
+.pricingPageTotal {
+  min-width: 220px;
+  padding-left: 24px;
+  border-left: 1px solid var(--pricing-border);
+}
+
+.pricingPageTotal span,
+.pricingBlockTotal span,
+.pricingItemTotal > span {
+  display: block;
+  color: var(--pricing-muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pricingPageTotal strong {
+  display: block;
+  margin-top: 5px;
+  color: #fff;
+  font-size: 1.8rem;
+}
+
+.pricingPageTotal small {
+  display: block;
+  margin-top: 4px;
+  color: var(--pricing-muted);
+}
+
+.pricingPrimaryButton,
+.pricingEstimateButton,
+.pricingComposerActions button,
+.pricingBlockActions button,
+.pricingItemActions button,
+.pricingAddItem {
+  min-height: 40px;
+  padding: 0 15px;
+  border: 1px solid #3b3e42;
+  border-radius: 10px;
+  color: #e8e9eb;
+  background: #242526;
+  cursor: pointer;
+}
+
+.pricingPrimaryButton,
+.pricingComposerActions .primary {
+  border-color: color-mix(in srgb, var(--job-colour) 70%, #fff);
+  color: #fff;
+  background: color-mix(in srgb, var(--job-colour) 68%, #17203c);
+  font-weight: 850;
+}
+
+.pricingHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pricingEstimateButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border-color: color-mix(in srgb, var(--job-colour) 70%, #fff);
+  color: #fff;
+  background: color-mix(in srgb, var(--job-colour) 84%, #161720);
+  font-weight: 900;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--job-colour) 18%, transparent);
+}
+
+.pricingEstimateButton b {
+  font-size: 1.1rem;
+  transition: transform 160ms ease;
+}
+
+.pricingEstimateButton:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.pricingEstimateButton:hover:not(:disabled) b {
+  transform: translateX(3px);
+}
+
+.pricingPrimaryButton:hover,
+.pricingComposerActions .primary:hover {
+  filter: brightness(1.12);
+}
+
+.pricingNotesPage button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.pricingSeparationNote {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 16px;
+  padding: 11px 16px;
+  border: 1px solid #3b3425;
+  border-radius: 11px;
+  color: #c8c1b5;
+  background: #211e18;
+  font-size: 0.77rem;
+}
+
+.pricingSeparationNote strong {
+  color: #f4c66f;
+}
+
+.pricingPageMessage {
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 12px auto;
+  padding: 9px 13px;
+  border: 1px solid #2d714a;
+  border-radius: 9px;
+  color: #8fe6af;
+  background: #163323;
+  font-size: 0.78rem;
+  box-shadow: 0 8px 26px rgb(0 0 0 / 30%);
+}
+
+.pricingPageMessage.error {
+  border-color: #82404a;
+  color: #ff9aa7;
+  background: #351b20;
+}
+
+.pricingNewBlock,
+.pricingBlock,
+.pricingEmptyState,
+.pricingLoading {
+  border: 1px solid var(--pricing-border);
+  border-radius: 15px;
+  background: var(--pricing-card);
+}
+
+.pricingNewBlock {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 18px;
+  margin-bottom: 16px;
+  padding: 18px;
+  border-color: color-mix(in srgb, var(--job-colour) 45%, var(--pricing-border));
+}
+
+.pricingNewBlock > div:first-child {
+  display: grid;
+  gap: 8px;
+}
+
+.pricingNewBlock input,
+.pricingNewBlock textarea,
+.pricingBlockHeadingInputs input,
+.pricingBlockHeadingInputs textarea,
+.pricingField input,
+.pricingItemNote textarea {
+  width: 100%;
+  border: 1px solid #3b3d3e;
+  border-radius: 8px;
+  outline: none;
+  color: #f4f4f5;
+  background: #181919;
+}
+
+.pricingNewBlock input,
+.pricingNewBlock textarea {
+  padding: 11px 12px;
+}
+
+.pricingNotesPage input:focus,
+.pricingNotesPage textarea:focus {
+  border-color: var(--job-colour);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--job-colour) 18%, transparent);
+}
+
+.pricingComposerActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.pricingBlockList {
+  display: grid;
+  gap: 16px;
+}
+
+.pricingBlock {
+  overflow: hidden;
+}
+
+.pricingBlockHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 20px;
+  padding: 17px 18px;
+  border-bottom: 1px solid var(--pricing-border);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--job-colour) 8%, #202121), #202121 45%);
+}
+
+.pricingBlockHeadingInputs {
+  position: relative;
+  display: grid;
+  gap: 4px;
+}
+
+.pricingBlockHeadingInputs input,
+.pricingBlockHeadingInputs textarea {
+  padding: 2px 5px;
+  border-color: transparent;
+  background: transparent;
+  resize: vertical;
+}
+
+.pricingBlockHeadingInputs input {
+  font-size: 1.1rem;
+  font-weight: 900;
+}
+
+.pricingBlockHeadingInputs textarea {
+  color: var(--pricing-muted);
+  font-size: 0.78rem;
+}
+
+.pricingBlockHeadingInputs small {
+  position: absolute;
+  right: 3px;
+  top: 4px;
+  color: #7fdca0;
+  font-size: 0.65rem;
+}
+
+.pricingBlockHeadingInputs small.failed,
+.pricingSaveState.failed {
+  color: #ff8592;
+}
+
+.pricingBlockTotal {
+  min-width: 120px;
+  text-align: right;
+}
+
+.pricingBlockTotal strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 1.25rem;
+}
+
+.pricingBlockActions,
+.pricingItemActions {
+  display: flex;
+  gap: 7px;
+}
+
+.pricingBlockActions button,
+.pricingItemActions button {
+  min-height: 34px;
+  padding: 0 11px;
+  font-size: 0.72rem;
+}
+
+.pricingNotesPage button.danger {
+  border-color: #5e3238;
+  color: #ee9ba4;
+  background: #281b1d;
+}
+
+.pricingItemLabels,
+.pricingItem {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) 74px minmax(90px, 0.7fr) minmax(110px, 0.8fr) minmax(140px, 1fr) 120px auto;
+  gap: 9px;
+  align-items: center;
+}
+
+.pricingItemLabels {
+  padding: 9px 18px 5px;
+  color: #7f858d;
+  font-size: 0.61rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pricingItems {
+  padding: 0 12px;
+}
+
+.pricingItem {
+  padding: 9px 6px;
+  border-bottom: 1px solid #303232;
+}
+
+.pricingField {
+  min-width: 0;
+}
+
+.pricingField > span {
+  display: none;
+  margin-bottom: 5px;
+  color: #858b94;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pricingField input,
+.pricingItemNote textarea {
+  min-height: 38px;
+  padding: 8px 9px;
+}
+
+.pricingMoneyInput {
+  position: relative;
+}
+
+.pricingMoneyInput b {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 9px;
+  transform: translateY(-50%);
+  color: #8f949b;
+}
+
+.pricingMoneyInput input {
+  padding-left: 24px;
+}
+
+.pricingItemTotal {
+  min-width: 0;
+  text-align: right;
+}
+
+.pricingItemTotal strong {
+  display: block;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+
+.pricingSaveState {
+  display: block;
+  min-height: 12px;
+  margin-top: 2px;
+  color: #76d397;
+  font-size: 0.58rem;
+}
+
+.pricingItemNote {
+  grid-column: 1 / -1;
+  padding: 0 2px 3px;
+}
+
+.pricingItemNote summary {
+  width: max-content;
+  color: #8faefc;
+  font-size: 0.68rem;
+  cursor: pointer;
+}
+
+.pricingItemNote textarea {
+  margin-top: 7px;
+  resize: vertical;
+}
+
+.pricingEmptyItems {
+  display: grid;
+  gap: 3px;
+  padding: 24px 8px 20px;
+  color: var(--pricing-muted);
+  text-align: center;
+}
+
+.pricingEmptyItems strong {
+  color: #d4d5d7;
+}
+
+.pricingEmptyItems span {
+  font-size: 0.75rem;
+}
+
+.pricingAddItem {
+  width: calc(100% - 24px);
+  margin: 10px 12px 13px;
+  border-style: dashed;
+  color: color-mix(in srgb, var(--job-colour) 72%, #d7e1ff);
+  background: color-mix(in srgb, var(--job-colour) 5%, #1a1b1b);
+  font-weight: 800;
+}
+
+.pricingBlockFooter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 13px 18px;
+  border-top: 1px solid var(--pricing-border);
+  background: #202121;
+}
+
+.pricingBlockFooter span {
+  color: var(--pricing-muted);
+  font-size: 0.67rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pricingBlockFooter strong {
+  min-width: 120px;
+  color: #fff;
+  font-size: 1.2rem;
+  text-align: right;
+}
+
+.pricingNewItem {
+  margin: 10px 12px 13px;
+  padding: 13px;
+  border: 1px solid color-mix(in srgb, var(--job-colour) 35%, #3b3d3e);
+  border-radius: 11px;
+  background: #181919;
+}
+
+.pricingNewItemGrid {
+  display: grid;
+  grid-template-columns: minmax(220px, 2fr) 74px minmax(90px, 0.7fr) minmax(110px, 0.8fr) minmax(140px, 1fr) minmax(160px, 1fr);
+  gap: 9px;
+}
+
+.pricingNewItem .pricingField > span {
+  display: block;
+}
+
+.pricingNewItem .pricingComposerActions {
+  margin-top: 12px;
+}
+
+.pricingEmptyState,
+.pricingLoading {
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  padding: 38px;
+  color: var(--pricing-muted);
+  text-align: center;
+}
+
+.pricingEmptyState h2 {
+  margin: 12px 0 7px;
+  color: #f5f5f5;
+}
+
+.pricingEmptyState p {
+  max-width: 520px;
+  margin: 0 0 22px;
+}
+
+.pricingEmptyIcon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid color-mix(in srgb, var(--job-colour) 55%, #444);
+  border-radius: 18px;
+  color: #fff;
+  background: color-mix(in srgb, var(--job-colour) 22%, #1c1d1d);
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.pricingEstimateOverlay {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(4 5 7 / 78%);
+  backdrop-filter: blur(10px);
+  animation: pricingOverlayIn 160ms ease-out both;
+}
+
+.pricingEstimateModal {
+  width: min(780px, 100%);
+  max-height: min(900px, calc(100vh - 48px));
+  overflow: auto;
+  border: 1px solid color-mix(in srgb, var(--job-colour) 45%, #3b3d45);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 90% 0%, color-mix(in srgb, var(--job-colour) 15%, transparent), transparent 35%),
+    #191a1c;
+  box-shadow: 0 28px 90px rgb(0 0 0 / 62%);
+  animation: pricingModalIn 200ms ease-out both;
+}
+
+.pricingEstimateModal.isConverting {
+  overflow: hidden;
+}
+
+.pricingEstimateModalHeader,
+.pricingEstimateModalFooter,
+.pricingEstimateSelectBar,
+.pricingConversionOptionsTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.pricingEstimateModalHeader {
+  padding: 24px 24px 18px;
+}
+
+.pricingEstimateModalHeader h2 {
+  margin: 7px 0 5px;
+  color: #fff;
+  font-size: 1.65rem;
+  letter-spacing: -0.025em;
+}
+
+.pricingEstimateModalHeader p,
+.pricingEstimatePrivacyNote p {
+  margin: 0;
+  color: var(--pricing-muted);
+  font-size: 0.82rem;
+}
+
+.pricingModalClose {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid #3a3c40;
+  border-radius: 11px;
+  color: #aeb2ba;
+  background: #222326;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.pricingEstimatePrivacyNote {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 24px 18px;
+  padding: 12px 14px;
+  border: 1px solid #4f4023;
+  border-radius: 12px;
+  background: #252016;
+}
+
+.pricingEstimatePrivacyNote > span {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: #16120b;
+  background: #e8bb5f;
+  font-weight: 950;
+}
+
+.pricingEstimatePrivacyNote strong {
+  color: #f1c66f;
+}
+
+.pricingEstimateSelectBar {
+  padding: 0 24px 10px;
+  color: #dfe1e5;
+  font-size: 0.75rem;
+}
+
+.pricingEstimateSelectBar > div {
+  display: flex;
+  gap: 5px;
+}
+
+.pricingEstimateSelectBar button {
+  padding: 4px 7px;
+  border: 0;
+  color: color-mix(in srgb, var(--job-colour) 72%, #cdd8ff);
+  background: transparent;
+  font-size: 0.73rem;
+  cursor: pointer;
+}
+
+.pricingEstimateChoices {
+  display: grid;
+  gap: 8px;
+  max-height: 300px;
+  padding: 0 24px 18px;
+  overflow: auto;
+}
+
+.pricingEstimateChoice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 68px;
+  padding: 12px 14px;
+  border: 1px solid #35373b;
+  border-radius: 13px;
+  background: #202124;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+
+.pricingEstimateChoice:hover {
+  border-color: color-mix(in srgb, var(--job-colour) 45%, #41434a);
+  transform: translateY(-1px);
+}
+
+.pricingEstimateChoice.selected {
+  border-color: color-mix(in srgb, var(--job-colour) 72%, #fff);
+  background: color-mix(in srgb, var(--job-colour) 9%, #202124);
+}
+
+.pricingEstimateChoice > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pricingEstimateCheck {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #50535a;
+  border-radius: 8px;
+  color: #0d1310;
+  background: #18191b;
+  font-size: 0.8rem;
+  font-weight: 950;
+}
+
+.pricingEstimateChoice.selected .pricingEstimateCheck {
+  border-color: var(--job-colour);
+  background: color-mix(in srgb, var(--job-colour) 76%, #d9ffe6);
+}
+
+.pricingEstimateChoiceText,
+.pricingEstimateChoiceMeta {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.pricingEstimateChoiceText strong,
+.pricingEstimateChoiceText small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pricingEstimateChoiceText strong {
+  color: #f4f5f7;
+  font-size: 0.9rem;
+}
+
+.pricingEstimateChoiceText small,
+.pricingEstimateChoiceMeta small {
+  color: var(--pricing-muted);
+  font-size: 0.7rem;
+}
+
+.pricingEstimateChoiceMeta {
+  min-width: 150px;
+  color: #e4e6e9;
+  font-size: 0.72rem;
+  text-align: right;
+}
+
+.pricingConversionOptions {
+  display: grid;
+  gap: 13px;
+  margin: 0 24px 22px;
+  padding: 17px;
+  border: 1px solid color-mix(in srgb, var(--job-colour) 30%, #383a40);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--job-colour) 5%, #202124);
+}
+
+.pricingConversionOptionsTitle h3 {
+  margin: 4px 0 0;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.pricingConversionOptionsTitle > small {
+  max-width: 220px;
+  color: var(--pricing-muted);
+  font-size: 0.66rem;
+  line-height: 1.4;
+  text-align: right;
+}
+
+.pricingOverheadToggle {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 12px;
+  border: 1px solid #393b40;
+  border-radius: 11px;
+  background: #1a1b1d;
+  cursor: pointer;
+}
+
+.pricingOverheadToggle.selected {
+  border-color: color-mix(in srgb, var(--job-colour) 52%, #454850);
+}
+
+.pricingOverheadToggle > input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.pricingOverheadToggle > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.pricingOverheadToggle strong {
+  color: #f3f4f6;
+  font-size: 0.82rem;
+}
+
+.pricingOverheadToggle small {
+  color: var(--pricing-muted);
+  font-size: 0.68rem;
+}
+
+.pricingToggleVisual {
+  position: relative;
+  flex: 0 0 auto;
+  width: 37px;
+  height: 21px;
+  border-radius: 99px;
+  background: #3b3d42;
+  transition: background 150ms ease;
+}
+
+.pricingToggleVisual i {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #d6d8dd;
+  transition: transform 150ms ease, background 150ms ease;
+}
+
+.pricingOverheadToggle.selected .pricingToggleVisual {
+  background: color-mix(in srgb, var(--job-colour) 78%, #333);
+}
+
+.pricingOverheadToggle.selected .pricingToggleVisual i {
+  transform: translateX(16px);
+  background: #fff;
+}
+
+.pricingConversionFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pricingConversionFields label {
+  display: grid;
+  gap: 5px;
+  color: #c9ccd2;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.pricingConversionFields input {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  border: 1px solid #3c3e43;
+  border-radius: 9px;
+  color: #fff;
+  background: #18191b;
+}
+
+.pricingConversionFields input:disabled {
+  opacity: 0.45;
+}
+
+.pricingPercentInput {
+  position: relative;
+}
+
+.pricingPercentInput input {
+  padding-right: 32px;
+}
+
+.pricingPercentInput b {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  color: var(--pricing-muted);
+}
+
+.pricingConversionSummary {
+  display: grid;
+  grid-template-columns: minmax(90px, 1fr) auto minmax(90px, 1fr) auto minmax(90px, 1fr) auto minmax(120px, 1.15fr);
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 11px;
+  background: #18191b;
+}
+
+.pricingConversionSummary > span {
+  display: grid;
+  gap: 4px;
+}
+
+.pricingConversionSummary small {
+  color: var(--pricing-muted);
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.pricingConversionSummary strong {
+  color: #f3f4f6;
+  font-size: 0.82rem;
+}
+
+.pricingConversionSummary > i {
+  color: #696d75;
+  font-style: normal;
+}
+
+.pricingSellingTotal {
+  padding-left: 10px;
+  border-left: 1px solid #3b3d43;
+}
+
+.pricingSellingTotal strong {
+  color: color-mix(in srgb, var(--job-colour) 65%, #fff);
+  font-size: 1rem;
+}
+
+.pricingOverheadWarning,
+.pricingSpreadNote {
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+.pricingOverheadWarning {
+  padding: 8px 10px;
+  border: 1px solid #684c23;
+  border-radius: 8px;
+  color: #efc36d;
+  background: #282014;
+}
+
+.pricingSpreadNote {
+  color: var(--pricing-muted);
+}
+
+.pricingConversionError {
+  margin: 0 24px 16px;
+  padding: 10px 12px;
+  border: 1px solid #80333f;
+  border-radius: 10px;
+  color: #ff98a6;
+  background: #32191e;
+  font-size: 0.78rem;
+}
+
+.pricingEstimateModalFooter {
+  position: sticky;
+  bottom: 0;
+  padding: 16px 24px;
+  border-top: 1px solid #323438;
+  background: rgb(25 26 28 / 94%);
+  backdrop-filter: blur(10px);
+}
+
+.pricingModalCancel,
+.pricingModalConfirm {
+  min-height: 44px;
+  padding: 0 17px;
+  border-radius: 11px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.pricingModalCancel {
+  border: 1px solid #3c3e43;
+  color: #c9ccd2;
+  background: #222326;
+}
+
+.pricingModalConfirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  border: 1px solid color-mix(in srgb, var(--job-colour) 72%, #fff);
+  color: #fff;
+  background: color-mix(in srgb, var(--job-colour) 82%, #151827);
+}
+
+.pricingModalConfirm span {
+  display: grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  padding: 0 6px;
+  border-radius: 999px;
+  color: #fff;
+  background: rgb(255 255 255 / 15%);
+  font-size: 0.7rem;
+}
+
+.pricingConversionState {
+  display: grid;
+  place-items: center;
+  min-height: 410px;
+  padding: 42px;
+  text-align: center;
+}
+
+.pricingConversionState h2 {
+  margin: 12px 0 8px;
+  color: #fff;
+  font-size: 1.55rem;
+}
+
+.pricingConversionState p {
+  max-width: 470px;
+  margin: 0;
+  color: var(--pricing-muted);
+  line-height: 1.55;
+}
+
+.pricingConversionSpinner {
+  position: relative;
+  width: 74px;
+  height: 74px;
+  margin-bottom: 22px;
+  border: 1px solid color-mix(in srgb, var(--job-colour) 28%, #373940);
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--job-colour) 12%, #202124);
+  box-shadow: 0 0 42px color-mix(in srgb, var(--job-colour) 24%, transparent);
+}
+
+.pricingConversionSpinner::before {
+  content: "";
+  position: absolute;
+  inset: 13px;
+  border: 3px solid rgb(255 255 255 / 10%);
+  border-top-color: var(--job-colour);
+  border-radius: 50%;
+  animation: pricingSpin 700ms linear infinite;
+}
+
+.pricingConversionSpinner span {
+  position: absolute;
+  right: -3px;
+  bottom: 13px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--job-colour);
+  animation: pricingDot 900ms ease-in-out infinite;
+}
+
+.pricingConversionSpinner span:nth-child(2) { bottom: 30px; animation-delay: 120ms; }
+.pricingConversionSpinner span:nth-child(3) { bottom: 47px; animation-delay: 240ms; }
+
+.pricingConversionProgress {
+  width: min(340px, 100%);
+  height: 4px;
+  margin-top: 28px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #303238;
+}
+
+.pricingConversionProgress span {
+  display: block;
+  width: 45%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, var(--job-colour), #fff, transparent);
+  animation: pricingProgress 900ms ease-in-out infinite;
+}
+
+@keyframes pricingOverlayIn { from { opacity: 0; } }
+@keyframes pricingModalIn { from { opacity: 0; transform: translateY(12px) scale(0.985); } }
+@keyframes pricingSpin { to { transform: rotate(360deg); } }
+@keyframes pricingDot { 50% { transform: scale(1.5); filter: brightness(1.35); } }
+@keyframes pricingProgress { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
+
+@media (max-width: 1120px) {
+  .pricingPageHeader,
+  .pricingBlockHeader {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .pricingPageHeader > .pricingPrimaryButton,
+  .pricingHeaderActions,
+  .pricingBlockActions {
+    grid-column: 1 / -1;
+  }
+
+  .pricingBlockActions {
+    justify-content: flex-end;
+  }
+
+  .pricingItemLabels {
+    display: none;
+  }
+
+  .pricingItems {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .pricingItem {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    padding: 13px;
+    border: 1px solid #343636;
+    border-radius: 11px;
+    background: #191a1a;
+  }
+
+  .pricingField > span {
+    display: block;
+  }
+
+  .pricingDescriptionField,
+  .pricingSupplierField,
+  .pricingItemNote {
+    grid-column: 1 / -1;
+  }
+
+  .pricingItemTotal {
+    text-align: left;
+  }
+
+  .pricingItemActions {
+    justify-content: flex-end;
+  }
+
+  .pricingNewItemGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pricingNewItem .pricingDescriptionField,
+  .pricingNewNoteField {
+    grid-column: span 3;
+  }
+}
+
+@media (max-width: 720px) {
+  .pricingNotesPage {
+    width: min(100% - 22px, 1540px);
+    padding-top: 18px;
+  }
+
+  .pricingPageHeader,
+  .pricingBlockHeader,
+  .pricingNewBlock {
+    grid-template-columns: 1fr;
+  }
+
+  .pricingPageHeader,
+  .pricingBlockHeader {
+    gap: 16px;
+  }
+
+  .pricingPageTotal {
+    padding: 14px 0 0;
+    border-top: 1px solid var(--pricing-border);
+    border-left: 0;
+  }
+
+  .pricingPageHeader > .pricingPrimaryButton,
+  .pricingBlockActions {
+    grid-column: auto;
+  }
+
+  .pricingPageHeader > .pricingPrimaryButton {
+    width: 100%;
+  }
+
+  .pricingHeaderActions {
+    width: 100%;
+  }
+
+  .pricingHeaderActions button {
+    flex: 1;
+  }
+
+  .pricingEstimateModalHeader,
+  .pricingEstimateModalFooter {
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
+  .pricingEstimatePrivacyNote,
+  .pricingConversionOptions {
+    margin-left: 17px;
+    margin-right: 17px;
+  }
+
+  .pricingEstimateSelectBar,
+  .pricingEstimateChoices {
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
+  .pricingEstimateChoice {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .pricingEstimateChoiceMeta {
+    grid-column: 2;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .pricingConversionSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pricingConversionSummary > i {
+    display: none;
+  }
+
+  .pricingSellingTotal {
+    padding: 8px 0 0;
+    border-top: 1px solid #3b3d43;
+    border-left: 0;
+  }
+
+  .pricingBlockTotal {
+    text-align: left;
+  }
+
+  .pricingBlockActions {
+    justify-content: stretch;
+  }
+
+  .pricingBlockActions button {
+    flex: 1;
+  }
+
+  .pricingItems {
+    grid-template-columns: 1fr;
+  }
+
+  .pricingNewItemGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pricingNewItem .pricingDescriptionField,
+  .pricingNewNoteField,
+  .pricingSupplierField {
+    grid-column: 1 / -1;
+  }
+
+  .pricingSeparationNote {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 440px) {
+  .pricingNewItemGrid,
+  .pricingItem {
+    grid-template-columns: 1fr;
+  }
+
+  .pricingDescriptionField,
+  .pricingSupplierField,
+  .pricingItemNote,
+  .pricingNewItem .pricingDescriptionField,
+  .pricingNewNoteField {
+    grid-column: auto;
+  }
+
+  .pricingItemActions,
+  .pricingComposerActions {
+    justify-content: stretch;
+  }
+
+  .pricingItemActions button,
+  .pricingComposerActions button {
+    flex: 1;
+  }
+
+  .pricingEstimateOverlay {
+    padding: 10px;
+  }
+
+  .pricingHeaderActions,
+  .pricingConversionOptionsTitle {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pricingHeaderActions button {
+    width: 100%;
+  }
+
+  .pricingConversionOptionsTitle > small {
+    max-width: none;
+    text-align: left;
+  }
+
+  .pricingConversionFields {
+    grid-template-columns: 1fr;
+  }
+
+  .pricingEstimateModalFooter {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .pricingModalConfirm,
+  .pricingModalCancel {
+    justify-content: center;
+    width: 100%;
+    margin: 0;
+  }
+}

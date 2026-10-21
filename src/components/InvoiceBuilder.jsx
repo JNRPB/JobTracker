@@ -31,6 +31,18 @@ NI Number: JS280884A
 
 Thankyou.`;
 
+const FALLBACK_INVOICE_COMPANY = {
+  name: "JNR Plastering & Building Ltd",
+  owner: "Joshua Roberton",
+  email: "info@jnrplasteringandbuilding.com",
+  phone: "07954 567976",
+  address1: "19 Sherwood Drive",
+  address2: "Melton Mowbray",
+  postcode: "LE13 0LL",
+  vatNumber: "",
+  companyNumber: "",
+};
+
 function money(value) {
   return `£${Number(value || 0).toFixed(2)}`;
 }
@@ -69,7 +81,15 @@ function createHistoryEvent(type, message) {
 
 function buildPublicInvoiceUrl(publicToken) {
   if (!publicToken) return "";
-  return `${window.location.origin}/job-tracker/invoice/${publicToken}`;
+  return `${window.location.origin}/invoice/${publicToken}`;
+}
+
+function invoiceHasBeenIssued(invoice) {
+  return Boolean(
+    invoice &&
+      (invoice.invoiceNumber || invoice.number) &&
+      invoice.issuedAt,
+  );
 }
 
 function getFileName(file) {
@@ -229,9 +249,7 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
   }, [files, job]);
 
   const [mode, setMode] = useState(
-    ["issued", "emailed", "paid"].includes(invoice?.status)
-      ? "preview"
-      : "edit",
+    invoiceHasBeenIssued(invoice) ? "preview" : "edit",
   );
 
   const [lightboxFile, setLightboxFile] = useState(null);
@@ -248,7 +266,7 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
   const [fixedGross, setFixedGross] = useState(
     invoice?.fixedGross || invoice?.total || 0,
   );
-  const [vatRate, setVatRate] = useState(invoice?.vatRate || 20);
+  const [vatRate, setVatRate] = useState(invoice?.vatRate ?? 20);
   const [invoiceDate, setInvoiceDate] = useState(
     toDateInput(invoice?.invoiceDate || invoice?.createdAt),
   );
@@ -276,20 +294,11 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
   const [metaPaidAt, setMetaPaidAt] = useState(toDateInput(invoice?.paidAt));
 
   const [companyDetails, setCompanyDetails] = useState(
-    invoice?.companySnapshot ||
+      invoice?.companySnapshot ||
       invoice?.fromSnapshot ||
       estimate?.companySnapshot ||
-      estimate?.fromSnapshot || {
-        name: "JNR Plastering & Building Ltd",
-        owner: "Joshua Roberton",
-        email: "info@jnrplasteringandbuilding.com",
-        phone: "07954 567976",
-        address1: "19 Sherwood Drive",
-        address2: "Melton Mowbray",
-        postcode: "LE13 0LL",
-        vatNumber: "",
-        companyNumber: "",
-      },
+      estimate?.fromSnapshot ||
+      FALLBACK_INVOICE_COMPANY,
   );
 
   const [customerDetails, setCustomerDetails] = useState(
@@ -315,6 +324,8 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
   const [paymentMethod, setPaymentMethod] = useState(
     invoice?.paymentMethod || "Bank transfer",
   );
+  const [savingChanges, setSavingChanges] = useState(false);
+  const [saveChangesMessage, setSaveChangesMessage] = useState("");
 
   if (!job || !invoice) {
     return (
@@ -341,7 +352,62 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
     );
   }
 
-  const isIssued = ["issued", "emailed", "paid"].includes(invoice.status);
+  const isIssued = invoiceHasBeenIssued(invoice);
+
+  const editableState = {
+    invoiceType,
+    amountMode,
+    percentage: Number(percentage || 0),
+    fixedGross: Number(fixedGross || 0),
+    vatRate: Number(vatRate || 0),
+    invoiceDate,
+    isCashInvoice,
+    companyDetails,
+    customerDetails,
+    items: lineItems.map((item) => ({
+      description: item.description || "",
+      details: item.details || "",
+      rate: Number(item.rate || 0),
+      qty: Number(item.qty || 0),
+      vat: item.vat !== false,
+    })),
+    footnote,
+    attachments,
+  };
+  const savedEditableState = {
+    invoiceType: invoice.invoiceType || "deposit",
+    amountMode: invoice.amountMode || (isStandalone ? "items" : "remaining"),
+    percentage: Number(invoice.percentage || 100),
+    fixedGross: Number(invoice.fixedGross || invoice.total || 0),
+    vatRate: Number(invoice.vatRate ?? 20),
+    invoiceDate: toDateInput(invoice.invoiceDate || invoice.createdAt),
+    isCashInvoice: Boolean(invoice.isCashInvoice),
+    companyDetails:
+      invoice.companySnapshot ||
+      invoice.fromSnapshot ||
+      estimate?.companySnapshot ||
+      estimate?.fromSnapshot ||
+      FALLBACK_INVOICE_COMPANY,
+    customerDetails: getCustomerSnapshot(job, invoice),
+    items: normaliseItems(
+      invoice.items?.length
+        ? invoice.items
+        : isStandalone
+          ? []
+          : estimate?.items || [],
+      isStandalone ? "" : "Invoice item",
+    ).map((item) => ({
+      description: item.description || "",
+      details: item.details || "",
+      rate: Number(item.rate || 0),
+      qty: Number(item.qty || 0),
+      vat: item.vat !== false,
+    })),
+    footnote: invoice.footnote || DEFAULT_INVOICE_FOOTNOTE,
+    attachments: invoice.attachments || [],
+  };
+  const hasUnsavedChanges =
+    JSON.stringify(editableState) !== JSON.stringify(savedEditableState);
 
   const itemTotals = calculateItemTotals(lineItems, vatRate);
   const grossTotals = calculateGrossTotals(fixedGross, vatRate);
@@ -439,8 +505,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
   const publicInvoiceUrl = buildPublicInvoiceUrl(invoice.publicToken);
 
   function updateLineItem(id, field, value) {
-    if (isIssued) return;
-
     setLineItems((prev) =>
       prev.map((item) =>
         String(item.id) === String(id) ? { ...item, [field]: value } : item,
@@ -451,8 +515,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
   }
 
   function addLineItem() {
-    if (isIssued) return;
-
     setLineItems((prev) => [
       ...prev,
       {
@@ -469,8 +531,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
   }
 
   function deleteLineItem(id) {
-    if (isIssued) return;
-
     setLineItems((prev) =>
       prev.filter((item) => String(item.id) !== String(id)),
     );
@@ -510,6 +570,55 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
     navigate("JobDocuments", { jobId: job.id });
   }
 
+  async function saveIssuedInvoiceChanges() {
+    if (savingChanges || !hasUnsavedChanges) return;
+
+    setSavingChanges(true);
+    setSaveChangesMessage("");
+
+    try {
+      const savedInvoice = {
+        ...workingInvoice,
+        status: invoice.status,
+        number: invoice.number,
+        invoiceNumber: invoice.invoiceNumber,
+        issuedAt: invoice.issuedAt,
+        emailedAt: invoice.emailedAt,
+        paidAt: invoice.paidAt,
+        publicToken: invoice.publicToken,
+        updatedAt: new Date().toISOString(),
+        history: [
+          ...(invoice.history || []),
+          createHistoryEvent(
+            "invoice_edited",
+            `Invoice changes saved${Number(invoice.vatRate ?? 20) !== Number(vatRate || 0) ? ` · VAT changed to ${Number(vatRate || 0)}%` : ""}`,
+          ),
+        ],
+      };
+
+      const updatedJob = upsertInvoiceOnJob(job, savedInvoice);
+      await onUpdate(updatedJob);
+      setSaveChangesMessage("Changes saved. You can now return to Documents.");
+    } catch (error) {
+      setSaveChangesMessage(
+        error instanceof Error ? error.message : "Could not save invoice changes.",
+      );
+    } finally {
+      setSavingChanges(false);
+    }
+  }
+
+  function backToDocuments() {
+    if (
+      hasUnsavedChanges &&
+      !window.confirm("Discard the unsaved changes to this invoice?")
+    ) {
+      return;
+    }
+
+    navigate("JobDocuments", { jobId: job.id });
+  }
+
   async function getNextInvoiceNumber() {
     const res = await fetch(
       `${API_BASE}/api/business-settings/next-invoice-number`,
@@ -523,8 +632,15 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
   async function handleIssueInvoice() {
     const number = invoice.invoiceNumber || (await getNextInvoiceNumber());
 
+    const wasAlreadyPaid =
+      String(invoice.status || "").toLowerCase() === "paid" ||
+      Boolean(invoice.paidAt);
+
+    const issuedInvoice = issueInvoice(workingInvoice, number);
+
     const invoiceToIssue = {
-      ...issueInvoice(workingInvoice, number),
+      ...issuedInvoice,
+      status: wasAlreadyPaid ? "paid" : issuedInvoice.status,
 
       publicToken: workingInvoice.publicToken || crypto.randomUUID(),
       viewCount: workingInvoice.viewCount || 0,
@@ -537,6 +653,58 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
 
     await onUpdate(updatedJob);
     navigate("JobDocuments", { jobId: job.id });
+  }
+
+  async function handleEmailInvoice() {
+    if (!invoice?.publicToken) {
+      alert("Issue the invoice before emailing it.");
+      return;
+    }
+
+    const defaultEmail =
+      customerDetails.email || invoice.customerSnapshot?.email || "";
+
+    const recipientEmail = window.prompt("Send invoice to:", defaultEmail);
+
+    if (!recipientEmail) return;
+
+    try {
+      const response = await fetch(
+        `${API_BASE}/api/invoices/${invoice.publicToken}/email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            to: recipientEmail.trim(),
+          }),
+        },
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.details ||
+            responseData.error ||
+            "Could not email the invoice.",
+        );
+      }
+
+      alert(responseData.message);
+
+      navigate("JobDocuments", {
+        jobId: job.id,
+      });
+    } catch (error) {
+      console.error("Could not email invoice:", error);
+
+      alert(
+        error instanceof Error ? error.message : "Could not email the invoice.",
+      );
+    }
   }
 
   async function handleIssueToken() {
@@ -649,7 +817,7 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
       <div className="estimateTopbar">
         <button
           className="sleekButton ghostButton"
-          onClick={() => navigate("JobDocuments", { jobId: job.id })}
+          onClick={backToDocuments}
           type="button"
         >
           ← Back to Documents
@@ -686,16 +854,53 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
                 type="button"
                 onClick={handleIssueInvoice}
               >
-                Issue Invoice
+                {String(invoice.status || "").toLowerCase() === "paid"
+                  ? "Issue Paid Invoice"
+                  : "Issue Invoice"}
               </button>
             </>
+          )}
+
+          {isIssued && mode === "edit" && (
+            <button
+              className="sleekButton primaryButton"
+              type="button"
+              onClick={saveIssuedInvoiceChanges}
+              disabled={savingChanges || !hasUnsavedChanges}
+            >
+              {savingChanges
+                ? "Saving…"
+                : hasUnsavedChanges
+                  ? "Save Changes"
+                  : "Saved"}
+            </button>
+          )}
+
+          {isIssued && !invoice.publicToken && (
+            <button
+              className="sleekButton primaryButton"
+              type="button"
+              onClick={handleIssueToken}
+            >
+              Create PDF Link
+            </button>
+          )}
+
+          {isIssued && invoice.publicToken && invoice.status !== "paid" && (
+            <button
+              className="sleekButton primaryButton"
+              type="button"
+              onClick={handleEmailInvoice}
+            >
+              Email Invoice
+            </button>
           )}
         </div>
       </div>
 
       <div className="estimateLayout">
         <main className="estimateCanvas">
-          {mode === "preview" || isIssued ? (
+          {mode === "preview" ? (
             <InvoicePreview
               logo={logo}
               invoice={workingInvoice}
@@ -751,7 +956,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
                     type="date"
                     value={invoiceDate}
                     onChange={(e) => setInvoiceDate(e.target.value)}
-                    disabled={isIssued}
                   />
                 </label>
               </div>
@@ -764,7 +968,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
                     setIsCashInvoice(e.target.checked);
                     if (e.target.checked) setPaymentMethod("Cash");
                   }}
-                  disabled={isIssued}
                 />
                 Mark this as a Cash Invoice
               </label>
@@ -1072,7 +1275,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
             <select
               value={invoiceType}
               onChange={(e) => setInvoiceType(e.target.value)}
-              disabled={isIssued}
             >
               <option value="deposit">Deposit</option>
               <option value="stage">Stage</option>
@@ -1093,7 +1295,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
                 setIsCashInvoice(e.target.checked);
                 if (e.target.checked) setPaymentMethod("Cash");
               }}
-              disabled={isIssued}
             />
             Cash Invoice
           </label>
@@ -1103,7 +1304,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
             <select
               value={amountMode}
               onChange={(e) => setAmountMode(e.target.value)}
-              disabled={isIssued}
             >
               <option value="items">Use line items</option>
 
@@ -1124,7 +1324,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
                 type="number"
                 value={percentage}
                 onChange={(e) => setPercentage(e.target.value)}
-                disabled={isIssued}
               />
             </label>
           )}
@@ -1136,7 +1335,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
                 type="number"
                 value={fixedGross}
                 onChange={(e) => setFixedGross(e.target.value)}
-                disabled={isIssued}
               />
             </label>
           )}
@@ -1165,7 +1363,6 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
               type="number"
               value={vatRate}
               onChange={(e) => setVatRate(e.target.value)}
-              disabled={isIssued}
             />
           </label>
 
@@ -1176,6 +1373,38 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
             <br />
             Total: {money(workingInvoice.total)}
           </div>
+
+          {isIssued && mode === "edit" && (
+            <div
+              className={`invoiceSaveChangesPanel ${hasUnsavedChanges ? "hasChanges" : "saved"}`}
+              role="status"
+              aria-live="polite"
+            >
+              <div>
+                <strong>
+                  {hasUnsavedChanges ? "Invoice changed" : "Invoice up to date"}
+                </strong>
+                <small>
+                  {hasUnsavedChanges
+                    ? "Save before returning to Documents so the new VAT and totals are retained."
+                    : saveChangesMessage ||
+                      "Any saved changes are reflected in the invoice and client link."}
+                </small>
+              </div>
+              <button
+                className="sleekButton primaryButton"
+                type="button"
+                onClick={saveIssuedInvoiceChanges}
+                disabled={savingChanges || !hasUnsavedChanges}
+              >
+                {savingChanges
+                  ? "Saving changes…"
+                  : hasUnsavedChanges
+                    ? "Save Changes"
+                    : "Changes Saved"}
+              </button>
+            </div>
+          )}
 
           {!isStandalone && (
             <>
@@ -1219,14 +1448,18 @@ function InvoiceBuilder({ navData, jobs, files = [], navigate, onUpdate }) {
                 Copy Link
               </button>
             </div>
-          ) : (
+          ) : isIssued ? (
             <button
               className="sleekButton ghostButton"
               type="button"
               onClick={handleIssueToken}
             >
-              Issue Token
+              Create PDF Link
             </button>
+          ) : (
+            <div className="currencyBox">
+              Issue the invoice above to create its number, PDF and client link.
+            </div>
           )}
 
           <h3>Payment</h3>
@@ -1591,4 +1824,3 @@ function FileLightbox({ file, onClose }) {
 }
 
 export default InvoiceBuilder;
-

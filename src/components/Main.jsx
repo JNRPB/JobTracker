@@ -1,11 +1,12 @@
-﻿import CreateJob from "./CreateJob";
+import { useEffect, useState } from "react";
+import CreateJob from "./CreateJob";
 import JobCard from "./JobCard";
 import QuoteBuilder from "./QuoteBuilder";
 import InvoiceBuilder from "./InvoiceBuilder";
 import JobDocuments from "./JobDocuments";
+import PricingNotesPage from "./PricingNotesPage";
 import JobStatusOverview from "./JobStatusOverview";
 import WelcomeScreen from "./WelcomeScreen";
-import ArchivedJobs from "./JobCardTabs/ArchivedJobs";
 import Transactions from "./Transactions";
 import Files from "./Files";
 import UnsortedFiles from "./UnsortedFiles";
@@ -13,6 +14,13 @@ import SpendCalendar from "./SpendCalendar";
 import JobHeatMap from "./JobHeatMap";
 import BusinessFacts from "./BusinessFacts";
 import ForecastPage from "./ForecastPage";
+import Settings from "./Settings";
+import TodoPage from "./TodoPage";
+import SchedulePage from "./SchedulePage";
+import ResourceProfile from "./ResourceProfile";
+import TeamHome from "./TeamHome";
+import MyProfile from "./MyProfile";
+import { canAccessScreen } from "./access";
 
 const API_BASE = "";
 
@@ -27,82 +35,128 @@ function Main({
   refreshFiles,
   unsortedFiles = [],
   refreshUnsortedFiles,
+  refreshJobs,
+  onSettingsDirtyChange,
+  currentUser,
+  onCurrentUserChange,
 }) {
-  const job = jobs.find((j) => String(j.id) === String(navData.jobId));
+  const [sessionUser, setSessionUser] = useState(currentUser || null);
+  const [checkingAccess, setCheckingAccess] = useState(!currentUser);
+  const accessUser = currentUser || sessionUser;
+  const job = jobs.find((item) => String(item.id) === String(navData.jobId));
 
-  async function updateJob(updatedJob) {
-    const updatedJobs = jobs.map((j) =>
-      String(j.id) === String(updatedJob.id) ? updatedJob : j,
-    );
+  useEffect(() => {
+    if (currentUser) {
+      setSessionUser(currentUser);
+      setCheckingAccess(false);
+      return undefined;
+    }
 
-    setJobs(updatedJobs);
+    let cancelled = false;
+    setCheckingAccess(true);
 
-    try {
-      const response = await fetch(`${API_BASE}/jobs/${updatedJob.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedJob),
+    fetch(`${API_BASE}/api/auth/me`, { credentials: "include" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Could not confirm this HQ session.");
+        const data = await response.json();
+        if (!cancelled) setSessionUser(data.user || null);
+      })
+      .catch(() => {
+        if (!cancelled) setSessionUser(null);
+      })
+      .finally(() => {
+        if (!cancelled) setCheckingAccess(false);
       });
 
-      if (!response.ok) {
-        console.error("Failed to update job on server", response.statusText);
-      }
-    } catch (err) {
-      console.error("Error updating job on server:", err);
+    return () => {
+      cancelled = true;
+    };
+  }, [currentUser]);
+
+  async function updateJob(updatedJob) {
+    const response = await fetch(`${API_BASE}/jobs/${updatedJob.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedJob),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Could not update job (${response.status}).`);
     }
+
+    const data = await response.json();
+    const savedJob = data.job || data;
+
+    setJobs(
+      jobs.map((item) =>
+        String(item.id) === String(savedJob.id) ? savedJob : item,
+      ),
+    );
+
+    return savedJob;
   }
 
   async function deleteJob(jobId) {
-    const updatedJobs = jobs.filter((j) => String(j.id) !== String(jobId));
-    setJobs(updatedJobs);
+    const response = await fetch(`${API_BASE}/jobs/${jobId}`, {
+      method: "DELETE",
+    });
 
-    try {
-      const response = await fetch(`${API_BASE}/jobs/${jobId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        console.error("Failed to delete job on server", response.statusText);
-      }
-    } catch (err) {
-      console.error("Error deleting job on server:", err);
+    if (!response.ok) {
+      throw new Error(`Could not delete job (${response.status}).`);
     }
+
+    setJobs(jobs.filter((item) => String(item.id) !== String(jobId)));
   }
 
   async function refreshJobsFromServer() {
-    try {
-      const res = await fetch(`${API_BASE}/jobs`);
-      const data = await res.json();
-      setJobs(data);
-    } catch (err) {
-      console.error("Error refreshing jobs:", err);
+    const response = await fetch(`${API_BASE}/jobs`);
+
+    if (!response.ok) {
+      throw new Error(`Could not refresh jobs (${response.status}).`);
     }
+
+    const data = await response.json();
+    setJobs(Array.isArray(data) ? data : []);
+    return data;
   }
 
-  async function archiveJob(jobId) {
-    try {
-      await fetch(`${API_BASE}/jobs/${jobId}/archive`, {
-        method: "PUT",
-      });
+  async function setArchivedState(jobId, archived) {
+    const endpoint = archived ? "archive" : "unarchive";
+    const response = await fetch(`${API_BASE}/jobs/${jobId}/${endpoint}`, {
+      method: "PUT",
+    });
 
-      await refreshJobsFromServer();
-    } catch (err) {
-      console.error("Error archiving job:", err);
+    if (!response.ok) {
+      throw new Error(
+        `Could not ${archived ? "archive" : "unarchive"} job (${response.status}).`,
+      );
     }
+
+    const data = await response.json();
+    const savedJob = data.job;
+
+    if (!savedJob) {
+      await refreshJobsFromServer();
+      return null;
+    }
+
+    setJobs(
+      jobs.map((item) =>
+        String(item.id) === String(savedJob.id) ? savedJob : item,
+      ),
+    );
+
+    return savedJob;
   }
 
-  async function unarchiveJob(jobId) {
-    try {
-      await fetch(`${API_BASE}/jobs/${jobId}/unarchive`, {
-        method: "PUT",
-      });
+  function archiveJob(jobId) {
+    return setArchivedState(jobId, true);
+  }
 
-      await refreshJobsFromServer();
-    } catch (err) {
-      console.error("Error unarchiving job:", err);
-    }
+  function unarchiveJob(jobId) {
+    return setArchivedState(jobId, false);
   }
 
   function renderWelcome() {
@@ -110,6 +164,7 @@ function Main({
       <WelcomeScreen
         jobs={jobs}
         files={files}
+        currentUser={accessUser}
         unsortedFiles={unsortedFiles}
         navigate={navigate}
       />
@@ -129,11 +184,34 @@ function Main({
         onUnarchive={unarchiveJob}
         navigate={navigate}
         files={files}
+        currentUser={accessUser}
       />
     );
   }
 
   function renderActiveComponent() {
+    if (checkingAccess && !accessUser) {
+      return (
+        <section className="settingsPage">
+          <article className="settingsCard">
+            <h3>Checking access…</h3>
+            <p>Confirming your JNR HQ account.</p>
+          </article>
+        </section>
+      );
+    }
+
+    if (!canAccessScreen(accessUser, activeComponent)) {
+      return (
+        <section className="settingsPage">
+          <article className="settingsCard">
+            <h3>Access not available</h3>
+            <p>Your JNR HQ account does not have access to this section.</p>
+          </article>
+        </section>
+      );
+    }
+
     switch (activeComponent) {
       case "CreateJob":
         return <CreateJob addJob={addJob} navigate={navigate} />;
@@ -141,18 +219,83 @@ function Main({
       case "JobCard":
         return renderJobCard();
 
+      case "TeamHome":
+        return (
+          <TeamHome
+            jobs={jobs}
+            currentUser={accessUser}
+            onRefresh={refreshJobs}
+          />
+        );
+
+      case "MyProfile":
+        return (
+          <MyProfile
+            currentUser={accessUser}
+            onCurrentUserChange={(user) => {
+              setSessionUser(user);
+              onCurrentUserChange?.(user);
+            }}
+            navigate={navigate}
+          />
+        );
+
+      case "SchedulePage":
+        return (
+          <SchedulePage
+            jobs={jobs}
+            navigate={navigate}
+            currentUser={accessUser}
+            initialJobId={navData.jobId}
+          />
+        );
+
+      case "ResourceProfile":
+        return (
+          <ResourceProfile
+            resourceId={navData.resourceId}
+            navigate={navigate}
+            currentUser={accessUser}
+          />
+        );
+
       case "JobDocuments":
         return (
           <JobDocuments job={job} navigate={navigate} onUpdate={updateJob} />
         );
 
+      case "PricingNotesPage":
+        if (!job) return renderWelcome();
+        return (
+          <PricingNotesPage
+            job={job}
+            navigate={navigate}
+            onUpdate={updateJob}
+          />
+        );
+
       case "JobStatusOverview":
         return (
-          <JobStatusOverview jobs={jobs} navigate={navigate} files={files} />
+          <JobStatusOverview
+            jobs={jobs}
+            navigate={navigate}
+            files={files}
+            onUnarchive={unarchiveJob}
+          />
+        );
+
+      case "TodoPage":
+        return (
+          <TodoPage
+            jobs={jobs}
+            navigate={navigate}
+            onUpdate={updateJob}
+            initialJobId={navData.jobId}
+          />
         );
 
       case "BusinessFacts":
-        return <BusinessFacts />;
+        return <BusinessFacts navigate={navigate} />;
 
       case "QuoteBuilder":
         return (
@@ -177,7 +320,7 @@ function Main({
 
       case "ArchivedJobs":
         return (
-          <ArchivedJobs
+          <JobStatusOverview
             jobs={jobs}
             navigate={navigate}
             onUnarchive={unarchiveJob}
@@ -191,7 +334,7 @@ function Main({
         return <SpendCalendar jobs={jobs} />;
 
       case "JobHeatMap":
-        return <JobHeatMap jobs={jobs} navigate={navigate} />;
+        return <JobHeatMap jobs={jobs} navigate={navigate} navData={navData} />;
 
       case "Files":
         return (
@@ -218,6 +361,20 @@ function Main({
       case "ForecastPage":
         return <ForecastPage jobs={jobs} />;
 
+      case "Settings":
+        return (
+          <Settings
+            files={files}
+            onDirtyChange={onSettingsDirtyChange}
+            currentUser={accessUser}
+            onCurrentUserChange={(user) => {
+              setSessionUser(user);
+              onCurrentUserChange?.(user);
+            }}
+            navigate={navigate}
+          />
+        );
+
       case "WelcomeScreen":
       default:
         return renderWelcome();
@@ -228,4 +385,3 @@ function Main({
 }
 
 export default Main;
-

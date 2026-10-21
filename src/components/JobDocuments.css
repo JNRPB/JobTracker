@@ -30,6 +30,11 @@
   justify-content: space-between;
   gap: 18px;
   align-items: flex-start;
+  border-color: color-mix(in srgb, var(--job-colour) 35%, rgba(255, 255, 255, 0.12));
+  box-shadow: inset 4px 0 var(--job-colour);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--job-colour) 11%, transparent), transparent 45%),
+    var(--bg-panel);
 }
 
 .job-documents-hero h1 {
